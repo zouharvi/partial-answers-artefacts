@@ -29,7 +29,7 @@ def create_arg_parser():
 
 
 def read_corpus(corpus_file, use_sentiment):
-    '''TODO: add function description'''
+    '''Load and parse corpus structure'''
     documents = []
     labels = []
     with open(corpus_file, encoding='utf-8') as f:
@@ -54,9 +54,9 @@ def shuffle_dependent_lists(l1, l2, seed):
 
 
 def split_data(X_full, Y_full, test_percentage, shuffle, seed):
-    '''This function is aimed to split the data to the train and test set'''
+    '''This function splits the data to the train and test set with (possible) shuffling'''
     split_point = int(test_percentage*len(X_full))
-    # TODO: comment
+
     if shuffle:
         X_full, Y_full = shuffle_dependent_lists(X_full, Y_full, seed)
     X_train = X_full[split_point:]
@@ -70,18 +70,17 @@ def identity(x):
     '''Dummy function that just returns the input'''
     return x
 
-
 if __name__ == "__main__":
     args = create_arg_parser()
 
-    # Here we load the corpus and split the data
+    # Load the corpus and split the data
     X_full, Y_full = read_corpus(args.input_file, args.sentiment)
     X_train, Y_train, X_test, Y_test = split_data(
             X_full, Y_full, args.test_percentage, args.shuffle, args.seed
     )
 
     # Convert the texts to vectors
-    # We use a dummy function as tokenizer and preprocessor,
+    # Use a dummy function as tokenizer and preprocessor,
     # since the texts are already preprocessed and tokenized.
     if args.tfidf:
         vec = TfidfVectorizer(preprocessor=identity, tokenizer=identity)
@@ -95,9 +94,9 @@ if __name__ == "__main__":
     # train the classifier
     classifier.fit(X_train, Y_train)
 
-    # test the classifier
+    # make inferences
     Y_pred = classifier.predict(X_test)
 
-    # check the accuracy
+    # compute evaluation metrics
     acc = accuracy_score(Y_test, Y_pred)
     print("Final accuracy: {}".format(acc))
