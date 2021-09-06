@@ -7,6 +7,8 @@ import argparse
 import random
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
 from collections import Counter
@@ -22,9 +24,12 @@ def create_arg_parser():
                         help="Use the TF-IDF vectorizer instead of CountVectorizer")
     parser.add_argument("-tp", "--test_percentage", default=0.20, type=float,
                         help="Percentage of the data that is used for the test set (default 0.20)")
+    parser.add_argument("--model", default="nb",
+                        help="nb - Naive Bayes, lr - logistic regression ")
     parser.add_argument("-sh", "--shuffle", action="store_true",
                         help="Shuffle data set before splitting in train/test")
-    parser.add_argument("--seed", default=0, type=int, help="Seed used for shuffling")
+    parser.add_argument("--seed", default=0, type=int,
+                        help="Seed used for shuffling")
     args = parser.parse_args()
     return args
 
@@ -56,7 +61,7 @@ def shuffle_dependent_lists(l1, l2, seed):
 
 def split_data(X_full, Y_full, test_percentage, shuffle, seed):
     '''This function splits the data to the train and test set with (possible) shuffling'''
-    split_point = int(test_percentage*len(X_full))
+    split_point = int(test_percentage * len(X_full))
 
     if shuffle:
         X_full, Y_full = shuffle_dependent_lists(X_full, Y_full, seed)
@@ -71,13 +76,14 @@ def identity(x):
     '''Dummy function that just returns the input'''
     return x
 
+
 if __name__ == "__main__":
     args = create_arg_parser()
 
     # Load the corpus and split the data
     X_full, Y_full = read_corpus(args.input_file, args.sentiment)
     X_train, Y_train, X_test, Y_test = split_data(
-            X_full, Y_full, args.test_percentage, args.shuffle, args.seed
+        X_full, Y_full, args.test_percentage, args.shuffle, args.seed
     )
 
     # Convert the texts to vectors
@@ -92,10 +98,16 @@ if __name__ == "__main__":
     print("Class distribution")
     y_freqs = Counter(Y_train)
     print(y_freqs)
-    print("MCCC accuracy", list(y_freqs.items())[0][1]/sum(y_freqs.values()))
+    print("MCCC accuracy", list(y_freqs.items())[0][1] / sum(y_freqs.values()))
 
     # Combine the vectorizer with a Naive Bayes classifier
-    classifier = Pipeline([('vec', vec), ('cls', MultinomialNB())])
+    if args.model == "nb":
+        classifier = Pipeline([('vec', vec), ('cls', MultinomialNB())])
+    elif args.model == "lr":
+        classifier = Pipeline(
+            [('vec', vec), ('cls', LogisticRegression(max_iter=5000))])
+    else:
+        raise Exception(f"Unknown model {args.model}")
 
     # train the classifier
     classifier.fit(X_train, Y_train)
