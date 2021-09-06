@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-'''TODO: add high-level description of this Python script'''
+'''This code is aimed to process the labeled file and to predict to which class the text belongs to'''
 
 import sys
 import argparse
@@ -54,7 +54,7 @@ def shuffle_dependent_lists(l1, l2, seed):
 
 
 def split_data(X_full, Y_full, test_percentage, shuffle, seed):
-    '''TODO: add function description'''
+    '''This function is aimed to split the data to the train and test set'''
     split_point = int(test_percentage*len(X_full))
     # TODO: comment
     if shuffle:
@@ -74,7 +74,7 @@ def identity(x):
 if __name__ == "__main__":
     args = create_arg_parser()
 
-    # TODO: comment
+    # Here we load the corpus and split the data
     X_full, Y_full = read_corpus(args.input_file, args.sentiment)
     X_train, Y_train, X_test, Y_test = split_data(
             X_full, Y_full, args.test_percentage, args.shuffle, args.seed
@@ -92,12 +92,12 @@ if __name__ == "__main__":
     # Combine the vectorizer with a Naive Bayes classifier
     classifier = Pipeline([('vec', vec), ('cls', MultinomialNB())])
 
-    # TODO: comment this
+    # train the classifier
     classifier.fit(X_train, Y_train)
 
-    # TODO: comment this
+    # test the classifier
     Y_pred = classifier.predict(X_test)
 
-    # TODO: comment this
+    # check the accuracy
     acc = accuracy_score(Y_test, Y_pred)
     print("Final accuracy: {}".format(acc))
