@@ -23,6 +23,7 @@ def create_arg_parser():
                         help="Percentage of the data that is used for the test set (default 0.20)")
     parser.add_argument("-sh", "--shuffle", action="store_true",
                         help="Shuffle data set before splitting in train/test")
+    parser.add_argument("--seed", default=123, type=int, help="Seed used for shuffling")
     args = parser.parse_args()
     return args
 
@@ -44,20 +45,20 @@ def read_corpus(corpus_file, use_sentiment):
     return documents, labels
 
 
-def shuffle_dependent_lists(l1, l2):
+def shuffle_dependent_lists(l1, l2, seed):
     '''Shuffle two lists, but keep the dependency between them'''
     tmp = list(zip(l1, l2))
     # Seed the random generator so results are consistent between runs
-    random.Random(123).shuffle(tmp)
+    random.Random(seed).shuffle(tmp)
     return zip(*tmp)
 
 
-def split_data(X_full, Y_full, test_percentage, shuffle):
+def split_data(X_full, Y_full, test_percentage, shuffle, seed):
     '''TODO: add function description'''
     split_point = int(test_percentage*len(X_full))
     # TODO: comment
     if shuffle:
-        X_full, Y_full = shuffle_dependent_lists(X_full, Y_full)
+        X_full, Y_full = shuffle_dependent_lists(X_full, Y_full, seed)
     X_train = X_full[:split_point]
     Y_train = Y_full[:split_point]
     X_test = X_full[split_point:]
@@ -75,7 +76,9 @@ if __name__ == "__main__":
 
     # TODO: comment
     X_full, Y_full = read_corpus(args.input_file, args.sentiment)
-    X_train, Y_train, X_test, Y_test = split_data(X_full, Y_full, args.test_percentage, args.shuffle)
+    X_train, Y_train, X_test, Y_test = split_data(
+            X_full, Y_full, args.test_percentage, args.shuffle, args.seed
+    )
 
     # Convert the texts to vectors
     # We use a dummy function as tokenizer and preprocessor,
