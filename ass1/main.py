@@ -59,10 +59,10 @@ def split_data(X_full, Y_full, test_percentage, shuffle, seed):
     # TODO: comment
     if shuffle:
         X_full, Y_full = shuffle_dependent_lists(X_full, Y_full, seed)
-    X_train = X_full[:split_point]
-    Y_train = Y_full[:split_point]
-    X_test = X_full[split_point:]
-    Y_test = Y_full[split_point:]
+    X_train = X_full[split_point:]
+    Y_train = Y_full[split_point:]
+    X_test = X_full[:split_point]
+    Y_test = Y_full[:split_point]
     return X_train, Y_train, X_test, Y_test
 
 
