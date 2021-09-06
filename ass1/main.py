@@ -11,8 +11,10 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_validate
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from collections import Counter
+
+from itertools import starmap
 
 
 def create_arg_parser():
@@ -104,10 +106,8 @@ if __name__ == "__main__":
     if args.experiment == "main":
         # train the classifier
         classifier.fit(X_train, Y_train)
-
         # make inferences
         Y_pred = classifier.predict(X_test)
-
         # compute evaluation metrics
         acc = accuracy_score(Y_test, Y_pred)
         print("Final accuracy: {}".format(acc))
@@ -121,5 +121,34 @@ if __name__ == "__main__":
             scoring=["accuracy"], return_train_score=False,
         )
         print(np.average(score["test_accuracy"]))
+        print(np.var(score["test_accuracy"]))
     elif args.experiment == "train_data":
         pass
+    elif args.experiment == "error_classes":
+        # TODO this all can be made cleaner by using return_dict=True 
+        # train the classifier
+        classifier.fit(X_train, Y_train)
+
+        # make inferences
+        Y_pred = classifier.predict(X_test)
+
+        # compute evaluation metrics
+        acc = accuracy_score(Y_test, Y_pred)
+        print("Final accuracy: {}".format(acc))
+        print(classification_report(Y_test, Y_pred))
+
+        # Compute confusion matrix
+        c_mat = confusion_matrix(Y_test, Y_pred)
+        c_mat = c_mat.astype(str)
+        c_mat = c_mat.tolist()
+
+        # Padding with labels
+        c_mat = [[*y_freqs.keys()]] + c_mat
+        c_mat = list(zip(*c_mat)) # Transpose
+        c_mat = [["",*y_freqs.keys()]] + c_mat
+        c_mat = list(zip(*c_mat)) # Transpose
+
+
+        c_mat = "\n".join(starmap(("{:10}"*len(c_mat)).format,c_mat))
+
+        print(c_mat)
