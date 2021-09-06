@@ -5,10 +5,11 @@
 import sys
 import argparse
 import random
+import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_validate
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
 from collections import Counter
@@ -25,7 +26,9 @@ def create_arg_parser():
     parser.add_argument("-tp", "--test_percentage", default=0.20, type=float,
                         help="Percentage of the data that is used for the test set (default 0.20)")
     parser.add_argument("--model", default="nb",
-                        help="nb - Naive Bayes, lr - logistic regression ")
+                        help="nb - Naive Bayes, lr - logistic regression")
+    parser.add_argument("--experiment", default="main",
+                        help="Which experiment to run: main, mccc, cv, train_data")
     parser.add_argument("-sh", "--shuffle", action="store_true",
                         help="Shuffle data set before splitting in train/test")
     parser.add_argument("--seed", default=0, type=int,
@@ -44,7 +47,7 @@ def read_corpus(corpus_file, use_sentiment):
             documents.append(tokens[3:])
             if use_sentiment:
                 # 2-class problem: positive vs negative
-                labels.append(tokens[1])
+                labels.append(tokens[1] == "pos")
             else:
                 # 6-class problem: books, camera, dvd, health, music, software
                 labels.append(tokens[0])
@@ -72,11 +75,6 @@ def split_data(X_full, Y_full, test_percentage, shuffle, seed):
     return X_train, Y_train, X_test, Y_test
 
 
-def identity(x):
-    '''Dummy function that just returns the input'''
-    return x
-
-
 if __name__ == "__main__":
     args = create_arg_parser()
 
@@ -87,34 +85,41 @@ if __name__ == "__main__":
     )
 
     # Convert the texts to vectors
-    # Use a dummy function as tokenizer and preprocessor,
-    # since the texts are already preprocessed and tokenized.
     if args.tfidf:
-        vec = TfidfVectorizer(preprocessor=identity, tokenizer=identity)
+        vec = TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
     else:
         # Bag of Words vectorizer
-        vec = CountVectorizer(preprocessor=identity, tokenizer=identity)
-
-    print("Class distribution")
-    y_freqs = Counter(Y_train)
-    print(y_freqs)
-    print("MCCC accuracy", list(y_freqs.items())[0][1] / sum(y_freqs.values()))
+        vec = CountVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
 
     # Combine the vectorizer with a Naive Bayes classifier
     if args.model == "nb":
         classifier = Pipeline([('vec', vec), ('cls', MultinomialNB())])
     elif args.model == "lr":
         classifier = Pipeline(
-            [('vec', vec), ('cls', LogisticRegression(max_iter=5000))])
+            [('vec', vec), ('cls', LogisticRegression(max_iter=5000))],
+        )
     else:
         raise Exception(f"Unknown model {args.model}")
 
-    # train the classifier
-    classifier.fit(X_train, Y_train)
+    if args.experiment == "main":
+        # train the classifier
+        classifier.fit(X_train, Y_train)
 
-    # make inferences
-    Y_pred = classifier.predict(X_test)
+        # make inferences
+        Y_pred = classifier.predict(X_test)
 
-    # compute evaluation metrics
-    acc = accuracy_score(Y_test, Y_pred)
-    print("Final accuracy: {}".format(acc))
+        # compute evaluation metrics
+        acc = accuracy_score(Y_test, Y_pred)
+        print("Final accuracy: {}".format(acc))
+    elif args.experiment == "mccc":
+        y_freqs = Counter(Y_train)
+        print("MCCC accuracy", list(y_freqs.items())[0][1] / sum(y_freqs.values()))
+    elif args.experiment == "cv":
+        # TODO: how to pass random state to CV?
+        score = cross_validate(
+            classifier, X_full, Y_full, cv=10, n_jobs=4,
+            scoring=["accuracy"], return_train_score=False,
+        )
+        print(np.average(score["test_accuracy"]))
+    elif args.experiment == "train_data":
+        pass
