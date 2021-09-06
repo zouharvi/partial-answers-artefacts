@@ -1,20 +1,16 @@
 #!/usr/bin/env python3
 
-'''This code is aimed to process the labeled file and to predict to which class the text belongs to'''
+'''Small script to experiment with review classification'''
 
-import sys
 import argparse
-import random
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import cross_validate
+from sklearn.model_selection import cross_validate, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.dummy import DummyClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from collections import Counter
-
 from itertools import starmap
 
 
@@ -57,34 +53,18 @@ def read_corpus(corpus_file, use_sentiment):
     return documents, labels
 
 
-def shuffle_dependent_lists(l1, l2, seed):
-    '''Shuffle two lists, but keep the dependency between them'''
-    tmp = list(zip(l1, l2))
-    # Seed the random generator so results are consistent between runs
-    random.Random(seed).shuffle(tmp)
-    return zip(*tmp)
-
-
-def split_data(X_full, Y_full, test_percentage, shuffle, seed):
-    '''This function splits the data to the train and test set with (possible) shuffling'''
-    split_point = int(test_percentage * len(X_full))
-
-    if shuffle:
-        X_full, Y_full = shuffle_dependent_lists(X_full, Y_full, seed)
-    X_train = X_full[split_point:]
-    Y_train = Y_full[split_point:]
-    X_test = X_full[:split_point]
-    Y_test = Y_full[:split_point]
-    return X_train, Y_train, X_test, Y_test
-
-
 if __name__ == "__main__":
     args = create_arg_parser()
 
     # Load the corpus and split the data
     X_full, Y_full = read_corpus(args.input_file, args.sentiment)
-    X_train, Y_train, X_test, Y_test = split_data(
-        X_full, Y_full, args.test_percentage, args.shuffle, args.seed
+
+    # use scikit's built-in splitting function to save space
+    X_train, X_test, Y_train, Y_test = train_test_split(
+        X_full, Y_full,
+        test_size=args.test_percentage,
+        random_state=args.seed,
+        shuffle=args.shuffle
     )
 
     # Convert the texts to vectors
@@ -96,15 +76,15 @@ if __name__ == "__main__":
 
     # Combine the vectorizer with a Naive Bayes classifier
     if args.model == "nb":
-        classifier = Pipeline([('vec', vec), ('cls', MultinomialNB())])
+        model_class = lambda: MultinomialNB()
     elif args.model == "lr":
-        classifier = Pipeline(
-            [('vec', vec), ('cls', LogisticRegression(max_iter=5000))],
-        )
+        model_class = lambda: LogisticRegression(max_iter=5000)
     elif args.model == "mccc":
-        classifier = Pipeline([('vec', vec), ('cls', DummyClassifier(strategy="most_frequent"))])
+        model_class = lambda: DummyClassifier(strategy="most_frequent")
     else:
         raise Exception(f"Unknown model {args.model}")
+
+    classifier = Pipeline([('vec', vec), ('cls', model_class())])
 
     if args.experiment == "main":
         # train the classifier
