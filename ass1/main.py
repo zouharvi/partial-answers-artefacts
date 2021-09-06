@@ -9,6 +9,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
+from collections import Counter
 
 
 def create_arg_parser():
@@ -23,7 +24,7 @@ def create_arg_parser():
                         help="Percentage of the data that is used for the test set (default 0.20)")
     parser.add_argument("-sh", "--shuffle", action="store_true",
                         help="Shuffle data set before splitting in train/test")
-    parser.add_argument("--seed", default=123, type=int, help="Seed used for shuffling")
+    parser.add_argument("--seed", default=0, type=int, help="Seed used for shuffling")
     args = parser.parse_args()
     return args
 
@@ -87,6 +88,11 @@ if __name__ == "__main__":
     else:
         # Bag of Words vectorizer
         vec = CountVectorizer(preprocessor=identity, tokenizer=identity)
+
+    print("Class distribution")
+    y_freqs = Counter(Y_train)
+    print(y_freqs)
+    print("MCCC accuracy", list(y_freqs.items())[0][1]/sum(y_freqs.values()))
 
     # Combine the vectorizer with a Naive Bayes classifier
     classifier = Pipeline([('vec', vec), ('cls', MultinomialNB())])
