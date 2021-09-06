@@ -11,6 +11,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_validate
 from sklearn.pipeline import Pipeline
+from sklearn.dummy import DummyClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from collections import Counter
 
@@ -100,6 +101,8 @@ if __name__ == "__main__":
         classifier = Pipeline(
             [('vec', vec), ('cls', LogisticRegression(max_iter=5000))],
         )
+    elif args.model == "mccc":
+        classifier = Pipeline([('vec', vec), ('cls', DummyClassifier(strategy="most_frequent"))])
     else:
         raise Exception(f"Unknown model {args.model}")
 
@@ -111,9 +114,6 @@ if __name__ == "__main__":
         # compute evaluation metrics
         acc = accuracy_score(Y_test, Y_pred)
         print("Final accuracy: {}".format(acc))
-    elif args.experiment == "mccc":
-        y_freqs = Counter(Y_train)
-        print("MCCC accuracy", list(y_freqs.items())[0][1] / sum(y_freqs.values()))
     elif args.experiment == "cv":
         # TODO: how to pass random state to CV?
         score = cross_validate(
