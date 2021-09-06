@@ -10,8 +10,10 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from collections import Counter
+
+from itertools import starmap
 
 
 def create_arg_parser():
@@ -118,3 +120,21 @@ if __name__ == "__main__":
     # compute evaluation metrics
     acc = accuracy_score(Y_test, Y_pred)
     print("Final accuracy: {}".format(acc))
+    print(classification_report(Y_test, Y_pred))
+
+    # Compute confusion matrix
+    c_mat = confusion_matrix(Y_test, Y_pred)
+    c_mat = c_mat.astype(str)
+    c_mat = c_mat.tolist()
+
+    # Padding with labels
+    c_mat = [[*y_freqs.keys()]] + c_mat
+    c_mat = list(zip(*c_mat)) # Transpose
+    c_mat = [["",*y_freqs.keys()]] + c_mat
+    c_mat = list(zip(*c_mat)) # Transpose
+
+
+    c_mat = "\n".join(starmap(("{:10}"*len(c_mat)).format,c_mat))
+
+    print(c_mat)
+
