@@ -20,7 +20,7 @@ def create_arg_parser():
                         help="Input file to learn from (default reviews.txt)")
     parser.add_argument("-s", "--sentiment", action="store_true",
                         help="Do sentiment analysis (2-class problem)")
-    parser.add_argument("-t", "--tfidf", action="store_true",
+    parser.add_argument("-t", "--tf-idf", action="store_true",
                         help="Use the TF-IDF vectorizer instead of CountVectorizer")
     parser.add_argument("-tp", "--test_percentage", default=0.20, type=float,
                         help="Percentage of the data that is used for the test set (default 0.20)")
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     )
 
     # Convert the texts to vectors
-    if args.tfidf:
+    if args.tf_idf:
         vec = TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
     else:
         # Bag of Words vectorizer
@@ -97,11 +97,11 @@ if __name__ == "__main__":
     elif args.experiment == "cv":
         # TODO: how to pass random state to CV?
         score = cross_validate(
-            classifier, X_full, Y_full, cv=10, n_jobs=4,
+            classifier, X_full, Y_full, cv=10, n_jobs=5,
             scoring=["accuracy"], return_train_score=False,
         )
-        print(np.average(score["test_accuracy"]))
-        print(np.var(score["test_accuracy"]))
+        print(f'acc: {np.average(score["test_accuracy"]):.2%}')
+        print(f'std: {np.std(score["test_accuracy"]):.5f}')
     elif args.experiment == "train_data":
         pass
     elif args.experiment == "error_classes":
