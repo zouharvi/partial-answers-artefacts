@@ -12,6 +12,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.dummy import DummyClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from report_utils import *
+import pickle
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -21,7 +23,7 @@ def parse_args():
                         help="Do sentiment analysis (2-class problem)")
     parser.add_argument("-t", "--tf-idf", action="store_true",
                         help="Use the TF-IDF vectorizer instead of CountVectorizer")
-    parser.add_argument("-tp", "--test_percentage", default=0.20, type=float,
+    parser.add_argument("-tp", "--test_percentage", default=0.1, type=float,
                         help="Percentage of the data that is used for the test set (default 0.20)")
     parser.add_argument("--model", default="nb",
                         help="nb - Naive Bayes, lr - logistic regression")
@@ -31,6 +33,8 @@ def parse_args():
                         help="Shuffle data set before splitting in train/test")
     parser.add_argument("--seed", default=0, type=int,
                         help="Seed used for shuffling")
+    parser.add_argument("--data-out", default="tmp.pkl",
+                        help="Where to store experiment data")
     args = parser.parse_args()
     return args
 
@@ -51,6 +55,19 @@ def read_corpus(corpus_file, use_sentiment):
                 labels.append(tokens[0])
     return documents, labels
 
+
+def model_factory(model):
+    model_lib = {
+        "nb": lambda: MultinomialNB(),
+        "lr": lambda: LogisticRegression(max_iter=5000),
+        "mccc": lambda: DummyClassifier(strategy="most_frequent"),
+    }
+    if model in model_lib:
+        return model_lib[model]
+    elif model == "all":
+        return model_lib
+    else:
+        raise Exception(f"Unknown model {model}")
 
 if __name__ == "__main__":
     args = parse_args()
@@ -74,14 +91,7 @@ if __name__ == "__main__":
         vec = CountVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
 
     # Combine the vectorizer with a Naive Bayes classifier
-    if args.model == "nb":
-        model_class = lambda: MultinomialNB()
-    elif args.model == "lr":
-        model_class = lambda: LogisticRegression(max_iter=5000)
-    elif args.model == "mccc":
-        model_class = lambda: DummyClassifier(strategy="most_frequent")
-    else:
-        raise Exception(f"Unknown model {args.model}")
+    model_class = model_factory(args.model)
 
     classifier = Pipeline([('vec', vec), ('cls', model_class())])
 
@@ -93,6 +103,7 @@ if __name__ == "__main__":
         # compute evaluation metrics
         acc = accuracy_score(Y_test, Y_pred)
         print("Final accuracy: {}".format(acc))
+
     elif args.experiment == "cv":
         # TODO: how to pass random state to CV?
         score = cross_validate(
@@ -101,23 +112,46 @@ if __name__ == "__main__":
         )
         print(f'acc: {np.average(score["test_accuracy"]):.2%}')
         print(f'std: {np.std(score["test_accuracy"]):.5f}')
+
     elif args.experiment == "train_data":
-        pass
+        data_out = {}
+        for model_name, model_class in model_factory("all").items():
+            for tf_idf in [False, True]:
+                print(model_name, tf_idf)
+
+                if tf_idf:
+                    vec = TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
+                else:
+                    vec = CountVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
+                classifier = Pipeline([('vec', vec), ('cls', model_class())])
+
+                accs = []
+                for train_index in np.linspace(10, len(X_train), num=20):
+                    train_index = int(train_index)
+                    classifier.fit(X_train[:train_index], Y_train[:train_index])
+                    Y_pred = classifier.predict(X_test)
+                    accs.append((train_index, accuracy_score(Y_test, Y_pred)))
+
+                data_out[(model_name, tf_idf)] = accs
+
+        with open(args.data_out, "wb") as f:
+            pickle.dump(data_out, f)
+
     elif args.experiment == "train_stability":
         folds = KFold(n_splits=10)
         accs = []
         X_train = np.array(X_train, dtype=object)
         Y_train = np.array(Y_train, dtype=object)
+
         for train_indicies, _ in folds.split(X_train):
-            # train the classifier
             classifier.fit(X_train[train_indicies], Y_train[train_indicies])
-            # make inferences
             Y_pred = classifier.predict(X_test)
-            # compute evaluation metrics
             accs.append(accuracy_score(Y_test, Y_pred))
+
         print("average:", np.average(accs))
         print("std:", np.std(accs))
-        print("diameter:", max(accs)-min(accs))
+        print("diameter:", max(accs) - min(accs))
+
     elif args.experiment == "error_classes":
         # train the classifier
         classifier.fit(X_train, Y_train)
@@ -134,4 +168,4 @@ if __name__ == "__main__":
 
         print("Final accuracy: {}".format(acc))
         print(format_report(c_report))
-        print(format_auto_matrix(c_mat,np.unique(Y_train)))
+        print(format_auto_matrix(c_mat, np.unique(Y_train)))
