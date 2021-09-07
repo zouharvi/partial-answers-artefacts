@@ -13,6 +13,7 @@ from sklearn.dummy import DummyClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from report_utils import *
 import pickle
+import random
 
 
 def parse_args():
@@ -105,7 +106,6 @@ if __name__ == "__main__":
         print("Final accuracy: {}".format(acc))
 
     elif args.experiment == "cv":
-        # TODO: how to pass random state to CV?
         score = cross_validate(
             classifier, X_full, Y_full, cv=10, n_jobs=5,
             scoring=["accuracy"], return_train_score=False,
@@ -136,6 +136,20 @@ if __name__ == "__main__":
 
         with open(args.data_out, "wb") as f:
             pickle.dump(data_out, f)
+
+    elif args.experiment == "lr_stability":
+        classifier.fit(X_train, Y_train)
+        Y_pred = classifier.predict(X_test)
+        acc1 = accuracy_score(Y_test, Y_pred)
+
+        tmp = list(zip(X_train, Y_train))
+        random.Random().shuffle(tmp)
+        X_train, Y_train = zip(*tmp)
+        classifier.fit(X_train, Y_train)
+        Y_pred = classifier.predict(X_test)
+        acc2 = accuracy_score(Y_test, Y_pred)
+
+        assert acc1 == acc2
 
     elif args.experiment == "train_stability":
         folds = KFold(n_splits=10)
