@@ -4,13 +4,16 @@
 
 import argparse
 import numpy as np
+import statistics
+
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_validate, train_test_split, KFold
 from sklearn.pipeline import Pipeline
 from sklearn.dummy import DummyClassifier
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, make_scorer
+
 from report_utils import *
 import pickle
 import random
@@ -70,6 +73,17 @@ def model_factory(model):
     else:
         raise Exception(f"Unknown model {model}")
 
+def complete_scoring(model,X_test,Y_test,**kwargs):
+    
+    Y_pred = model.predict(X_test)
+    
+    report = classification_report(Y_test, Y_pred, output_dict=True)
+    c_mat = confusion_matrix(Y_test, Y_pred)
+        
+    score = dict(report=report,c_mat=c_mat)
+    
+    return score
+        
 if __name__ == "__main__":
     args = parse_args()
 
@@ -106,12 +120,28 @@ if __name__ == "__main__":
         print("Final accuracy: {}".format(acc))
 
     elif args.experiment == "cv":
-        score = cross_validate(
-            classifier, X_full, Y_full, cv=10, n_jobs=5,
-            scoring=["accuracy"], return_train_score=False,
-        )
-        print(f'acc: {np.average(score["test_accuracy"]):.2%}')
-        print(f'std: {np.std(score["test_accuracy"]):.5f}')
+        kf = KFold(n_splits=10)
+        
+        scores = []
+        for train_i, test_i in kf.split(X_full):
+            classifier = Pipeline([('vec', vec), ('cls', model_class())])
+            
+            X_train = list(map(X_full.__getitem__,train_i))
+            Y_train = list(map(Y_full.__getitem__,train_i))
+            X_test = list(map(X_full.__getitem__,test_i))
+            Y_test = list(map(Y_full.__getitem__,test_i))
+            
+            classifier.fit(X_train, Y_train)
+            score = complete_scoring(classifier,X_test,Y_test)
+            
+            scores.append(score)
+
+        avg_score = dict_op(avg_dict,*scores)
+        print(format_report(avg_score["report"]))
+        print(format_auto_matrix(avg_score["c_mat"], np.unique(Y_full)))
+        
+        if args.
+        
 
     elif args.experiment == "train_data":
         data_out = {}
@@ -165,21 +195,3 @@ if __name__ == "__main__":
         print("average:", np.average(accs))
         print("std:", np.std(accs))
         print("diameter:", max(accs) - min(accs))
-
-    elif args.experiment == "error_classes":
-        # train the classifier
-        classifier.fit(X_train, Y_train)
-
-        # make inferences
-        Y_pred = classifier.predict(X_test)
-
-        # compute evaluation metrics
-        acc = accuracy_score(Y_test, Y_pred)
-        c_report = classification_report(Y_test, Y_pred, output_dict=True)
-
-        # Compute confusion matrix
-        c_mat = confusion_matrix(Y_test, Y_pred)
-
-        print("Final accuracy: {}".format(acc))
-        print(format_report(c_report))
-        print(format_auto_matrix(c_mat, np.unique(Y_train)))

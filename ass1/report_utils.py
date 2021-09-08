@@ -1,5 +1,6 @@
 from itertools import starmap
 import operator
+import numpy as np
 
 # Data formating
 def format_auto_matrix(mat,labels):
@@ -78,3 +79,9 @@ def dict_op(op,*d):
         vals.append(dict_op(op,*d_new))
 
     return dict(zip(d0.keys(),vals))
+
+def avg_dict(*d):
+    def _avg_args(*args):
+        return np.mean(args,axis=0)
+    
+    return dict_op(_avg_args,*d)
