@@ -59,8 +59,10 @@ def format_report(report_dict,digits=2,format_="default"):
     for row in rows:
         report += row_fmt.format(*row, width=width, digits=digits)
     
-    if format_ == "default":
-        report += '\n'
+    if format_ == "latex":
+        report += "&"*4+"\\"*2
+    report += '\n'
+    
 
     # accuracy
     
