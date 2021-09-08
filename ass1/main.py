@@ -39,6 +39,8 @@ def parse_args():
                         help="Seed used for shuffling")
     parser.add_argument("--data-out", default="tmp.pkl",
                         help="Where to store experiment data")
+    parser.add_argument("--table-format", default="default",
+                        help="How to format table: default or latex")
     args = parser.parse_args()
     return args
 
@@ -137,8 +139,8 @@ if __name__ == "__main__":
         labels = np.unique(Y_full)
             
         avg_score = dict_op(avg_dict,*scores)
-        print(format_report(avg_score["report"]))
-        print(format_auto_matrix(avg_score["c_mat"],labels))
+        print(format_report(avg_score["report"],format_=args.table_format))
+        print(format_auto_matrix(avg_score["c_mat"],labels,format_=args.table_format))
         
         avg_score["labels"] = labels
         avg_score["task"] = "sentiment" if args.sentiment else "topic"

@@ -3,7 +3,7 @@ import operator
 import numpy as np
 
 # Data formating
-def format_auto_matrix(mat,labels):
+def format_auto_matrix(mat,labels,format_="default"):
     # TODO document
     mat = mat.astype(str)
     mat = mat.tolist()
@@ -14,18 +14,36 @@ def format_auto_matrix(mat,labels):
     mat = [["",*labels]] + mat
     mat = list(zip(*mat)) # Transpose
 
-    format_str = "{:>10}"*len(mat)
-    mat = "\n".join(starmap(format_str.format,mat))
+    if format_ == "default":
+        format_str = "{:>10}"*len(mat)
+        line_join = "\n"
+    elif format_ == "latex":
+        format_str = "{:>10}"+ " & {:>10}"*len(mat[:-1])
+        line_join = "\\\\\n"
+    
+    mat = line_join.join(starmap(format_str.format,mat))
 
     return mat
 
-def format_report(report_dict,digits=2):
+def format_report(report_dict,digits=2,format_="default"):
     # TODO document
-    row_fmt = '{:>{width}s} ' + ' {:>9.{digits}f}' * 3 + ' {:>9}\n'
-
+    
     headers = ["precision", "recall", "f1-score", "support"]
     average_types = {"accuracy","macro avg","weighted avg"}
-
+    
+    if format_ == "default":
+        row_fmt = '{:>{width}s} ' + ' {:>9.{digits}f}' * 3 + ' {:>9}\n'
+        row_fmt_accuracy = '{:>{width}s} ' + \
+                        ' {:>9.{digits}}' * 2 + ' {:>9.{digits}f}' + \
+                        ' {:>9}\n'
+        head_fmt = '{:>{width}s} ' + ' {:>9}' * len(headers) + "\n\n"
+    elif format_ == "latex":
+        row_fmt = '{:>{width}s} &' + ' {:>9.{digits}f} &' * 3 + ' {:>9}\\\\\n'
+        row_fmt_accuracy = '{:>{width}s} &' + \
+                        ' {:>9.{digits}} &' * 2 + ' {:>9.{digits}f} &' + \
+                        ' {:>9}\\\\\n'
+        head_fmt = '{:>{width}s} &' + ' {:>9} &' * len(headers[:-1]) + ' {:>9}\\\\\n'
+        
     # Per class scores
     target_names = set(report_dict.keys()) - average_types
     scores = map(report_dict.__getitem__,target_names)
@@ -36,17 +54,16 @@ def format_report(report_dict,digits=2):
     longest_last_line_heading = 'weighted avg'
     name_width = max(len(cn) for cn in target_names)
     width = max(name_width, len(longest_last_line_heading), digits)
-    head_fmt = '{:>{width}s} ' + ' {:>9}' * len(headers)
+    
     report = head_fmt.format('', *headers, width=width)
-    report += '\n\n'
     for row in rows:
         report += row_fmt.format(*row, width=width, digits=digits)
-    report += '\n'
+    
+    if format_ == "default":
+        report += '\n'
 
     # accuracy
-    row_fmt_accuracy = '{:>{width}s} ' + \
-                        ' {:>9.{digits}}' * 2 + ' {:>9.{digits}f}' + \
-                        ' {:>9}\n'
+    
     report += row_fmt_accuracy.format("accuracy", '', '',
                                         report_dict["accuracy"],
                                         report_dict["macro avg"]["support"],

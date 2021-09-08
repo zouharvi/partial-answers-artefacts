@@ -44,8 +44,8 @@ if __name__ == "__main__":
         yticklabels=data["labels"],
         cbar_kws=dict(
             ticks=cbar_ticks,
-            format=formatter)
-        )
+            format=formatter),
+        fmt="g")
     plt.title("Averaged confusion matrix\nModel: {}, Task: {}".format(PRETTY_NAME_MODEL[data["model"]],data["task"]))
     plt.ylabel("True label")
     plt.xlabel("Predicted label") 
