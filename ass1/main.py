@@ -83,6 +83,19 @@ def complete_scoring(Y_test,Y_pred):
     
     return score
         
+    
+def report_score(score,labels,args):
+        
+    print(format_report(score["report"],format_=args.table_format))
+    print(format_auto_matrix(score["c_mat"],labels,format_=args.table_format))
+
+    score["labels"] = labels
+    score["task"] = "sentiment" if args.sentiment else "topic"
+    score["model"] = args.model
+    with open(args.data_out, "wb") as f:
+        pickle.dump(score, f)
+
+    
 if __name__ == "__main__":
     args = parse_args()
 
@@ -115,8 +128,11 @@ if __name__ == "__main__":
         # make inferences
         Y_pred = classifier.predict(X_test)
         # compute evaluation metrics
-        acc = complete_scoring(Y_test, Y_pred)
-        print("Final accuracy: {}".format(acc))
+        score  = complete_scoring(Y_test, Y_pred)
+    
+        labels = np.unique(Y_full)
+        report_score(score,labels,args)
+    
 
     elif args.experiment == "cv":
         kf = KFold(n_splits=10)
@@ -134,19 +150,11 @@ if __name__ == "__main__":
             Y_pred = classifier.predict(X_test)
             
             score = complete_scoring(Y_test,Y_pred)
-            scores.append(score)
-
-        labels = np.unique(Y_full)
-            
-        avg_score = dict_op(avg_dict,*scores)
-        print(format_report(avg_score["report"],format_=args.table_format))
-        print(format_auto_matrix(avg_score["c_mat"],labels,format_=args.table_format))
+            scores.append(score)            
+        score = dict_op(avg_dict,*scores)
         
-        avg_score["labels"] = labels
-        avg_score["task"] = "sentiment" if args.sentiment else "topic"
-        avg_score["model"] = args.model
-        with open(args.data_out, "wb") as f:
-            pickle.dump(avg_score, f)
+        labels = np.unique(Y_full)
+        report_score(score,labels,args)
 
     elif args.experiment == "train_data":
         data_out = {}
