@@ -35,6 +35,7 @@ if __name__ == "__main__":
     formatter = tkr.ScalarFormatter(useMathText=True)
     formatter.set_scientific(False)
 
+    plt.figure(figsize=(4.7, 3.7))
     sns.heatmap(
         data["c_mat"],
         cmap="Greens",
@@ -46,7 +47,10 @@ if __name__ == "__main__":
             ticks=cbar_ticks,
             format=formatter),
         fmt="g")
-    plt.title("Averaged confusion matrix\nModel: {}, Task: {}".format(PRETTY_NAME_MODEL[data["model"]],data["task"]))
+    # plt.title("Averaged confusion matrix\nModel: {}, Task: {}".format(PRETTY_NAME_MODEL[data["model"]],data["task"]))
+    # plt.title("Topic task")
+    plt.title("Sentiment task")
     plt.ylabel("True label")
-    plt.xlabel("Predicted label") 
+    plt.xlabel("Predicted label")
+    plt.tight_layout()
     plt.show()

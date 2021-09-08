@@ -134,7 +134,7 @@ if __name__ == "__main__":
         report_score(score,labels,args)
     
 
-    elif args.experiment == "cv":
+    elif args.experiment == "cv_errors":
         kf = KFold(n_splits=10)
         
         scores = []

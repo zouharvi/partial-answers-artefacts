@@ -1,6 +1,7 @@
 # added by zouharvi
 ass1/reviews.txt
 *.pkl
+*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
