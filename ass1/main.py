@@ -73,10 +73,7 @@ def model_factory(model):
     else:
         raise Exception(f"Unknown model {model}")
 
-def complete_scoring(model,X_test,Y_test,**kwargs):
-    
-    Y_pred = model.predict(X_test)
-    
+def complete_scoring(Y_test,Y_pred):
     report = classification_report(Y_test, Y_pred, output_dict=True)
     c_mat = confusion_matrix(Y_test, Y_pred)
         
@@ -116,7 +113,7 @@ if __name__ == "__main__":
         # make inferences
         Y_pred = classifier.predict(X_test)
         # compute evaluation metrics
-        acc = accuracy_score(Y_test, Y_pred)
+        acc = complete_scoring(Y_test, Y_pred)
         print("Final accuracy: {}".format(acc))
 
     elif args.experiment == "cv":
@@ -132,16 +129,22 @@ if __name__ == "__main__":
             Y_test = list(map(Y_full.__getitem__,test_i))
             
             classifier.fit(X_train, Y_train)
-            score = complete_scoring(classifier,X_test,Y_test)
+            Y_pred = classifier.predict(X_test)
             
+            score = complete_scoring(Y_test,Y_pred)
             scores.append(score)
 
+        labels = np.unique(Y_full)
+            
         avg_score = dict_op(avg_dict,*scores)
         print(format_report(avg_score["report"]))
-        print(format_auto_matrix(avg_score["c_mat"], np.unique(Y_full)))
+        print(format_auto_matrix(avg_score["c_mat"],labels))
         
+        avg_score["labels"] = labels
+        avg_score["task"] = "sentiment" if args.sentiment else "topic"
+        avg_score["model"] = args.model
         with open(args.data_out, "wb") as f:
-            pickle.dump(data_out, f)
+            pickle.dump(avg_score, f)
 
     elif args.experiment == "train_data":
         data_out = {}

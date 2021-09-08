@@ -14,7 +14,7 @@ def format_auto_matrix(mat,labels):
     mat = [["",*labels]] + mat
     mat = list(zip(*mat)) # Transpose
 
-    format_str = "{:10}"*len(mat)
+    format_str = "{:>10}"*len(mat)
     mat = "\n".join(starmap(format_str.format,mat))
 
     return mat
