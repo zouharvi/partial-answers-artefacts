@@ -140,8 +140,8 @@ if __name__ == "__main__":
         print(format_report(avg_score["report"]))
         print(format_auto_matrix(avg_score["c_mat"], np.unique(Y_full)))
         
-        if args.
-        
+        with open(args.data_out, "wb") as f:
+            pickle.dump(data_out, f)
 
     elif args.experiment == "train_data":
         data_out = {}
