@@ -21,13 +21,13 @@ import random
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input_file", default='reviews.txt', type=str,
+    parser.add_argument("-i", "--input-file", default='reviews.txt', type=str,
                         help="Input file to learn from (default reviews.txt)")
     parser.add_argument("-s", "--sentiment", action="store_true",
                         help="Do sentiment analysis (2-class problem)")
     parser.add_argument("-t", "--tf-idf", action="store_true",
                         help="Use the TF-IDF vectorizer instead of CountVectorizer")
-    parser.add_argument("-tp", "--test_percentage", default=0.1, type=float,
+    parser.add_argument("-tp", "--test-percentage", default=0.1, type=float,
                         help="Percentage of the data that is used for the test set (default 0.20)")
     parser.add_argument("--model", default="nb",
                         help="nb - Naive Bayes, lr - logistic regression")

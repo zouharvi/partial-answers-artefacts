@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
 from collections import Counter
+import numpy as np
+import argparse
 
 def read_corpus(corpus_file):
     documents = []
@@ -17,9 +19,18 @@ def read_corpus(corpus_file):
     return documents, labels_s, labels_m
 
 
-X_all, Ys_all, Ym_all = read_corpus("reviews.txt")
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--input-file", default='reviews.txt', type=str,
+                    help="Input file to learn from (default reviews.txt)")
+args = parser.parse_args()
+
+
+X_all, Ys_all, Ym_all = read_corpus(args.input_file)
 
 print("count:", len(X_all))
 print("class M distribution", Counter(Ym_all))
 print("class S distribution", Counter(Ys_all))
 print("class MS distribution", Counter(zip(Ys_all, Ym_all)))
+
+print(f"Avereage token count: {np.average([len(x) for x in X_all]):.2f}")
+print(f"Avereage sentence count: {np.average([x.count('.') for x in X_all]):.2f}")
