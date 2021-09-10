@@ -255,5 +255,5 @@ if __name__ == "__main__":
         incorrect_conf = statistics.mean(proba_incorrect)
         
                 
-        print("Average confidence on correct instances: {:.3}".format(correct_conf))
-        print("Average confidence on incorrect instances: {:.3}".format(incorrect_conf))        
+        print("Average confidence on correct instances: {:.4}".format(correct_conf*100))
+        print("Average confidence on incorrect instances: {:.4}".format(incorrect_conf*100))        
