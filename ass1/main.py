@@ -164,15 +164,22 @@ if __name__ == "__main__":
         labels = np.unique(Y_full)
         report_score(score, labels, args)
 
-    elif args.experiment == "example_errors":
+    elif args.experiment == "error_lengths":
         classifier.fit(X_train, Y_train)
-        Y_pred = classifier.predict(X_train)
 
         # find examples
         if args.sentiment:
-            print([' '.join(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold == True and pred == False][1:10])
+            Y_pred = classifier.predict(X_train)
+            avg_incorrect = np.average([len(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold != pred])
+            avg_correct = np.average([len(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold == pred])
+            print(avg_correct, avg_incorrect)
         else:
+            Y_pred = classifier.predict(X_train)
             print([' '.join(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold == "books" and pred == "dvd" and "watch" in doc][:10])
+
+            avg_incorrect = np.average([len(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold != pred])
+            avg_correct = np.average([len(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold == pred])
+            print(avg_correct, avg_incorrect)
 
     elif args.experiment == "train_data":
         # examine the effect of limited data on (all) model performance
