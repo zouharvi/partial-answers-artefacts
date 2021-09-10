@@ -140,7 +140,7 @@ if __name__ == "__main__":
         labels = np.unique(Y_full)
         report_score(score, labels, args)
 
-    elif args.experiment == "cv_errors":
+    elif args.experiment == "cv":
         # TODO: comment
 
         kf = KFold(n_splits=10)
