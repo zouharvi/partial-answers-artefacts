@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 
+'''
+Rudimentary data distribution statistics
+'''
+
 from collections import Counter
 import numpy as np
 import argparse
@@ -23,7 +27,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--input-file", default='reviews.txt', type=str,
                     help="Input file to learn from (default reviews.txt)")
 args = parser.parse_args()
-
 
 X_all, Ys_all, Ym_all = read_corpus(args.input_file)
 

@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 
-'''Small script to experiment with review classification'''
+'''
+Vizualization of data size effect on model performance
+'''
 
 import argparse
-import numpy as np
 import pickle
 import matplotlib.pyplot as plt
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data", default="tmp.pkl",
                         help="Where to find experiment data")
+    parser.add_argument("-s", "--sentiment", action="store_true")
+    parser.add_argument("-l", "--legend", action="store_true")
     args = parser.parse_args()
     return args
+
 
 PRETTY_NAME_MODEL = {
     "nb": "Naive Bayes",
@@ -40,6 +45,8 @@ if __name__ == "__main__":
         data = pickle.load(f)
 
     plt.figure(figsize=(4.7, 3.7))
+
+    # plot each model configuration
     for (model_name, tfidf), accs in data.items():
         plt.plot(
             [x[0] for x in accs],
@@ -48,10 +55,15 @@ if __name__ == "__main__":
             color=COLOR_NAME_MODEL[model_name],
             linestyle=STYLE_VEC[tfidf],
         )
+
     plt.xlabel("Data size")
     plt.ylabel("Accuracy")
-    # plt.legend(bbox_to_anchor=(0.5,1.25), loc="upper center", ncol=3)
-    plt.title("Sentiment task")
-    # plt.title("Topic task")
-    plt.tight_layout()
+    if args.legend:
+        plt.legend(bbox_to_anchor=(0.5, 1.25), loc="upper center", ncol=3)
+    else:
+        if args.sentiment:
+            plt.title("Sentiment task")
+        else:
+            plt.title("Topic task")
+        plt.tight_layout()
     plt.show()
