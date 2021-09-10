@@ -165,6 +165,8 @@ if __name__ == "__main__":
         report_score(score, labels, args)
 
     elif args.experiment == "error_lengths":
+        # find some erronerous examples (hard coded) and output average review length per all correctly and incorrectly classified examples
+
         classifier.fit(X_train, Y_train)
 
         # find examples
