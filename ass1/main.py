@@ -248,8 +248,9 @@ if __name__ == "__main__":
             errors = [dict(zip(labels,err)) for err in Y_pred_proba[error_idx]]
             for j,error_id in enumerate(error_idx):
                 print("{:.200}".format(" ".join(X_test[error_id])))
+                print("Predicted: {}, Gold: {}".format(labels[Y_pred_idx[error_id]],Y_test[error_id]))
                 pprint(errors[j])
-                print()
+                
                 
         correct_conf = statistics.mean(proba_correct)
         incorrect_conf = statistics.mean(proba_incorrect)
