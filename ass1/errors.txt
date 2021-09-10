@@ -1,0 +1,30 @@
+# Topic
+## Requires prior knowledge of a entity that is referred by a proper noun
+# camera / dvd # i 'm still waiting for poldark to make it across the pond . until then , i 'll satisfy myself with this fine work
+# health / camera # doesnt work even though the lenmar website says it does . i thought it was a pretty good deal for $26. i wouldnt even give it one star coz it plain doesnt work
+# health / music # this was not a waste of brad 's time or mine . good job !
+
+## Mixes common words in two or more topics
+# music / dvd # timeless classic movie . 2 of the songs are frequently re-done by various artist
+# music / health # this writting instrument is superb in it 's ability to compensate the energetic writer
+# dvd / software # this is going to be a great program that will benefit our family in producing fantastic photos and films
+# dvd / book # i saw the tv show made , so i wanted to check out the full story . it was a disappointment , but my wife loved it . so there you are one against , one for it
+
+## Cannot be deduced from sentence
+# softawre / heath # i made my order 5 / 26 / 06 and received my order 7 / 22 / 0
+# camera / software # the price was the best i could find . ordering was hassle free and delivery was fast
+# health / camera (hilarious)# i bought this as a gift for my mother and she absolutely loves it ! definitely a good buy
+
+# Sentiment 
+## Defending product against other reviews, critisizes reviews not product
+# negative / positive # i would like to point out that mtv rocks is funny and you guys are suckers . this album does rule , just not as much as top40 radio hits
+# negative / positive # and he know 's nothing about popular music and really should get back to work and stop sitting around convincing himself that he does . dumbass
+
+## Bad thing followed by good thing -> good
+# negative / positive # it 's quite a bit slower than version 7. but it looks really good and the form designer has been improved by leaps and bounds
+
+## Good thing followed by bad thing -> bad
+# positive / negative # while the title cut with joe public was bumping most of this disc is so-so&amp ; formula driven.without teddy riley the grooves&amp ; vibe are n't as strong
+
+## Not clear opinion
+# negative / positive # i was a little diappointed when i found out that i would have to buy more versions to get continued training on this subject
