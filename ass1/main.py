@@ -49,6 +49,7 @@ def parse_args():
 
 def read_corpus(corpus_file, use_sentiment):
     '''Load and parse corpus structure'''
+
     documents = []
     labels = []
     with open(corpus_file, encoding='utf-8') as f:
@@ -65,6 +66,8 @@ def read_corpus(corpus_file, use_sentiment):
 
 
 def model_factory(model):
+    '''return a model given the description string (or the whole dictionary)'''
+
     model_lib = {
         "nb": lambda: MultinomialNB(),
         "lr": lambda: LogisticRegression(max_iter=5000),
@@ -77,19 +80,23 @@ def model_factory(model):
     else:
         raise Exception(f"Unknown model {model}")
 
-def complete_scoring(Y_test,Y_pred):
+
+def complete_scoring(Y_test, Y_pred):
+    # TODO: comment
+
     report = classification_report(Y_test, Y_pred, output_dict=True)
     c_mat = confusion_matrix(Y_test, Y_pred)
-        
-    score = dict(report=report,c_mat=c_mat)
-    
+    score = dict(report=report, c_mat=c_mat)
+
     return score
-        
-    
-def report_score(score,labels,args):
-        
-    print(format_report(score["report"],format_=args.table_format))
-    print(format_auto_matrix(score["c_mat"],labels,format_=args.table_format))
+
+
+def report_score(score, labels, args):
+    # TODO: comment
+
+    print(format_report(score["report"], format_=args.table_format))
+    print(format_auto_matrix(score["c_mat"],
+          labels, format_=args.table_format))
 
     score["labels"] = labels
     score["task"] = "sentiment" if args.sentiment else "topic"
@@ -98,11 +105,11 @@ def report_score(score,labels,args):
     with open(args.data_out, "wb") as f:
         pickle.dump(score, f)
 
-    
+
 if __name__ == "__main__":
     args = parse_args()
 
-    # Load the corpus and split the data
+    # load the corpus and split the data
     X_full, Y_full = read_corpus(args.input_file, args.sentiment)
 
     # use scikit's built-in splitting function to save space
@@ -113,31 +120,29 @@ if __name__ == "__main__":
         shuffle=args.shuffle
     )
 
-    # Convert the texts to vectors
+    # compute features
     if args.tf_idf:
         vec = TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
     else:
-        # Bag of Words vectorizer
+        # bag of Words vectorizer
         vec = CountVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
 
-    # Combine the vectorizer with a Naive Bayes classifier
     model_class = model_factory(args.model)
-
+    # combine the vectorizer with the statistical model
     classifier = Pipeline([('vec', vec), ('cls', model_class())])
 
     if args.experiment == "main":
-        # train the classifier
+        # train the classifier, make inferences and compute metrics
+
         classifier.fit(X_train, Y_train)
-        # make inferences
         Y_pred = classifier.predict(X_test)
-        # compute evaluation metrics
-        score  = complete_scoring(Y_test, Y_pred)
-    
+        score = complete_scoring(Y_test, Y_pred)
         labels = np.unique(Y_full)
-        report_score(score,labels,args)
-    
+        report_score(score, labels, args)
 
     elif args.experiment == "cv_errors":
+        # TODO: comment
+
         kf = KFold(n_splits=10)
         
         X_full, Y_full = map(np.array,(X_full,Y_full))
@@ -151,13 +156,13 @@ if __name__ == "__main__":
             
             classifier.fit(X_train, Y_train)
             Y_pred = classifier.predict(X_test)
-            
-            score = complete_scoring(Y_test,Y_pred)
-            scores.append(score)            
-        score = dict_op(avg_dict,*scores)
-        
+
+            score = complete_scoring(Y_test, Y_pred)
+            scores.append(score)
+        score = dict_op(avg_dict, *scores)
+
         labels = np.unique(Y_full)
-        report_score(score,labels,args)
+        report_score(score, labels, args)
 
     elif args.experiment == "example_errors":
         classifier.fit(X_train, Y_train)
@@ -170,21 +175,27 @@ if __name__ == "__main__":
             print([' '.join(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold == "books" and pred == "dvd" and "watch" in doc][:10])
 
     elif args.experiment == "train_data":
+        # examine the effect of limited data on (all) model performance
+
         data_out = {}
         for model_name, model_class in model_factory("all").items():
             for tf_idf in [False, True]:
                 print(model_name, tf_idf)
 
                 if tf_idf:
-                    vec = TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
+                    vec = TfidfVectorizer(
+                        preprocessor=lambda x: x, tokenizer=lambda x: x)
                 else:
-                    vec = CountVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
+                    vec = CountVectorizer(
+                        preprocessor=lambda x: x, tokenizer=lambda x: x)
                 classifier = Pipeline([('vec', vec), ('cls', model_class())])
 
                 accs = []
                 for train_index in np.linspace(10, len(X_train), num=20):
+                    # compute performance curves (against data) of a specific model configuration
                     train_index = int(train_index)
-                    classifier.fit(X_train[:train_index], Y_train[:train_index])
+                    classifier.fit(X_train[:train_index],
+                                   Y_train[:train_index])
                     Y_pred = classifier.predict(X_test)
                     accs.append((train_index, accuracy_score(Y_test, Y_pred)))
 
@@ -193,7 +204,9 @@ if __name__ == "__main__":
         with open(args.data_out, "wb") as f:
             pickle.dump(data_out, f)
 
-    elif args.experiment == "lr_stability":
+    elif args.experiment == "stability":
+        # validate that shuffling training data does not affect performance
+
         classifier.fit(X_train, Y_train)
         Y_pred = classifier.predict(X_test)
         acc1 = accuracy_score(Y_test, Y_pred)
@@ -208,6 +221,8 @@ if __name__ == "__main__":
         assert acc1 == acc2
 
     elif args.experiment == "train_stability":
+        # compute variance in k-fold cross validation runs
+
         folds = KFold(n_splits=10)
         accs = []
         X_train = np.array(X_train, dtype=object)
