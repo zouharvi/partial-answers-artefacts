@@ -14,6 +14,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.dummy import DummyClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, make_scorer
 
+from pprint import pprint
+
 from report_utils import *
 import pickle
 import random
@@ -99,6 +101,7 @@ def report_score(score, labels, args):
     score["labels"] = labels
     score["task"] = "sentiment" if args.sentiment else "topic"
     score["model"] = args.model
+
     with open(args.data_out, "wb") as f:
         pickle.dump(score, f)
 
@@ -141,15 +144,16 @@ if __name__ == "__main__":
         # TODO: comment
 
         kf = KFold(n_splits=10)
+        
+        X_full, Y_full = map(np.array,(X_full,Y_full))
+        
         scores = []
         for train_i, test_i in kf.split(X_full):
             classifier = Pipeline([('vec', vec), ('cls', model_class())])
-
-            X_train = list(map(X_full.__getitem__, train_i))
-            Y_train = list(map(Y_full.__getitem__, train_i))
-            X_test = list(map(X_full.__getitem__, test_i))
-            Y_test = list(map(Y_full.__getitem__, test_i))
-
+            
+            X_train,Y_train = X_full[train_i],Y_full[train_i]
+            X_test,Y_test = X_full[test_i],Y_full[test_i]
+            
             classifier.fit(X_train, Y_train)
             Y_pred = classifier.predict(X_test)
 
@@ -159,6 +163,16 @@ if __name__ == "__main__":
 
         labels = np.unique(Y_full)
         report_score(score, labels, args)
+
+    elif args.experiment == "example_errors":
+        classifier.fit(X_train, Y_train)
+        Y_pred = classifier.predict(X_train)
+
+        # find examples
+        if args.sentiment:
+            print([' '.join(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold == True and pred == False][1:10])
+        else:
+            print([' '.join(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold == "books" and pred == "dvd" and "watch" in doc][:10])
 
     elif args.experiment == "train_data":
         # examine the effect of limited data on (all) model performance
@@ -222,3 +236,45 @@ if __name__ == "__main__":
         print("average:", np.average(accs))
         print("std:", np.std(accs))
         print("diameter:", max(accs) - min(accs))
+        
+    elif args.experiment == "errors":
+        kf = KFold(n_splits=10)
+        
+        X_full, Y_full = map(np.array,(X_full,Y_full))
+        labels = np.unique(Y_full)
+        
+        proba_correct = []
+        proba_incorrect = []
+        for i,(train_i, test_i) in enumerate(kf.split(X_full)):
+            classifier = Pipeline([('vec', vec), ('cls', model_class())])
+            
+            X_train,Y_train = X_full[train_i],Y_full[train_i]
+            X_test,Y_test = X_full[test_i],Y_full[test_i]
+            
+            classifier.fit(X_train, Y_train)
+            Y_pred = classifier.predict(X_test)
+            
+            Y_pred_proba = classifier.predict_proba(X_test)
+            Y_pred_idx = np.argmax(Y_pred_proba,axis=1)
+            
+            error_mask = Y_pred != np.array(Y_test)
+            error_idx = error_mask.nonzero()[0]
+            correct_idx = (~error_mask).nonzero()[0]
+            
+            proba_correct.extend(Y_pred_proba[correct_idx,Y_pred_idx[correct_idx]])
+            proba_incorrect.extend(Y_pred_proba[error_idx,Y_pred_idx[error_idx]])
+            
+            print("\n\n", "#"*10, "Fold", i, "#"*10, "\n\n")
+            
+            errors = [dict(zip(labels,err)) for err in Y_pred_proba[error_idx]]
+            for j,error_id in enumerate(error_idx):
+                print("{:.200}".format(" ".join(X_test[error_id])))
+                pprint(errors[j])
+                print()
+                
+        correct_conf = statistics.mean(proba_correct)
+        incorrect_conf = statistics.mean(proba_incorrect)
+        
+                
+        print("Average confidence on correct instances: {:.4}".format(correct_conf*100))
+        print("Average confidence on incorrect instances: {:.4}".format(incorrect_conf*100))        
