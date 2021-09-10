@@ -159,6 +159,16 @@ if __name__ == "__main__":
         labels = np.unique(Y_full)
         report_score(score,labels,args)
 
+    elif args.experiment == "example_errors":
+        classifier.fit(X_train, Y_train)
+        Y_pred = classifier.predict(X_train)
+
+        # find examples
+        if args.sentiment:
+            print([' '.join(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold == True and pred == False][1:10])
+        else:
+            print([' '.join(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold == "books" and pred == "dvd" and "watch" in doc][:10])
+
     elif args.experiment == "train_data":
         data_out = {}
         for model_name, model_class in model_factory("all").items():
@@ -239,11 +249,7 @@ if __name__ == "__main__":
             proba_correct.extend(Y_pred_proba[correct_idx,Y_pred_idx[correct_idx]])
             proba_incorrect.extend(Y_pred_proba[error_idx,Y_pred_idx[error_idx]])
             
-            print()
-            print()
-            print("################################## Fold n {} ##################################".format(i))
-            print()
-            print()
+            print("\n\n", "#"*10, "Fold", i, "#"*10, "\n\n")
             
             errors = [dict(zip(labels,err)) for err in Y_pred_proba[error_idx]]
             for j,error_id in enumerate(error_idx):
