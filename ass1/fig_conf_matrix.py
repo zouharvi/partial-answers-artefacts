@@ -22,6 +22,7 @@ def parse_args():
                         help="Where to find experiment data")
     args = parser.parse_args()
     return args
+
 if __name__ == "__main__":
     args = parse_args()
 
