@@ -1,24 +1,42 @@
 #!/usr/bin/env python3
 
-'''
+"""
 Vizualization of data size effect on model performance
-'''
+"""
 
-import argparse
-import pickle
+# Visualization libs
 import matplotlib.pyplot as plt
 
+# Misc
+import argparse
+from argparse import Namespace
+import pickle
 
-def parse_args():
-    parser = argparse.ArgumentParser()
+
+
+def parse_args() -> Namespace:
+    """Function containing all the argument parsing logic. Parses command line arguments and
+    handles exceptions and help queries. 
+
+    Returns
+    =======
+        Namespace object that has an attribute per command line parameter.
+    """
+    
+    parser = argparse.ArgumentParser()# Argument parsing object
+    
+    # Arguments
     parser.add_argument("--data", default="tmp.pkl",
                         help="Where to find experiment data")
     parser.add_argument("-s", "--sentiment", action="store_true")
     parser.add_argument("-l", "--legend", action="store_true")
+    
+    # Parse the args
     args = parser.parse_args()
     return args
 
 
+# Utility maps
 PRETTY_NAME_MODEL = {
     "nb": "Naive Bayes",
     "lr": "Logistic Regression",
@@ -41,9 +59,11 @@ STYLE_VEC = {
 if __name__ == "__main__":
     args = parse_args()
 
+    # Load pickled data
     with open(args.data, "rb") as f:
         data = pickle.load(f)
 
+    # Create figure
     plt.figure(figsize=(4.7, 3.7))
 
     # plot each model configuration
@@ -58,6 +78,8 @@ if __name__ == "__main__":
 
     plt.xlabel("Data size")
     plt.ylabel("Accuracy")
+    
+    # Add textual info
     if args.legend:
         plt.legend(bbox_to_anchor=(0.5, 1.25), loc="upper center", ncol=3)
     else:
@@ -66,4 +88,6 @@ if __name__ == "__main__":
         else:
             plt.title("Topic task")
         plt.tight_layout()
+    
+    # Show the figure
     plt.show()
