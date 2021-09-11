@@ -247,18 +247,25 @@ if __name__ == "__main__":
         labels = np.unique(Y_full)
         report_score(score, labels, args)
 
-    elif args.experiment == "example_errors":
-        # Adhoc experiment to find a specific classes of errors and print them to stodut 
-        
-        # Fit classifier and make predictions
+
+    elif args.experiment == "error_lengths":
+        # find some erronerous examples (hard coded) and output average review length per all correctly and incorrectly classified examples
+
         classifier.fit(X_train, Y_train)
-        Y_pred = classifier.predict(X_train)
 
         # find examples
-        if args.sentiment: # False negatives
-            print([' '.join(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold == True and pred == False][1:10])
-        else: # misclassified instance of class books as dvds that contain the word watch
+        if args.sentiment:
+            Y_pred = classifier.predict(X_train)
+            avg_incorrect = np.average([len(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold != pred])
+            avg_correct = np.average([len(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold == pred])
+            print(avg_correct, avg_incorrect)
+        else:
+            Y_pred = classifier.predict(X_train)
             print([' '.join(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold == "books" and pred == "dvd" and "watch" in doc][:10])
+
+            avg_incorrect = np.average([len(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold != pred])
+            avg_correct = np.average([len(doc) for doc, gold, pred  in zip(X_train, Y_train, Y_pred) if gold == pred])
+            print(avg_correct, avg_incorrect)
 
     elif args.experiment == "train_data":
         # examine the effect of limited data on (all) model performance
