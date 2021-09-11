@@ -8,6 +8,7 @@ from collections import Counter
 import numpy as np
 import argparse
 
+
 def read_corpus(corpus_file):
     documents = []
     labels_s = []
@@ -36,4 +37,5 @@ print("class S distribution", Counter(Ys_all))
 print("class MS distribution", Counter(zip(Ys_all, Ym_all)))
 
 print(f"Avereage token count: {np.average([len(x) for x in X_all]):.2f}")
-print(f"Avereage sentence count: {np.average([x.count('.') for x in X_all]):.2f}")
+print(
+    f"Avereage sentence count: {np.average([x.count('.') for x in X_all]):.2f}")

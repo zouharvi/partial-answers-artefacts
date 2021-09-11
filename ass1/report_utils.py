@@ -7,13 +7,12 @@ from typing import Any
 # Scientific / Numeric libraries
 import numpy as np
 
-# Data formating
 
-def format_auto_matrix(mat:np.array, labels:np.array, format_:str="default") -> str:
+def format_auto_matrix(mat: np.array, labels: np.array, format_: str = "default") -> str:
     """Given a matrix that compares elements from different classes between themselves (e.g. a
     confusion matrix, correlation matrix, covariance matrix...). Produce a string table to display 
     on stdout or to embed into a latex document.
-    
+
     Parameters
     ==========
         - "mat": Confusion matrix to format, must be a square matrix
@@ -22,7 +21,7 @@ def format_auto_matrix(mat:np.array, labels:np.array, format_:str="default") -> 
         - "format": How to format the table.
                         "default": Create a nice table to display to stdout
                         "latex": Create a table with latex syntax
-                        
+
     Returns
     =======
         A string object containing the matrix formated according to the parametets.
@@ -50,11 +49,11 @@ def format_auto_matrix(mat:np.array, labels:np.array, format_:str="default") -> 
     return mat
 
 
-def format_report(report_dict:dict, digits=2, format_="default") -> str:
+def format_report(report_dict: dict, digits=2, format_="default") -> str:
     """Given a dict that contains different kinds of classification metric scores
     (as returned by sklearn.classification_report). Produce a string table to display 
     on stdout or to embed into a latex document.
-    
+
     Parameters
     ==========
         - "report_dict": dictionary returned by "sklearn.classification_report"
@@ -62,7 +61,7 @@ def format_report(report_dict:dict, digits=2, format_="default") -> str:
         - "format": How to format the table.
                         "default": Create a nice table to display to stdout
                         "latex": Create a table with latex syntax
-                        
+
     Returns
     =======
         A string object containing the data formated in a table according to the parametets.
@@ -124,10 +123,10 @@ def format_report(report_dict:dict, digits=2, format_="default") -> str:
 # Data manipulation functions
 
 
-def dict_extract_tensor(d:dict) -> list[Any]:  # Not used
+def dict_extract_tensor(d: dict) -> list[Any]:  # Not used
     """Utility function for manipulating dicts. Converts dictionary into a nested list
     structure ignoring keys but preserving structure.
-    
+
     Parameters
     ==========
         - "d": any dictionary
@@ -141,10 +140,10 @@ def dict_extract_tensor(d:dict) -> list[Any]:  # Not used
     return list(map(dict_extract_tensor, d.values()))
 
 
-def dict_op(op:callable, *d:dict) -> dict:
+def dict_op(op: callable, *d: dict) -> dict:
     """Utility function for manipulating dicts. Applies a n-arity operator on n 
     dicts elementwise. Dicts must have the same structure.
-    
+
     Parameters
     ==========
         - "op": a operator of arbitrary number of parameters.
@@ -169,7 +168,7 @@ def dict_op(op:callable, *d:dict) -> dict:
 
 def avg_dict(*d):
     """Utility function for averaging all the values of dicts elementwise.
-    
+
     Parameters
     ==========
         - "*d": a list of identically structured dictionaries which to average elementwise
@@ -178,7 +177,7 @@ def avg_dict(*d):
         A dictionary with the same structure of any of the dicts "d" but with each element being
         the result of averaging the items in the same place within the nested structure.
     """
-    
+
     def _avg_args(*args):
         return np.mean(args, axis=0)
 

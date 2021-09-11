@@ -29,7 +29,7 @@ def parse_args() -> Namespace:
     """
     # Argument parsing object
     parser = argparse.ArgumentParser()
-    
+
     # Arguments
     parser.add_argument("--data", default="tmp.pkl",
                         help="Where to find experiment data")
@@ -38,6 +38,7 @@ def parse_args() -> Namespace:
     # Parse the args
     args = parser.parse_args()
     return args
+
 
 if __name__ == "__main__":
     args = parse_args()
@@ -53,7 +54,7 @@ if __name__ == "__main__":
 
     # Compute reference checkpoints for the colorbar
     cbar_ticks = [2**i for i in range(0, steps + 1)]
-    
+
     # Create formater to manipulate the strings formated in the plot
     formatter = matplotlib.ticker.ScalarFormatter(useMathText=True)
     formatter.set_scientific(False)
