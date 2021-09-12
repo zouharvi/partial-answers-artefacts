@@ -251,11 +251,17 @@ if __name__ == "__main__":
 
     elif args.experiment == "error_lengths":
         # find some erronerous examples (hard coded) and output average review length per all correctly and incorrectly classified examples
-
         classifier.fit(X_train, Y_train)
 
         # find examples
         if args.sentiment:
+            Y_pred_prob = classifier.predict_proba(X_train)
+            Y_pred = classifier.predict(X_train)
+            print([
+                (' '.join(doc), gold, pred, pred_prob) for doc, gold, pred, pred_prob in zip(X_train, Y_train, Y_pred, Y_pred_prob)
+                if gold != pred and max(pred_prob) >= 0.6 and len(doc) <= 50
+            ][:10])
+
             Y_pred = classifier.predict(X_train)
             avg_incorrect = np.average([len(doc) for doc, gold, pred in zip(
                 X_train, Y_train, Y_pred) if gold != pred])
@@ -272,6 +278,30 @@ if __name__ == "__main__":
             avg_correct = np.average([len(doc) for doc, gold, pred in zip(
                 X_train, Y_train, Y_pred) if gold == pred])
             print(avg_correct, avg_incorrect)
+
+    elif args.experiment == "error_corr":
+        # find whether mispredictions correlate along tasks 
+
+        assert not args.sentiment and not args.shuffle
+        X_train_m = X_train
+        Y_train_m = Y_train
+        classifier_m = Pipeline([('vec', vec), ('cls', model_class())])
+        classifier_m.fit(X_train_m, Y_train_m)
+        
+        X_full, Y_full = read_corpus(args.input_file, args.sentiment)
+        X_train_s, _, Y_train_s, _ = train_test_split(
+            X_full, Y_full,
+            test_size=args.test_percentage,
+            random_state=args.seed,
+            shuffle=args.shuffle
+        )
+        classifier_s = Pipeline([('vec', vec), ('cls', model_class())])
+        classifier_s.fit(X_train_s, Y_train_s)
+
+        mask_m = (Y_train_m != classifier_m.predict(X_train_m)).astype(int)
+        mask_s = (Y_train_s != classifier_s.predict(X_train_s)).astype(int)
+        rev_len = np.array([len(x) for x in X_train_m])
+        print(np.corrcoef([mask_m, mask_s, rev_len]))
 
     elif args.experiment == "train_data":
         # examine the effect of limited data on (all) model performance
