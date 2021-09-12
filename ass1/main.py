@@ -75,7 +75,7 @@ def read_corpus(corpus_filepath: str, use_sentiment: bool = False) -> tuple[list
         - "corpus_filepath": filepath of the file to be read.
 
         - "use_sentiment": Whether to extract the sentiment labels (True) or
-                            the topic labels. 
+                            the topic labels or both (None).
 
     Returns
     =======
@@ -85,18 +85,23 @@ def read_corpus(corpus_filepath: str, use_sentiment: bool = False) -> tuple[list
     """
 
     documents = []
-    labels = []
+    labels_s = []
+    labels_m = []
     with open(corpus_filepath, encoding='utf-8') as f:
         for line in f:
             tokens = line.strip().split()
             documents.append(tokens[3:])
-            if use_sentiment:
-                # 2-class problem: positive vs negative
-                labels.append(tokens[1] == "pos")
-            else:
-                # 6-class problem: books, camera, dvd, health, music, software
-                labels.append(tokens[0])
-    return documents, labels
+            # 2-class problem: positive vs negative
+            labels_s.append(tokens[1] == "pos")
+            # 6-class problem: books, camera, dvd, health, music, software
+            labels_m.append(tokens[0])
+
+    if use_sentiment is None:
+        return documents, labels_s, labels_m
+    elif use_sentiment:
+        return documents, labels_s
+    else:
+        return documents, labels_m
 
 
 def model_factory(model: str) -> BaseEstimator:
@@ -282,26 +287,25 @@ if __name__ == "__main__":
     elif args.experiment == "error_corr":
         # find whether mispredictions correlate along tasks 
 
-        assert not args.sentiment and not args.shuffle
-        X_train_m = X_train
-        Y_train_m = Y_train
-        classifier_m = Pipeline([('vec', vec), ('cls', model_class())])
-        classifier_m.fit(X_train_m, Y_train_m)
-        
-        X_full, Y_full = read_corpus(args.input_file, args.sentiment)
-        X_train_s, _, Y_train_s, _ = train_test_split(
-            X_full, Y_full,
+        X_full, Y_full_s, Y_full_m = read_corpus(args.input_file, None)
+        X_train, _, Y_train, _ = train_test_split(
+            X_full, list(zip(Y_full_s, Y_full_m)),
             test_size=args.test_percentage,
             random_state=args.seed,
             shuffle=args.shuffle
         )
-        classifier_s = Pipeline([('vec', vec), ('cls', model_class())])
-        classifier_s.fit(X_train_s, Y_train_s)
+        Y_train_m, Y_train_s = zip(*Y_train)
 
-        mask_m = (Y_train_m != classifier_m.predict(X_train_m)).astype(int)
-        mask_s = (Y_train_s != classifier_s.predict(X_train_s)).astype(int)
-        rev_len = np.array([len(x) for x in X_train_m])
+        classifier_m = Pipeline([('vec', vec), ('cls', model_class())])
+        classifier_m.fit(X_train, Y_train_m)
+        classifier_s = Pipeline([('vec', vec), ('cls', model_class())])
+        classifier_s.fit(X_train, Y_train_s)
+
+        mask_m = (Y_train_m != classifier_m.predict(X_train)).astype(int)
+        mask_s = (Y_train_s != classifier_s.predict(X_train)).astype(int)
+        rev_len = np.array([len(x) for x in X_train])
         print(np.corrcoef([mask_m, mask_s, rev_len]))
+        print("same classification", sum(mask_m == mask_s)/len(mask_m))
 
     elif args.experiment == "train_data":
         # examine the effect of limited data on (all) model performance
