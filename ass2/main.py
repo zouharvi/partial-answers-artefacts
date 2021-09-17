@@ -1,57 +1,62 @@
 #!/usr/bin/env python3
 
 """
-Train a model for six-way review classification
+This is a small script for topic classification using ensemble of ComplementNB, MultinomialNB, RandomForests and KNN.
+The model hyperparameters were first optimized individually and then gridsearch was performed on the vote weights.
+Simple LogisticRegression is better than the whole ensemble (see assignment 1) but its use is not allowed.
+
+If one wished to overenginner this, they could do error analysis on the individual models
+and select model based on the input (e.g. MultinomialNB is good only on longer reviews).
+
+The 10-fold CV estimates the accuracy of 92.5%. This will, however, be probably lower for the test set, because
+I've made decisions based on these results and hence "overfitted" the hyperparameters to the training data.
+The runtime for single ensemble run is 20s. Because the ensemble is paralelized, it needs to fit 5 times the feature
+matrix into memory <4GB.
+
+Notes what didn't help:
+- WorNetLemmatizer
+- Custom features (e.g. review length)
+- Feature union with BoW
+- This elaborate feature kernel that was supposed to model term interactions (combined with standard TF-IDF):
+```
+("tfidf_kernel", Pipeline([      
+    ("tfidf_crop", TfidfVectorizer(stop_words="english", max_features=1000)),
+    ('kernel', sklearn.preprocessing.PolynomialFeatures(interaction_only=True, include_bias=False)),
+])),
+```
 """
 
-# Math/Numeric libraries
-import numpy as np
-from scipy.sparse.construct import rand
-
-# ML library
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.model_selection import train_test_split, KFold
-from sklearn.pipeline import FeatureUnion, Pipeline
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-import sklearn.tree, sklearn.naive_bayes, sklearn.ensemble, sklearn.neighbors, sklearn.base
-import sklearn.preprocessing, sklearn.feature_selection
-
-# Misc
 import argparse
-import itertools
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import KFold
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import accuracy_score
+import sklearn.tree
+import sklearn.naive_bayes
+import sklearn.ensemble
+import sklearn.neighbors
+import sklearn.base
+import sklearn.preprocessing
+import sklearn.feature_selection
 
 
 def parse_args():
-    # Argument parsing object
     parser = argparse.ArgumentParser()
-
-    # Arguments
-    parser.add_argument("-i", "--input-file", default='reviews.txt', type=str,
-                        help="Input file to learn from (default reviews.txt)")
-    parser.add_argument("--experiment", default="main",
-                        help="Which experiment to run: main, mccc, cv, train_data")
-    parser.add_argument("--seed", default=0, type=int,
-                        help="Seed used for shuffling")
-
+    parser.add_argument(
+        "-i", "--train-set", default='reviews.txt', help="Train set"
+    )
+    parser.add_argument("-ts", "--test-set", help="Test set")
+    parser.add_argument(
+        "--experiment", default="main", help="Options: main, search"
+    )
     args, _ = parser.parse_known_args()
-
     return args
 
 
 def read_corpus(corpus_filepath):
-    """Read and parse the corpus from file.
-
-    Parameters
-    ==========
-        - "corpus_filepath": filepath of the file to be read.
-
-    Returns
-    =======
-        A 2-tuple containing:
-            1. The tokenized sentences.
-            2. The labels (corresponding task) for each respective sentence.
     """
-
+    Parse corpus lines and return a tuple of (texts, classes)
+    """
     documents = []
     labels_m = []
     with open(corpus_filepath, encoding='utf-8') as f:
@@ -60,72 +65,129 @@ def read_corpus(corpus_filepath):
             documents.append(' '.join(tokens[3:]))
             labels_m.append(tokens[0])
 
-    return documents[:250], labels_m[:250]
+    return documents, labels_m
 
-# Notes:
-# - WorNetLemmatizer didn't help
-# - Automatic feature selection
-# - Custom feature (review length)
+
+# model definition
+classifier_complnb = Pipeline([
+    ("tfidf", TfidfVectorizer(
+        stop_words=None, max_features=90 * 1000,
+        max_df=0.6, ngram_range=(1, 2), sublinear_tf=False
+    )),
+    ('complnb', sklearn.naive_bayes.ComplementNB()),
+])
+classifier_multinb = Pipeline([
+    ("tfidf", TfidfVectorizer(
+        stop_words="english", max_features=70 * 1000,
+        max_df=0.2, ngram_range=(1, 7), sublinear_tf=False
+    )),
+    ('multinb', sklearn.naive_bayes.MultinomialNB()),
+])
+classifier_rforest = Pipeline([
+    ("tfidf", TfidfVectorizer(
+        stop_words="english", max_df=0.6, max_features=100 * 1000, ngram_range=(1, 2)
+    )),
+    ('rforest', sklearn.ensemble.RandomForestClassifier(
+        random_state=0, n_jobs=-1, n_estimators=200, min_samples_split=3)),
+])
+classifier_knneuc = Pipeline([
+    ("tfidf", TfidfVectorizer(
+        stop_words="english", max_df=0.4, max_features=90 * 1000, ngram_range=(1, 2)
+    )),
+    ("scaler", sklearn.preprocessing.StandardScaler(with_mean=False)),
+    ("normalizer", sklearn.preprocessing.Normalizer()),
+    ("knn", sklearn.neighbors.KNeighborsClassifier(
+        n_neighbors=200, weights="distance"))
+])
+classifier_knncos = Pipeline([
+    ("tfidf", TfidfVectorizer(
+        stop_words="english", max_df=0.4, max_features=90 * 1000, ngram_range=(1, 3)
+    )),
+    ("scaler", sklearn.preprocessing.StandardScaler(with_mean=False)),
+    ("normalizer", sklearn.preprocessing.Normalizer()),
+    # the ordering out of knn with cosine distance is probably the same as with L2
+    # because the vectors are normalized but the weights may be different
+    ("knn_model", sklearn.neighbors.KNeighborsClassifier(
+        n_neighbors=200, weights="distance", metric="cosine"))
+])
+# it would be possible to first create the vectorizer and feed the output to every model
+# but every model performs optimally with different vectorizer parameters
+classifier_ensemble = sklearn.ensemble.VotingClassifier(
+    estimators=[
+        ("pip_complnb", classifier_complnb),
+        ("pip_multinb", classifier_multinb),
+        ("pip_rforest", classifier_rforest),
+        ("pip_knneuc", classifier_knneuc),
+        ("pip_knncos", classifier_knncos),
+    ],
+    voting='soft',
+    weights=(1.3, 0.8, 1.0, 0.3, 0.3),
+    n_jobs=-1,
+)
 
 if __name__ == "__main__":
     args = parse_args()
 
     # load the corpus
-    X_full, Y_full = read_corpus(args.input_file)
-    print(len(X_full))
+    X_train, Y_train = read_corpus(args.train_set)
+    if args.test_set:
+        X_test, Y_test = read_corpus(args.test_set)
 
-    kf = KFold(n_splits=10)
-    X_full = np.array(X_full, dtype=object)
-    Y_full = np.array(Y_full, dtype=object)
+    if args.experiment == "main":
+        # fit classifier and make predictions
+        classifier_ensemble.fit(X_train, Y_train)
 
-    scores_all = []
-    
-    # for weights in itertools.product(*([[1,2]]*4)):
-    for weights in [(1, 1, 1, 0.5, 0.5)]:
+        if args.test_set:
+            Y_pred = classifier_ensemble.predict(X_test)
+        else:
+            print("test_set is not available, evaluating on train")
+            Y_pred = classifier_ensemble.predict(X_train)
+
+        score = accuracy_score(Y_train, Y_pred)
+        print(f"score: {score:.2%}")
+
+    elif args.experiment == "search":
         scores = []
-        # For each fold compute metrics
-        for train_i, test_i in list(kf.split(X_full))[:1]:
-            # combine the vectorizer with the statistical model
-            classifier = Pipeline([
-                ('vec', FeatureUnion([
-                    ("tfidf", TfidfVectorizer(stop_words="english")),
-                    ("tfidf_kernel", Pipeline([      
-                        ("tfidf_crop", TfidfVectorizer(stop_words="english", max_features=1000)),
-                        ('kernel', sklearn.preprocessing.PolynomialFeatures(interaction_only=True, include_bias=False)),
-                    ])),
-                ])),
-                ('cls', sklearn.ensemble.VotingClassifier(
-                    estimators=[
-                        ('gauss_nb', sklearn.naive_bayes.GaussianNB()),
-                        ('multin_nb', sklearn.naive_bayes.MultinomialNB()),
-                        ('rf', sklearn.ensemble.RandomForestClassifier(random_state=0, n_estimators=200, n_jobs=-1)),
-                        ('knn_1', Pipeline([
-                            ("scaler", sklearn.preprocessing.Normalizer()),
-                            ("knn_model", sklearn.neighbors.KNeighborsClassifier(n_neighbors=200, weights="distance"))
-                        ])),
-                        ('knn_2', Pipeline([
-                            ("scaler", sklearn.preprocessing.Normalizer()),
-                            ("knn_model", sklearn.neighbors.KNeighborsClassifier(n_neighbors=200, weights="distance", metric="cosine"))
-                        ])),
-                    ],
-                    voting='soft',
-                    weights=weights,
-                    n_jobs=-1
-                ))
-            ])
 
-            # Perform the split with the corresponding indices
-            X_train, Y_train = X_full[train_i], Y_full[train_i]
-            X_test, Y_test = X_full[test_i], Y_full[test_i]
+        # parameter gridsearch
+        # (most parameters are commented out because they were used for individual model hyperparameter optimalization)
+        clf = sklearn.model_selection.GridSearchCV(
+            classifier_ensemble,
+            param_grid={
+                # "tfidf__ngram_range": [(1, 2), (1, 3), (1, 4)],
+                # "tfidf__max_df": [0.4, 0.5, 0.6, 0.7],
+                # "tfidf__max_features": [90 * 1000, 100 * 1000, 110 * 1000],
+                # "knn__weights": ["uniform", "distance"],
+                # "knn__n_neighbors": [5, 50, 100, 150, 200, 250],
+                # "knn__p": [1, 2, 3],
+                # "knn__metric": ["minkowski", "cosine"],
+                # "rforest__min_samples_split": [2, 3, 4],
+                # "rforest__n_estimators": [100],
+                # "tfidf__sublinear_tf": [True, False]
+                # "tfidf__stop_words": [None, "english"],
+                "weights": [
+                    # baseline
+                    (1.3, 0.8, 1.0, 0.3, 0.3),
 
-            # Fit classifier and make predictions
-            classifier.fit(X_train, Y_train)
-            Y_pred = classifier.predict(X_test)
+                    # individual increase
+                    (1.4, 0.8, 1.0, 0.3, 0.3),
+                    (1.3, 0.9, 1.0, 0.3, 0.3),
+                    (1.3, 0.8, 1.1, 0.3, 0.3),
+                    (1.3, 0.8, 1.0, 0.4, 0.3),
+                    (1.3, 0.8, 1.0, 0.3, 0.4),
 
-            score = accuracy_score(Y_test, Y_pred)
-            scores.append(score)
-
-        print(weights, f"avg: {np.average(scores):.2%}")
-        scores_all.append((weights, np.average(scores)))
-
-    print(sorted(scores_all, key=lambda x: x[1])[-1])
+                    # individual decrease
+                    (1.2, 0.8, 1.0, 0.3, 0.3),
+                    (1.3, 0.7, 1.0, 0.3, 0.3),
+                    (1.3, 0.8, 0.9, 0.3, 0.3),
+                    (1.3, 0.8, 1.0, 0.2, 0.3),
+                    (1.3, 0.8, 1.0, 0.3, 0.2),
+                ]
+            },
+            verbose=10,  # monitor progress
+            n_jobs=4,
+            cv=KFold(n_splits=10),
+        )
+        # run grisearch and print best result
+        results = clf.fit(X_train, Y_train)
+        print(results.best_params_, results.best_score_)
