@@ -27,7 +27,8 @@ Notes what didn't help:
 """
 
 import argparse
-from sklearn.feature_extraction.text import TfidfVectorizer
+import time
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.model_selection import KFold
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
@@ -191,3 +192,33 @@ if __name__ == "__main__":
         # run grisearch and print best result
         results = clf.fit(X_train, Y_train)
         print(results.best_params_, results.best_score_)
+
+    elif args.experiment == "time":
+        """
+        Measure train and inference times for used model families
+        """
+
+        classifiers = {
+            "complnb": sklearn.naive_bayes.ComplementNB(),
+            "multinb": sklearn.naive_bayes.MultinomialNB(),
+            "knn_200": sklearn.neighbors.KNeighborsClassifier(n_neighbors=200, weights="distance"),
+            "knn_5": sklearn.neighbors.KNeighborsClassifier(n_neighbors=5, weights="distance"),
+            "rforest": sklearn.ensemble.RandomForestClassifier(n_estimators=200),
+            "dt": sklearn.tree.DecisionTreeClassifier(),
+        }
+
+        for model_name, model in classifiers.items():
+            model = Pipeline([
+                ("vec", CountVectorizer()),
+                ("model", model)
+            ])
+
+            start_fit = time.time()
+            model.fit(X_train, Y_train)
+            time_fit = time.time() - start_fit
+
+            start_pred = time.time()
+            model.predict(X_train)
+            time_pred = time.time() - start_pred
+    
+            print(model_name, "FIT:", time_fit, "PRED:", time_pred)
