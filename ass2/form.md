@@ -21,14 +21,18 @@ In this case, however, the number of samples and features is very low and it is 
 
 
 ### KNN-1a
-Note to the figure above: LOOCV F1 score was computed across the CV model outputs (because F1 score on a single example is ill-defined).
+Note that the figure uses scaling across features followed up with individual vector normalization.
 
-For uniform mode, train accuracy is good with K=1 but that does not hold for the LOOCV accuracy which gets better with larger K. For test accuracy, there is probably an optimal K in-between (for large data at least)
+For uniform mode, train accuracy is good with K=1 but that does not hold for the LOOCV accuracy which gets better with larger K and reaches a maximum in the interval 150-250.
 
-For distance mode (vote weight dependent on the distance) and depending on the distribution, higher K may be better in both cases and won't lead to large bias (due to diminishing weights). This comes at the cost of longer retrieval times (can be alleviated with approximate search, e.g. FAISS).
+For distance mode (vote weight dependent on the distance) the train accuracy is constant at 100% (because of diminishing vote weight). Interestingly, the LOOCV accuracy charasteristics are similar to those of uniform mode.
+
+Higher K come at the cost of longer retrieval times (can be alleviated with approximate search, e.g. FAISS).
 
 ### KNN-1b
-It may happen that different classes are distributed differently in the vector space and hence different Ks would lead to varying class performance. In most scenarios we can assume, however, that the class performance is independent on the varying values of K.
+It may happen that different classes are distributed differ ently in the vector space and hence different Ks would lead to varying class performance. In most scenarios we can assume, however, that the class performance is independent on the varying values of K.
+
+This is the case also for this data (tested in an experiment).
 
 ### KNN-1c
 Too low K leads to overfitting (large variance) and too high K leads to large bias (in extreme cases, to MCCC).

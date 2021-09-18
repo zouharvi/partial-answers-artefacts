@@ -10,7 +10,7 @@ and select model based on the input (e.g. MultinomialNB is good only on longer r
 
 The 10-fold CV estimates the accuracy of 92.5%. This will, however, be probably lower for the test set, because
 I've made decisions based on these results and hence "overfitted" the hyperparameters to the training data.
-The runtime for single ensemble run is 20s. Because the ensemble is paralelized, it needs to fit 5 times the feature
+The runtime for single ensemble run is 10s. Because the ensemble is paralelized, it needs to fit 5 times the feature
 matrix into memory <4GB.
 
 Notes what didn't help:
@@ -31,7 +31,7 @@ import time
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.model_selection import KFold
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report
 import sklearn.tree
 import sklearn.naive_bayes
 import sklearn.ensemble
@@ -171,6 +171,13 @@ classifier_rforest = Pipeline([
     ('rforest', sklearn.ensemble.RandomForestClassifier(
         random_state=0, n_jobs=-1, n_estimators=200, min_samples_split=3)),
 ])
+classifier_dt = Pipeline([
+    ("tfidf", TfidfVectorizer(
+        stop_words="english", max_df=0.6, max_features=100 * 1000, ngram_range=(1, 2)
+    )),
+    ('dt', sklearn.tree.DecisionTreeClassifier(
+        random_state=0, min_samples_split=3)),
+])
 classifier_knneuc = Pipeline([
     ("tfidf", TfidfVectorizer(
         stop_words="english", max_df=0.4, max_features=90 * 1000, ngram_range=(1, 2)
@@ -216,16 +223,19 @@ if __name__ == "__main__":
 
     if args.experiment == "main":
         # fit classifier and make predictions
-        classifier_ensemble.fit(X_train, Y_train)
 
+        classifier_ensemble.fit(X_train, Y_train)
         if args.test_set:
             Y_pred = classifier_ensemble.predict(X_test)
             score = accuracy_score(Y_test, Y_pred)
+            score_text = classification_report(Y_test, Y_pred)
         else:
             print("Test_set is not available, evaluating on train")
             Y_pred = classifier_ensemble.predict(X_train)
             score = accuracy_score(Y_train, Y_pred)
+            score_text = classification_report(Y_train, Y_pred)
 
+        print(score_text)
         print(f"score: {score:.2%}")
 
     elif args.experiment == "search":
