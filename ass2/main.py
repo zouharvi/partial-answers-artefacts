@@ -140,11 +140,12 @@ if __name__ == "__main__":
 
         if args.test_set:
             Y_pred = classifier_ensemble.predict(X_test)
+            score = accuracy_score(Y_test, Y_pred)
         else:
             print("test_set is not available, evaluating on train")
             Y_pred = classifier_ensemble.predict(X_train)
+            score = accuracy_score(Y_train, Y_pred)
 
-        score = accuracy_score(Y_train, Y_pred)
         print(f"score: {score:.2%}")
 
     elif args.experiment == "search":
