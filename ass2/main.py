@@ -42,6 +42,9 @@ import sklearn.feature_selection
 
 
 def parse_args():
+    """
+    Return instantiated Namespace object with arguments
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-i", "--train-set", default='reviews.txt', help="Train set"
@@ -67,6 +70,83 @@ def read_corpus(corpus_filepath):
             labels_m.append(tokens[0])
 
     return documents, labels_m
+
+
+def exp_time(X_train, Y_train):
+    """
+    Measure train and inference times for used model families
+    """
+    classifiers = {
+        "complnb": sklearn.naive_bayes.ComplementNB(),
+        "multinb": sklearn.naive_bayes.MultinomialNB(),
+        "knn_200": sklearn.neighbors.KNeighborsClassifier(n_neighbors=200, weights="distance"),
+        "knn_5": sklearn.neighbors.KNeighborsClassifier(n_neighbors=5, weights="distance"),
+        "rforest": sklearn.ensemble.RandomForestClassifier(n_estimators=200),
+        "dt": sklearn.tree.DecisionTreeClassifier(),
+    }
+
+    for model_name, model in classifiers.items():
+        model = Pipeline([
+            ("vec", CountVectorizer()),
+            ("model", model)
+        ])
+
+        start_fit = time.time()
+        model.fit(X_train, Y_train)
+        time_fit = time.time() - start_fit
+
+        start_pred = time.time()
+        model.predict(X_train)
+        time_pred = time.time() - start_pred
+
+        print(model_name, "FIT:", time_fit, "PRED:", time_pred)
+
+
+def exp_search(X_train, Y_train, classifier_ensemble):
+    """
+    Performs parameter gridsearch using CV
+    (most parameters are commented out because they were used for individual model hyperparameter optimalization)
+    """
+    clf = sklearn.model_selection.GridSearchCV(
+        classifier_ensemble,
+        param_grid={
+            # "tfidf__ngram_range": [(1, 2), (1, 3), (1, 4)],
+            # "tfidf__max_df": [0.4, 0.5, 0.6, 0.7],
+            # "tfidf__max_features": [90 * 1000, 100 * 1000, 110 * 1000],
+            # "knn__weights": ["uniform", "distance"],
+            # "knn__n_neighbors": [5, 50, 100, 150, 200, 250],
+            # "knn__p": [1, 2, 3],
+            # "knn__metric": ["minkowski", "cosine"],
+            # "rforest__min_samples_split": [2, 3, 4],
+            # "rforest__n_estimators": [100],
+            # "tfidf__sublinear_tf": [True, False]
+            # "tfidf__stop_words": [None, "english"],
+            "weights": [
+                # baseline
+                (1.6, 0.8, 0.9, 0.3, 0.3),
+
+                # individual increase
+                (1.7, 0.8, 0.9, 0.3, 0.3),
+                (1.6, 0.9, 0.9, 0.3, 0.3),
+                (1.6, 0.8, 1.0, 0.3, 0.3),
+                (1.6, 0.8, 0.9, 0.4, 0.3),
+                (1.6, 0.8, 0.9, 0.3, 0.4),
+
+                # individual decrease
+                (1.5, 0.8, 0.9, 0.3, 0.3),
+                (1.6, 0.7, 0.9, 0.3, 0.3),
+                (1.6, 0.8, 0.8, 0.3, 0.3),
+                (1.6, 0.8, 0.9, 0.2, 0.3),
+                (1.6, 0.8, 0.9, 0.3, 0.2),
+            ]
+        },
+        verbose=10,  # monitor progress
+        n_jobs=4,
+        cv=KFold(n_splits=10),
+    )
+    # run grisearch and print best result
+    results = clf.fit(X_train, Y_train)
+    print(results.best_params_, results.best_score_)
 
 
 # model definition
@@ -122,7 +202,7 @@ classifier_ensemble = sklearn.ensemble.VotingClassifier(
         ("pip_knncos", classifier_knncos),
     ],
     voting='soft',
-    weights=(1.3, 0.8, 1.0, 0.3, 0.3),
+    weights=(1.6, 0.8, 0.9, 0.3, 0.3),
     n_jobs=-1,
 )
 
@@ -142,84 +222,13 @@ if __name__ == "__main__":
             Y_pred = classifier_ensemble.predict(X_test)
             score = accuracy_score(Y_test, Y_pred)
         else:
-            print("test_set is not available, evaluating on train")
+            print("Test_set is not available, evaluating on train")
             Y_pred = classifier_ensemble.predict(X_train)
             score = accuracy_score(Y_train, Y_pred)
 
         print(f"score: {score:.2%}")
 
     elif args.experiment == "search":
-        scores = []
-
-        # parameter gridsearch
-        # (most parameters are commented out because they were used for individual model hyperparameter optimalization)
-        clf = sklearn.model_selection.GridSearchCV(
-            classifier_ensemble,
-            param_grid={
-                # "tfidf__ngram_range": [(1, 2), (1, 3), (1, 4)],
-                # "tfidf__max_df": [0.4, 0.5, 0.6, 0.7],
-                # "tfidf__max_features": [90 * 1000, 100 * 1000, 110 * 1000],
-                # "knn__weights": ["uniform", "distance"],
-                # "knn__n_neighbors": [5, 50, 100, 150, 200, 250],
-                # "knn__p": [1, 2, 3],
-                # "knn__metric": ["minkowski", "cosine"],
-                # "rforest__min_samples_split": [2, 3, 4],
-                # "rforest__n_estimators": [100],
-                # "tfidf__sublinear_tf": [True, False]
-                # "tfidf__stop_words": [None, "english"],
-                "weights": [
-                    # baseline
-                    (1.3, 0.8, 1.0, 0.3, 0.3),
-
-                    # individual increase
-                    (1.4, 0.8, 1.0, 0.3, 0.3),
-                    (1.3, 0.9, 1.0, 0.3, 0.3),
-                    (1.3, 0.8, 1.1, 0.3, 0.3),
-                    (1.3, 0.8, 1.0, 0.4, 0.3),
-                    (1.3, 0.8, 1.0, 0.3, 0.4),
-
-                    # individual decrease
-                    (1.2, 0.8, 1.0, 0.3, 0.3),
-                    (1.3, 0.7, 1.0, 0.3, 0.3),
-                    (1.3, 0.8, 0.9, 0.3, 0.3),
-                    (1.3, 0.8, 1.0, 0.2, 0.3),
-                    (1.3, 0.8, 1.0, 0.3, 0.2),
-                ]
-            },
-            verbose=10,  # monitor progress
-            n_jobs=4,
-            cv=KFold(n_splits=10),
-        )
-        # run grisearch and print best result
-        results = clf.fit(X_train, Y_train)
-        print(results.best_params_, results.best_score_)
-
+        exp_search(X_train, Y_train, classifier_ensemble)
     elif args.experiment == "time":
-        """
-        Measure train and inference times for used model families
-        """
-
-        classifiers = {
-            "complnb": sklearn.naive_bayes.ComplementNB(),
-            "multinb": sklearn.naive_bayes.MultinomialNB(),
-            "knn_200": sklearn.neighbors.KNeighborsClassifier(n_neighbors=200, weights="distance"),
-            "knn_5": sklearn.neighbors.KNeighborsClassifier(n_neighbors=5, weights="distance"),
-            "rforest": sklearn.ensemble.RandomForestClassifier(n_estimators=200),
-            "dt": sklearn.tree.DecisionTreeClassifier(),
-        }
-
-        for model_name, model in classifiers.items():
-            model = Pipeline([
-                ("vec", CountVectorizer()),
-                ("model", model)
-            ])
-
-            start_fit = time.time()
-            model.fit(X_train, Y_train)
-            time_fit = time.time() - start_fit
-
-            start_pred = time.time()
-            model.predict(X_train)
-            time_pred = time.time() - start_pred
-    
-            print(model_name, "FIT:", time_fit, "PRED:", time_pred)
+        exp_time(X_train, Y_train)
