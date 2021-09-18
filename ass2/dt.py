@@ -1,7 +1,11 @@
 import numpy as np
 from sklearn.feature_selection import mutual_info_classif
 from sklearn.dummy import DummyClassifier
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.metrics import accuracy_score, confusion_matrix
+
+import matplotlib.pyplot as plt
+import re
 
 accuracy_score = confusion_matrix
 
@@ -37,6 +41,27 @@ data_shp = np.array([
 data_edb = np.array([
     ["no", "yes"].index(x[3]) for x in data
 ])
+
+data_X, data_Y = np.concatenate((data_col, data_siz, data_shp), axis=1), data_edb
+
+## Decission tree
+print(data_X,data_Y)
+
+dtc = DecisionTreeClassifier(criterion="entropy").fit(data_X,data_Y)
+dot_str = export_graphviz(
+    dtc,
+    feature_names=["Color","Size","Shape"],
+    class_names=["Yes","No"],
+    filled=True)
+
+dot_str = dot_str.replace("Size <= 0.5","Size: small")
+dot_str = dot_str.replace("Color <= 0.5","Color: yellow")
+dot_str = dot_str.replace("Shape <= 0.5","Shape: round")
+dot_str = re.sub(r"\\nvalue = \[\d+, \d+\]","",dot_str)
+with open("dt.dot","w") as f:
+    f.write(dot_str)
+
+
 
 print("LEVEL 0")
 print("ig", mutual_info_classif(
