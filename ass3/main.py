@@ -43,8 +43,6 @@ def parse_args() -> Namespace:
     # Arguments
     parser.add_argument("-i", "--input-file", default='reviews.txt', type=str,
                         help="Input file to learn from (default reviews.txt)")
-    parser.add_argument("-s", "--sentiment", action="store_true",
-                        help="Do sentiment analysis (2-class problem)")
     parser.add_argument("-t", "--tf-idf", action="store_true",
                         help="Use the TF-IDF vectorizer instead of CountVectorizer")
     parser.add_argument("-tp", "--test-percentage", default=0.1, type=float,
@@ -67,41 +65,30 @@ def parse_args() -> Namespace:
     return args
 
 
-def read_corpus(corpus_filepath: str, use_sentiment: bool = False) -> tuple[list[list[str]], Union[list[str], list[bool]]]:
+def read_corpus(corpus_filepath: str) -> tuple[list[list[str]], Union[list[str], list[bool]]]:
     """Read and parse the corpus from file.
 
     Parameters
     ==========
         - "corpus_filepath": filepath of the file to be read.
 
-        - "use_sentiment": Whether to extract the sentiment labels (True) or
-                            the topic labels or both (None).
-
     Returns
     =======
         A 2-tuple containing:
             1. The tokenized sentences.
-            2. The labels (corresponding task) for each respective sentence.
+            2. The sentiment labels for each respective sentence.
     """
 
     documents = []
     labels_s = []
-    labels_m = []
     with open(corpus_filepath, encoding='utf-8') as f:
         for line in f:
             tokens = line.strip().split()
             documents.append(tokens[3:])
             # 2-class problem: positive vs negative
             labels_s.append(tokens[1] == "pos")
-            # 6-class problem: books, camera, dvd, health, music, software
-            labels_m.append(tokens[0])
 
-    if use_sentiment is None:
-        return documents, labels_s, labels_m
-    elif use_sentiment:
-        return documents, labels_s
-    else:
-        return documents, labels_m
+    return documents, labels_s
 
 
 def model_factory(model: str) -> BaseEstimator:
@@ -175,7 +162,7 @@ def report_score(score: dict, labels, args: Namespace):
 
     # Add additional information
     score["labels"] = labels
-    score["task"] = "sentiment" if args.sentiment else "topic"
+    score["task"] = "sentiment"
     score["model"] = args.model
 
     # Dump into pickle file
@@ -188,7 +175,7 @@ if __name__ == "__main__":
     args = parse_args()
 
     # load the corpus and split the data
-    X_full, Y_full = read_corpus(args.input_file, args.sentiment)
+    X_full, Y_full = read_corpus(args.input_file)
 
     # use scikit's built-in splitting function to save space
     X_train, X_test, Y_train, Y_test = train_test_split(
@@ -259,30 +246,19 @@ if __name__ == "__main__":
         classifier.fit(X_train, Y_train)
 
         # find examples
-        if args.sentiment:
-            Y_pred_prob = classifier.predict_proba(X_train)
-            Y_pred = classifier.predict(X_train)
-            print([
-                (' '.join(doc), gold, pred, pred_prob) for doc, gold, pred, pred_prob in zip(X_train, Y_train, Y_pred, Y_pred_prob)
-                if gold != pred and max(pred_prob) >= 0.6 and len(doc) <= 50
-            ][:10])
+        Y_pred_prob = classifier.predict_proba(X_train)
+        Y_pred = classifier.predict(X_train)
+        print([
+            (' '.join(doc), gold, pred, pred_prob) for doc, gold, pred, pred_prob in zip(X_train, Y_train, Y_pred, Y_pred_prob)
+            if gold != pred and max(pred_prob) >= 0.6 and len(doc) <= 50
+        ][:10])
 
-            Y_pred = classifier.predict(X_train)
-            avg_incorrect = np.average([len(doc) for doc, gold, pred in zip(
-                X_train, Y_train, Y_pred) if gold != pred])
-            avg_correct = np.average([len(doc) for doc, gold, pred in zip(
-                X_train, Y_train, Y_pred) if gold == pred])
-            print(avg_correct, avg_incorrect)
-        else:
-            Y_pred = classifier.predict(X_train)
-            print([' '.join(doc) for doc, gold, pred in zip(X_train, Y_train, Y_pred)
-                  if gold == "books" and pred == "dvd" and "watch" in doc][:10])
-
-            avg_incorrect = np.average([len(doc) for doc, gold, pred in zip(
-                X_train, Y_train, Y_pred) if gold != pred])
-            avg_correct = np.average([len(doc) for doc, gold, pred in zip(
-                X_train, Y_train, Y_pred) if gold == pred])
-            print(avg_correct, avg_incorrect)
+        Y_pred = classifier.predict(X_train)
+        avg_incorrect = np.average([len(doc) for doc, gold, pred in zip(
+            X_train, Y_train, Y_pred) if gold != pred])
+        avg_correct = np.average([len(doc) for doc, gold, pred in zip(
+            X_train, Y_train, Y_pred) if gold == pred])
+        print(avg_correct, avg_incorrect)
 
     elif args.experiment == "error_corr":
         # find whether mispredictions correlate along tasks 
