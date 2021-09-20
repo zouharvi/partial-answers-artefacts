@@ -151,15 +151,20 @@ def experiment_features(X_full, Y_full):
     )
 
     model = Pipeline([
-        ("vec", TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)),
-        ("svm", sklearn.svm.SVC()),
+        ("vec", TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x, max_features=1000)),
+        ("svm", sklearn.svm.SVC(kernel="linear")),
     ])
-    model.fit(X_train, Y_train)
+    model.fit(X_full, Y_full)
     score = accuracy_score(Y_test, model.predict(X_test))
     print(f"score: {score:.2%}")
-    print(model.get_params())
-    print(model.get_params().keys())
-    print(model.get_params()["svm"].coef_)
+
+    coefs = model.get_params()["svm"].coef_.toarray().reshape(-1)
+    largest_ind = np.argpartition(coefs, -15)[-15:]
+    smallest_ind = np.argpartition(coefs, -15)[:15]
+    vec = {v:k for k,v in model.get_params()["vec"].vocabulary_.items()}
+
+    print("positive:\n", "\n".join([" " + vec[v] for v in largest_ind]), sep="")
+    print("negative:\n", "\n".join([" " + vec[v] for v in smallest_ind]), sep="")
 
 # Script logic
 if __name__ == "__main__":
