@@ -88,35 +88,6 @@ def read_corpus(corpus_filepath: str) -> tuple[list[list[str]], Union[list[str],
 
     return documents, labels_s
 
-
-def model_factory(model: str) -> BaseEstimator:
-    """Factory function for easy model instantiation.
-
-    Parameters
-    ==========
-        - "model": abbreviation of the kind of model to instantiate
-                    nb - Naive Bayes
-                    lr - logistic regression
-                    mccc - most frequent class classifier
-
-    Returns
-    =======
-        An sklearn estimator of the type specified by "model"
-    """
-
-    model_lib = {
-        "nb": lambda: MultinomialNB(),
-        "lr": lambda: LogisticRegression(max_iter=5000),
-        "mccc": lambda: DummyClassifier(strategy="most_frequent"),
-    }
-    if model in model_lib:
-        return model_lib[model]
-    elif model == "all":
-        return model_lib
-    else:
-        raise Exception(f"Unknown model {model}")
-
-
 def complete_scoring(Y_test: np.array, Y_pred: np.array) -> dict:
     """Utility function to facilitate computing metrics.
 
@@ -193,16 +164,6 @@ if __name__ == "__main__":
         random_state=args.seed,
         shuffle=args.shuffle
     )
-
-    # compute features
-    if args.tf_idf:
-        vec = TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
-    else:  # Bag of words
-        vec = CountVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
-
-    model_class = model_factory(args.model)
-    # combine the vectorizer with the statistical model
-    classifier = Pipeline([('vec', vec), ('cls', model_class())])
 
     if args.experiment == "main":
         experiment_main(X_train, Y_train, X_test, Y_test)
