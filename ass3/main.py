@@ -12,13 +12,11 @@ import random
 
 # ML library
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, KFold
 from sklearn.pipeline import Pipeline
-from sklearn.dummy import DummyClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.base import BaseEstimator
+import sklearn.svm
 
 # Misc
 from typing import Union
@@ -172,8 +170,14 @@ def report_score(score: dict, labels, args: Namespace):
 def experiment_main():
     pass
 
-def experiment_features():
-    pass
+def experiment_features(X_train, Y_train, X_test, Y_test):
+    model = Pipeline([
+        ("vec", TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)),
+        ("svm", sklearn.svm.SVM()),
+    ])
+    model.fit(X_train, Y_train)
+    score = accuracy_score(Y_test, model.predict(X_test))
+    print(f"score: {score:.2%}")
 
 # Script logic
 if __name__ == "__main__":
