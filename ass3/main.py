@@ -141,22 +141,7 @@ def report_score(score: dict, labels, args: Namespace):
 def experiment_main():
     pass
 
-def experiment_features(X_train, Y_train, X_test, Y_test):
-    model = Pipeline([
-        ("vec", TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)),
-        ("svm", sklearn.svm.SVM()),
-    ])
-    model.fit(X_train, Y_train)
-    score = accuracy_score(Y_test, model.predict(X_test))
-    print(f"score: {score:.2%}")
-
-# Script logic
-if __name__ == "__main__":
-    args = parse_args()
-
-    # load the corpus and split the data
-    X_full, Y_full = read_corpus(args.input_file)
-
+def experiment_features(X_full, Y_full):
     # use scikit's built-in splitting function to save space
     X_train, X_test, Y_train, Y_test = train_test_split(
         X_full, Y_full,
@@ -165,8 +150,27 @@ if __name__ == "__main__":
         shuffle=args.shuffle
     )
 
+    model = Pipeline([
+        ("vec", TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)),
+        ("svm", sklearn.svm.SVC()),
+    ])
+    model.fit(X_train, Y_train)
+    score = accuracy_score(Y_test, model.predict(X_test))
+    print(f"score: {score:.2%}")
+    print(model.get_params())
+    print(model.get_params().keys())
+    print(model.get_params()["svm"].coef_)
+
+# Script logic
+if __name__ == "__main__":
+    args = parse_args()
+
+    # load the corpus and split the data
+    X_full, Y_full = read_corpus(args.input_file)
+
+
     if args.experiment == "main":
-        experiment_main(X_train, Y_train, X_test, Y_test)
+        experiment_main(X_full, Y_full)
 
     elif args.experiment == "features":
-        experiment_features(X_train, Y_train, X_test, Y_test)
+        experiment_features(X_full, Y_full)
