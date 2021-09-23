@@ -153,10 +153,10 @@ def experiment_features(X_full, Y_full, tf_idf, partition_n=16, data_out=None):
     model = Pipeline([
         ("vec",
          TfidfVectorizer(preprocessor=lambda x: x,
-                         tokenizer=lambda x:x, max_features=1000)
+                         tokenizer=lambda x:x, max_features=10000)
          if tf_idf else
          CountVectorizer(preprocessor=lambda x: x,
-                         tokenizer=lambda x:x, max_features=1000),
+                         tokenizer=lambda x:x, max_features=10000),
          ),
         ("svm", sklearn.svm.SVC(kernel="linear")),
     ])

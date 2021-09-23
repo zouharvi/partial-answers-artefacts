@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import argparse
 from argparse import Namespace
 import pickle
+import numpy as np
 
 
 def parse_args() -> Namespace:
@@ -70,6 +71,13 @@ if __name__ == "__main__":
         -x
         for x in range(len(coefs_pos_tfidf) + len(coefs_ntr_tfidf) + len(coefs_neg_tfidf))
     ]
+
+    print("Pearson's correlation",
+        np.corrcoef(
+            [x[1] for x in data_coefs_tfidf],
+            [coefs_bow_map[x[0]] for x in data_coefs_tfidf],
+        )[0][1]
+    )
 
     # plot each model configuration
     plt.barh(
