@@ -204,5 +204,7 @@ if __name__ == "__main__":
         experiment_main(X_full, Y_full)
 
     elif args.experiment == "features":
-        experiment_features(X_full, Y_full, args.tf_idf,
-                            args.partition_n, args.data_out)
+        experiment_features(
+            X_full, Y_full, args.tf_idf,
+            args.partition_n, args.data_out
+        )

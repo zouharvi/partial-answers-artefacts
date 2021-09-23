@@ -45,20 +45,32 @@ if __name__ == "__main__":
         data_coefs_tfidf = pickle.load(f)
 
     # create figure
-    plt.figure(figsize=(4.2, 4.2))
+    plt.figure(figsize=(4, 4.2))
 
-
-    coefs_bow_map = {k:v for k,v in data_coefs_bow }
+    coefs_bow_map = {k: v for k, v in data_coefs_bow}
 
     coefs_pos_tfidf = data_coefs_tfidf[-8:]
-    coefs_ntr_tfidf = data_coefs_tfidf[len(data_coefs_tfidf)//2:len(data_coefs_tfidf)//2+2]
+    pivot = len(data_coefs_tfidf) // 2
+    coefs_ntr_tfidf = data_coefs_tfidf[pivot:pivot + 2]
     coefs_neg_tfidf = data_coefs_tfidf[:8]
 
-    widths_tfidf = [x[1] for x in coefs_pos_tfidf][::-1]+[x[1] for x in coefs_ntr_tfidf][::-1]+[x[1] for x in coefs_neg_tfidf][::-1]
-    labels_tfidf = [x[0] for x in coefs_pos_tfidf]+[x[0] for x in coefs_ntr_tfidf]+[x[0] for x in coefs_neg_tfidf]
-    ys_tfidf = [-x for x in range(len(coefs_pos_tfidf)+len(coefs_ntr_tfidf)+len(coefs_neg_tfidf))]
-    ys_bow = [-x for x in range(len(coefs_pos_tfidf)+len(coefs_ntr_tfidf)+len(coefs_neg_tfidf))]
-    
+    widths_tfidf = \
+        [x[1] for x in coefs_pos_tfidf][::-1] +\
+        [x[1] for x in coefs_ntr_tfidf][::-1] +\
+        [x[1] for x in coefs_neg_tfidf][::-1]
+    labels_tfidf = \
+        [x[0] for x in coefs_pos_tfidf] +\
+        [x[0] for x in coefs_ntr_tfidf] +\
+        [x[0] for x in coefs_neg_tfidf]
+    ys_tfidf = [
+        -x
+        for x in range(len(coefs_pos_tfidf) + len(coefs_ntr_tfidf) + len(coefs_neg_tfidf))
+    ]
+    ys_bow = [
+        -x
+        for x in range(len(coefs_pos_tfidf) + len(coefs_ntr_tfidf) + len(coefs_neg_tfidf))
+    ]
+
     # plot each model configuration
     plt.barh(
         y=ys_tfidf,
@@ -77,7 +89,7 @@ if __name__ == "__main__":
         ticks=ys_tfidf,
         labels=labels_tfidf,
         family="monospace",
-        size=9,
+        size=10,
     )
     plt.xlabel("SVM Coefficient")
     plt.ylabel("Token")
