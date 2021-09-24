@@ -45,6 +45,8 @@ def parse_args() -> Namespace:
                         help="Input file to learn from (default reviews.txt)")
     parser.add_argument("-t", "--tf-idf", action="store_true",
                         help="Use the TF-IDF vectorizer instead of CountVectorizer")
+    parser.add_argument("-tp", "--test-percentage", default=0.1, type=float,
+                        help="Percentage of the data that is used for the test set (default 0.20)")
     parser.add_argument("--experiment", default="main",
                         help="Which experiment to run: main, mccc, cv, train_data")
     parser.add_argument("-sh", "--shuffle", action="store_true",
@@ -202,21 +204,72 @@ def experiment_features(X_full, Y_full, tf_idf, use_ngrams, max_features, data_o
         )
     )
 
+
 def color_example(review, vocab, coefs):
     message = ""
     for token in review:
-            if token not in vocab:
-                message += token + " "
+        if token not in vocab:
+            message += token + " "
+        else:
+            index = vocab[token]
+            coef = coefs[index]
+            if coef < -0.1:
+                message += "\\textcolor{DarkRed}{" + token + "} "
+            elif coef > 0.1:
+                message += "\\textcolor{DarkGreen}{" + token + "} "
             else:
-                index = vocab[token]
-                coef = coefs[index]
-                if coef < -0.1:
-                    message += "\\textcolor{DarkRed}{" + token + "} "
-                elif coef > 0.1:
-                    message += "\\textcolor{DarkGreen}{" + token + "} "
-                else:
-                    message += token + " "
+                message += token + " "
     return message
+
+
+def experiment_confidence(X_full, Y_full, tf_idf, max_features, test_percentage, seed):
+    X_train, X_test, Y_train, Y_test = train_test_split(
+        X_full, Y_full,
+        test_size=test_percentage,
+        random_state=seed,
+        shuffle=True
+    )
+
+    model = Pipeline([
+        ("vec",
+         TfidfVectorizer(
+             preprocessor=lambda x: x,
+             tokenizer=lambda x:x, max_features=max_features,
+         )
+         if tf_idf else
+         CountVectorizer(
+             preprocessor=lambda x: x,
+             tokenizer=lambda x:x, max_features=max_features,
+         ),
+         ),
+        ("svm", sklearn.svm.SVC(kernel="linear")),
+    ])
+    model.fit(X_train, Y_train)
+    conf_test = np.average(np.abs(model.decision_function(X_test)))
+    conf_train = np.average(np.abs(model.decision_function(X_train)))
+    print("Average confidence test ", f"{conf_test:.2f}")
+    print("Average confidence train", f"{conf_train:.2f}")
+
+    Y_pred = model.predict(X_full)
+    conf_full = np.abs(model.decision_function(X_full))
+
+    conf_full_tt = np.average(
+        [c for c, y_true, y_pred in zip(
+            conf_full, Y_full, Y_pred) if y_true and y_pred]
+    )
+    conf_full_tf = np.average(
+        [c for c, y_true, y_pred in zip(
+            conf_full, Y_full, Y_pred) if y_true and not y_pred]
+    )
+    conf_full_ff = np.average(
+        [c for c, y_true, y_pred in zip(
+            conf_full, Y_full, Y_pred) if not y_true and not y_pred]
+    )
+    conf_full_ft = np.average(
+        [c for c, y_true, y_pred in zip(
+            conf_full, Y_full, Y_pred) if not y_true and y_pred]
+    )
+    print(f"TT {conf_full_tt:.2f}, TF {conf_full_tf:.2f}, FT {conf_full_ft:.2f}, FF {conf_full_ff:.2f}")
 
 def experiment_examples(X_full, Y_full, tf_idf, max_features):
     model = Pipeline([
@@ -239,28 +292,31 @@ def experiment_examples(X_full, Y_full, tf_idf, max_features):
     coefs_original = model.get_params()["svm"].coef_.toarray().reshape(-1)
     vocab = model.get_params()["vec"].vocabulary_
 
-    for review, y_true, y_pred in [(x,y,z) for x,y,z in zip(X_full, Y_full, Y_pred) if len(x) <= 100][:10]:
+    for review, y_true, y_pred in [(x, y, z) for x, y, z in zip(X_full, Y_full, Y_pred) if len(x) <= 100][:10]:
         message = color_example(review, vocab, coefs_original)
-        print(message, (y_true, y_pred), model.decision_function([review]), "\n")
+        print(message, (y_true, y_pred),
+              model.decision_function([review]), "\n")
 
-
-    adversial="this camera works well , except that the shutter speed is a bit slow . the image quality is decent . the use of aa rechargeable batteries is also convenient . the camera is pretty sturdy . i 've dropped it a few times and it still works fine".split()
+    adversial = "this camera works well , except that the shutter speed is a bit slow . the image quality is decent . the use of aa rechargeable batteries is also convenient . the camera is pretty sturdy . i 've dropped it a few times and it still works fine".split()
     small_vocab = [k for k in vocab.keys() if len(k) <= 2]
     print("noise token   coefficient")
     for noise_token in ["..."] + small_vocab:
         if noise_token in vocab and all([not isalpha(x) and not isnumeric(x) for x in noise_token]):
-            print(f"{noise_token:>11}    {coefs_original[vocab[noise_token]]:.3f}")
+            print(
+                f"{noise_token:>11}    {coefs_original[vocab[noise_token]]:.3f}")
 
-    noise_token="#"
+    noise_token = "#"
     original_pred = model.predict([adversial])
     hit = False
     for i in range(50):
-        adversial_tmp = adversial + [noise_token]*i
+        adversial_tmp = adversial + [noise_token] * i
         current_pred = model.predict([adversial_tmp])
-        print(i, model.predict([adversial_tmp]), model.decision_function([adversial_tmp]))    
+        print(i, model.predict([adversial_tmp]),
+              model.decision_function([adversial_tmp]))
         if current_pred != original_pred and not hit:
             print(color_example(adversial_tmp, vocab, coefs_original))
             hit = True
+
 
 def experiment_errors(X_full, Y_full):
     pass
@@ -280,14 +336,23 @@ if __name__ == "__main__":
         experiment_examples(
             X_full, Y_full,
             tf_idf=args.tf_idf,
-            max_features=args.max_features
+            max_features=args.max_features,
+        )
+
+    elif args.experiment == "confidence":
+        experiment_confidence(
+            X_full, Y_full,
+            tf_idf=args.tf_idf,
+            max_features=args.max_features,
+            test_percentage=args.test_percentage,
+            seed=args.seed,
         )
 
     elif args.experiment == "features":
         experiment_features(
-            X_full, Y_full, 
+            X_full, Y_full,
             tf_idf=args.tf_idf,
             use_ngrams=args.ngrams,
             max_features=args.max_features,
-            data_out=args.data_out
+            data_out=args.data_out,
         )
