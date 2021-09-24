@@ -3,6 +3,9 @@
 """Small script to experiment with review classification"""
 
 # User libs
+from re import M
+
+from numpy.core.defchararray import isalpha, isnumeric
 from report_utils import *
 
 # Math/Numeric libraries
@@ -50,6 +53,7 @@ def parse_args() -> Namespace:
                         help="Seed used for shuffling")
     parser.add_argument("--max-features", default=10000, type=int,
                         help="Maximum number of features in the vectorizer")
+    parser.add_argument("--ngrams", action="store_true")
     parser.add_argument("--data-out", default="tmp.pkl",
                         help="Where to store experiment data")
 
@@ -140,14 +144,6 @@ def experiment_main():
 
 
 def experiment_features(X_full, Y_full, tf_idf, use_ngrams, max_features, data_out=None):
-    # use scikit's built-in splitting function to save space
-    X_train, X_test, Y_train, Y_test = train_test_split(
-        X_full, Y_full,
-        test_size=args.test_percentage,
-        random_state=args.seed,
-        shuffle=args.shuffle
-    )
-
     ngram_range = (2, 3) if use_ngrams else (1, 1)
 
     model = Pipeline([
@@ -167,13 +163,15 @@ def experiment_features(X_full, Y_full, tf_idf, use_ngrams, max_features, data_o
         ("svm", sklearn.svm.SVC(kernel="linear")),
     ])
     model.fit(X_full, Y_full)
-    score = accuracy_score(Y_test, model.predict(X_test))
-    print(f"score: {score:.2%}")
+    Y_pred = model.predict(X_full)
+    score = accuracy_score(Y_full, Y_pred)
+    print(f"train acc: {score:.2%}")
 
-    coefs = model.get_params()["svm"].coef_.toarray().reshape(-1)
-    coefs = sorted(enumerate(coefs), key=lambda x: x[1])
+    coefs_original = model.get_params()["svm"].coef_.toarray().reshape(-1)
+    coefs = sorted(enumerate(coefs_original), key=lambda x: x[1])
 
-    vec = {v: k for k, v in model.get_params()["vec"].vocabulary_.items()}
+    vocab = model.get_params()["vec"].vocabulary_
+    vec = {v: k for k, v in vocab.items()}
 
     # Print
     pivot = (len(coefs) - 8) // 2
@@ -189,13 +187,12 @@ def experiment_features(X_full, Y_full, tf_idf, use_ngrams, max_features, data_o
         with open(data_out, "wb") as f:
             pickle.dump([(vec[ind], v) for ind, v in coefs], f)
 
-    # Compute coefficient
+    # Compute norms
     X_vec = model["vec"].transform(X_full).toarray()
     print(
         "avg data norm",
         np.average(np.linalg.norm(X_vec, axis=1))
     )
-
     print(
         "coefs norm",
         np.average(
@@ -205,6 +202,65 @@ def experiment_features(X_full, Y_full, tf_idf, use_ngrams, max_features, data_o
         )
     )
 
+def color_example(review, vocab, coefs):
+    message = ""
+    for token in review:
+            if token not in vocab:
+                message += token + " "
+            else:
+                index = vocab[token]
+                coef = coefs[index]
+                if coef < -0.1:
+                    message += "\\textcolor{DarkRed}{" + token + "} "
+                elif coef > 0.1:
+                    message += "\\textcolor{DarkGreen}{" + token + "} "
+                else:
+                    message += token + " "
+    return message
+
+def experiment_examples(X_full, Y_full, tf_idf, max_features):
+    model = Pipeline([
+        ("vec",
+         TfidfVectorizer(
+             preprocessor=lambda x: x,
+             tokenizer=lambda x:x, max_features=max_features,
+         )
+         if tf_idf else
+         CountVectorizer(
+             preprocessor=lambda x: x,
+             tokenizer=lambda x:x, max_features=max_features,
+         ),
+         ),
+        ("svm", sklearn.svm.SVC(kernel="linear")),
+    ])
+    model.fit(X_full, Y_full)
+    Y_pred = model.predict(X_full)
+
+    coefs_original = model.get_params()["svm"].coef_.toarray().reshape(-1)
+    vocab = model.get_params()["vec"].vocabulary_
+
+    for review, y_true, y_pred in [(x,y,z) for x,y,z in zip(X_full, Y_full, Y_pred) if len(x) <= 100][:10]:
+        message = color_example(review, vocab, coefs_original)
+        print(message, (y_true, y_pred), model.decision_function([review]), "\n")
+
+
+    adversial="this camera works well , except that the shutter speed is a bit slow . the image quality is decent . the use of aa rechargeable batteries is also convenient . the camera is pretty sturdy . i 've dropped it a few times and it still works fine".split()
+    small_vocab = [k for k in vocab.keys() if len(k) <= 2]
+    print("noise token   coefficient")
+    for noise_token in ["..."] + small_vocab:
+        if noise_token in vocab and all([not isalpha(x) and not isnumeric(x) for x in noise_token]):
+            print(f"{noise_token:>11}    {coefs_original[vocab[noise_token]]:.3f}")
+
+    noise_token="#"
+    original_pred = model.predict([adversial])
+    hit = False
+    for i in range(50):
+        adversial_tmp = adversial + [noise_token]*i
+        current_pred = model.predict([adversial_tmp])
+        print(i, model.predict([adversial_tmp]), model.decision_function([adversial_tmp]))    
+        if current_pred != original_pred and not hit:
+            print(color_example(adversial_tmp, vocab, coefs_original))
+            hit = True
 
 def experiment_errors(X_full, Y_full):
     pass
@@ -220,16 +276,18 @@ if __name__ == "__main__":
     if args.experiment == "main":
         experiment_main(X_full, Y_full)
 
+    elif args.experiment == "examples":
+        experiment_examples(
+            X_full, Y_full,
+            tf_idf=args.tf_idf,
+            max_features=args.max_features
+        )
+
     elif args.experiment == "features":
-        # experiment_features(
-        #     X_full, Y_full, args.tf_idf,
-        #     partition_n=args.partition_n,
-        #     use_ngrams=False,
-        #     data_out=args.data_out
-        # )
         experiment_features(
-            X_full, Y_full, args.tf_idf,
-            use_ngrams=True,
+            X_full, Y_full, 
+            tf_idf=args.tf_idf,
+            use_ngrams=args.ngrams,
             max_features=args.max_features,
             data_out=args.data_out
         )
