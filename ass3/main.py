@@ -152,11 +152,13 @@ def experiment_features(X_full, Y_full, tf_idf, partition_n=16, data_out=None):
 
     model = Pipeline([
         ("vec",
-         TfidfVectorizer(preprocessor=lambda x: x,
-                         tokenizer=lambda x:x, max_features=10000)
+         TfidfVectorizer(
+             preprocessor=lambda x: x,
+             tokenizer=lambda x:x, max_features=10000)
          if tf_idf else
-         CountVectorizer(preprocessor=lambda x: x,
-                         tokenizer=lambda x:x, max_features=10000),
+         CountVectorizer(
+             preprocessor=lambda x: x,
+             tokenizer=lambda x:x, max_features=10000),
          ),
         ("svm", sklearn.svm.SVC(kernel="linear")),
     ])
@@ -167,26 +169,37 @@ def experiment_features(X_full, Y_full, tf_idf, partition_n=16, data_out=None):
     coefs = model.get_params()["svm"].coef_.toarray().reshape(-1)
     coefs = sorted(enumerate(coefs), key=lambda x: x[1])
 
-    largest_ind = coefs[-partition_n:]
-    smallest_ind = coefs[:partition_n]
-    neutral_ind = coefs[len(coefs) // 2 - partition_n //
-                        2:len(coefs) // 2 + partition_n // 2]
-
-    # largest_ind = np.argpartition(coefs, -partition_n)[-partition_n:]
-    # smallest_ind = np.argpartition(coefs, -partition_n)[:partition_n]
-    # neutral_ind = coefs[len(coefs)//2-partition_n//2:len(coefs)//2+partition_n//2]
     vec = {v: k for k, v in model.get_params()["vec"].vocabulary_.items()}
 
+    # Print
+    pivot = (len(coefs) - partition_n) // 2
     print("positive:\n", "\n".join(
-        [f" {vec[ind]} ({v:.2f})" for ind, v in largest_ind]), sep="")
+        [f" {vec[ind]} ({v:.2f})" for ind, v in coefs[-partition_n:]]), sep="")
     print("neutral:\n", "\n".join(
-        [f" {vec[ind]} ({v:.2f})" for ind, v in neutral_ind]), sep="")
+        [f" {vec[ind]} ({v:.2f})" for ind, v in coefs[pivot:pivot + partition_n]]), sep="")
     print("negative:\n", "\n".join(
-        [f" {vec[ind]} ({v:.2f})" for ind, v in smallest_ind]), sep="")
+        [f" {vec[ind]} ({v:.2f})" for ind, v in coefs[:partition_n]]), sep="")
 
+    # Store coefficients if argument is passed
     if data_out is not None:
         with open(data_out, "wb") as f:
             pickle.dump([(vec[ind], v) for ind, v in coefs], f)
+
+    # Compute coefficient
+    X_vec = model["vec"].transform(X_full).toarray()
+    print(
+        "avg data norm",
+        np.average(np.linalg.norm(X_vec, axis=1))
+    )
+
+    print(
+        "coefs norm",
+        np.average(
+            np.absolute(
+                model.get_params()["svm"].coef_.toarray().reshape(-1)
+            )
+        )
+    )
 
 
 def experiment_errors(X_full, Y_full):
