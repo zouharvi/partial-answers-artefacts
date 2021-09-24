@@ -42,16 +42,14 @@ def parse_args() -> Namespace:
                         help="Input file to learn from (default reviews.txt)")
     parser.add_argument("-t", "--tf-idf", action="store_true",
                         help="Use the TF-IDF vectorizer instead of CountVectorizer")
-    parser.add_argument("-tp", "--test-percentage", default=0.1, type=float,
-                        help="Percentage of the data that is used for the test set (default 0.20)")
     parser.add_argument("--experiment", default="main",
                         help="Which experiment to run: main, mccc, cv, train_data")
     parser.add_argument("-sh", "--shuffle", action="store_true",
                         help="Shuffle data set before splitting in train/test")
     parser.add_argument("--seed", default=0, type=int,
                         help="Seed used for shuffling")
-    parser.add_argument("--partition-n", default=8, type=int,
-                        help="Number of features to consider in exploration")
+    parser.add_argument("--max-features", default=10000, type=int,
+                        help="Maximum number of features in the vectorizer")
     parser.add_argument("--data-out", default="tmp.pkl",
                         help="Where to store experiment data")
 
@@ -141,7 +139,7 @@ def experiment_main():
     pass
 
 
-def experiment_features(X_full, Y_full, tf_idf, partition_n=16, data_out=None):
+def experiment_features(X_full, Y_full, tf_idf, use_ngrams, max_features, data_out=None):
     # use scikit's built-in splitting function to save space
     X_train, X_test, Y_train, Y_test = train_test_split(
         X_full, Y_full,
@@ -150,15 +148,21 @@ def experiment_features(X_full, Y_full, tf_idf, partition_n=16, data_out=None):
         shuffle=args.shuffle
     )
 
+    ngram_range = (2, 3) if use_ngrams else (1, 1)
+
     model = Pipeline([
         ("vec",
          TfidfVectorizer(
              preprocessor=lambda x: x,
-             tokenizer=lambda x:x, max_features=10000)
+             tokenizer=lambda x:x, max_features=max_features,
+             ngram_range=ngram_range,
+         )
          if tf_idf else
          CountVectorizer(
              preprocessor=lambda x: x,
-             tokenizer=lambda x:x, max_features=10000),
+             tokenizer=lambda x:x, max_features=max_features,
+             ngram_range=ngram_range,
+         ),
          ),
         ("svm", sklearn.svm.SVC(kernel="linear")),
     ])
@@ -172,13 +176,13 @@ def experiment_features(X_full, Y_full, tf_idf, partition_n=16, data_out=None):
     vec = {v: k for k, v in model.get_params()["vec"].vocabulary_.items()}
 
     # Print
-    pivot = (len(coefs) - partition_n) // 2
+    pivot = (len(coefs) - 8) // 2
     print("positive:\n", "\n".join(
-        [f" {vec[ind]} ({v:.2f})" for ind, v in coefs[-partition_n:]]), sep="")
+        [f" {vec[ind]} ({v:.2f})" for ind, v in coefs[-8:]]), sep="")
     print("neutral:\n", "\n".join(
-        [f" {vec[ind]} ({v:.2f})" for ind, v in coefs[pivot:pivot + partition_n]]), sep="")
+        [f" {vec[ind]} ({v:.2f})" for ind, v in coefs[pivot:pivot + 8]]), sep="")
     print("negative:\n", "\n".join(
-        [f" {vec[ind]} ({v:.2f})" for ind, v in coefs[:partition_n]]), sep="")
+        [f" {vec[ind]} ({v:.2f})" for ind, v in coefs[:8]]), sep="")
 
     # Store coefficients if argument is passed
     if data_out is not None:
@@ -217,7 +221,15 @@ if __name__ == "__main__":
         experiment_main(X_full, Y_full)
 
     elif args.experiment == "features":
+        # experiment_features(
+        #     X_full, Y_full, args.tf_idf,
+        #     partition_n=args.partition_n,
+        #     use_ngrams=False,
+        #     data_out=args.data_out
+        # )
         experiment_features(
             X_full, Y_full, args.tf_idf,
-            args.partition_n, args.data_out
+            use_ngrams=True,
+            max_features=args.max_features,
+            data_out=args.data_out
         )

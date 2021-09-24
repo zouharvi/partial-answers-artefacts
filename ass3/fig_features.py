@@ -28,8 +28,7 @@ def parse_args() -> Namespace:
     # Arguments
     parser.add_argument("--data-bow", default="ass3/features_bow.pkl")
     parser.add_argument("--data-tfidf", default="ass3/features_tfidf.pkl")
-    parser.add_argument("-s", "--sentiment", action="store_true")
-    parser.add_argument("-l", "--legend", action="store_true")
+    parser.add_argument("-m", "--multiple", action="store_true")
 
     # Parse the args
     args = parser.parse_args()
@@ -100,9 +99,10 @@ if __name__ == "__main__":
         size=10,
     )
     plt.xlabel("SVM Coefficient")
-    plt.ylabel("Token")
-    plt.legend(loc="lower right")
+    if not args.multiple:
+        plt.ylabel("Tokens")
+    plt.title("Multiple tokens (2,3)" if args.multiple else "Single token", size=10)
+    if args.multiple:
+        plt.legend(loc="lower right")
     plt.tight_layout()
     plt.show()
-
-    # TODO: compare with count vectorizer
