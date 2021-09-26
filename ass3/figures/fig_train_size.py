@@ -11,25 +11,17 @@ import matplotlib.pyplot as plt
 import argparse
 from argparse import Namespace
 import pickle
-import numpy as np
-from collections import defaultdict
 
 
 def parse_args() -> Namespace:
-    """Function containing all the argument parsing logic. Parses command line arguments and
-    handles exceptions and help queries. 
-
-    Returns
-    =======
-        Namespace object that has an attribute per command line parameter.
     """
+    Returns the parsed arguments.
+    """
+    parser = argparse.ArgumentParser()
 
-    parser = argparse.ArgumentParser()  # Argument parsing object
-
-    # Arguments
+    # arguments
     parser.add_argument("--data-in", default="ass3/errors_tfidf.pkl")
 
-    # Parse the args
     args = parser.parse_args()
     return args
 

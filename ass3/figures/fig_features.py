@@ -15,22 +15,16 @@ import numpy as np
 
 
 def parse_args() -> Namespace:
-    """Function containing all the argument parsing logic. Parses command line arguments and
-    handles exceptions and help queries. 
-
-    Returns
-    =======
-        Namespace object that has an attribute per command line parameter.
     """
+    Returns the parsed arguments.
+    """
+    parser = argparse.ArgumentParser()
 
-    parser = argparse.ArgumentParser()  # Argument parsing object
-
-    # Arguments
+    # arguments
     parser.add_argument("--data-bow", default="ass3/features_bow.pkl")
     parser.add_argument("--data-tfidf", default="ass3/features_tfidf.pkl")
     parser.add_argument("-m", "--multiple", action="store_true")
 
-    # Parse the args
     args = parser.parse_args()
     return args
 

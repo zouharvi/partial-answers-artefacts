@@ -5,7 +5,7 @@ import sklearn.svm
 from sklearn.metrics import accuracy_score
 import pickle
 
-def experiment_size(X_full, Y_full, data_out, seed):
+def experiment_size(X_full, Y_full, data_out, shuffle, seed):
     data = {}
     for tf_idf in [False, True]:
         for stop_words in [None, "english"]:
@@ -13,7 +13,7 @@ def experiment_size(X_full, Y_full, data_out, seed):
                 X_full, Y_full,
                 test_size=0.1,
                 random_state=seed,
-                shuffle=True
+                shuffle=shuffle,
             )
             data_vec = {"train": [], "features": []}
             for max_features in [100, 500, 1000, 5*1000, 10*1000, 50*1000, 100*1000]:

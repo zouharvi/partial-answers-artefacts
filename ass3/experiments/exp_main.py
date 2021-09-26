@@ -6,7 +6,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC, LinearSVC
 
 
-def experiment_main(X,y):
+def experiment_main(X, y, data_out):
     vec = TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
     X = vec.fit_transform(X)
     
@@ -52,4 +52,5 @@ def experiment_main(X,y):
     results_l = pd.DataFrame(gs_l_svm.cv_results_)
     
     results = results.append(results_l)
-    results.to_csv("grid_search_results.csv",index=False)
+    if data_out:
+        results.to_csv(data_out, index=False)
