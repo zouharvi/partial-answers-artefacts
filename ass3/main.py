@@ -18,6 +18,7 @@ from experiments.exp_errors import experiment_errors
 from experiments.exp_examples import experiment_examples
 from experiments.exp_gridsearch import experiment_gridsearch
 from experiments.exp_main import experiment_main
+from experiments.exp_cv_eval import experiment_cv_eval 
 
 def parse_args() -> Namespace:
     """
@@ -104,6 +105,9 @@ if __name__ == "__main__":
         experiment_main(X_full, Y_full, 
                         X_test, Y_test,
                         table_format=args.table_format)
+        
+    if args.experiment == "cv_eval":
+        experiment_cv_eval(X_full, Y_full, table_format=args.table_format)
         
     elif args.experiment == "gridsearch":
         experiment_gridsearch(
