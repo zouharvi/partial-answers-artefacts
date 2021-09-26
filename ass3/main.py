@@ -16,6 +16,7 @@ from experiments.exp_features import experiment_features
 from experiments.exp_confidence import experiment_confidence
 from experiments.exp_errors import experiment_errors
 from experiments.exp_examples import experiment_examples
+from experiments.exp_gridsearch import experiment_gridsearch
 from experiments.exp_main import experiment_main
 
 def parse_args() -> Namespace:
@@ -34,6 +35,8 @@ def parse_args() -> Namespace:
     # Arguments
     parser.add_argument("-i", "--input-file", default='reviews.txt', type=str,
                         help="Input file with all data")
+    parser.add_argument("-ts", "--test-set", type=str,
+                        help="Input file with data for test")
     parser.add_argument("-t", "--tf-idf", action="store_true",
                         help="Use the TF-IDF vectorizer instead of Bag of Words")
     parser.add_argument("-tp", "--test-percentage", default=0.1, type=float,
@@ -50,6 +53,8 @@ def parse_args() -> Namespace:
                         help="Use ngrams for feature exploration")
     parser.add_argument("--data-out", default="tmp.pkl",
                         help="Where to store experiment data")
+    parser.add_argument("--table-format", default="default",
+                        help="How to format table: default or latex")
 
     # Parse the args
     args = parser.parse_args()
@@ -90,7 +95,18 @@ if __name__ == "__main__":
 
     # choose which experiment to run
     if args.experiment == "main":
-        experiment_main(
+        if args.test_set:
+            X_test, Y_test = read_corpus(args.test_set)
+        else:
+            print("Test set not provided, evaluating with train set.")
+            X_test, Y_test = X_full, Y_full
+            
+        experiment_main(X_full, Y_full, 
+                        X_test, Y_test,
+                        table_format=args.table_format)
+        
+    elif args.experiment == "gridsearch":
+        experiment_gridsearch(
             X_full, Y_full,
             data_out=args.data_out)
 

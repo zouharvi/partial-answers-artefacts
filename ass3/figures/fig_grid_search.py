@@ -39,7 +39,8 @@ def plot_non_linear_perf(df):
     
     Cs = non_linear.param_C.unique()
     
-    plt.figure(figsize=(6, 4.5))
+    #plt.figure(figsize=(6, 4.5))
+    plt.figure(figsize=(4, 3),dpi=200)
     for kernel in non_linear.param_kernel.unique():
         df_kernel = non_linear[non_linear.param_kernel == kernel]
         
@@ -73,9 +74,10 @@ def plot_non_linear_perf(df):
     plt.xscale("log")
     plt.xticks(Cs,
                list(map("$2^{{{}}}$".format,np.asarray(np.log2(Cs),dtype=np.int32))))
-    plt.legend()
+    plt.legend(fontsize=8)
     plt.xlabel("$C$")
     plt.ylabel("Accuracy")
+    plt.tight_layout()
     plt.savefig("C_perf_kernel.png")
     
 def plot_linear_perf(df):
@@ -84,8 +86,8 @@ def plot_linear_perf(df):
     
     Cs = linear_df.param_C.unique()
     
-    plt.figure(figsize=(6, 4.5))
-    
+    #plt.figure(figsize=(6, 4.5))
+    plt.figure(figsize=(4, 3),dpi=200)
     plt.plot( # L1 squared_hinge
         Cs,
         linear_df[linear_df.param_penalty == "l1"].mean_test_score,
@@ -120,6 +122,7 @@ def plot_linear_perf(df):
     plt.legend()
     plt.xlabel("$C$")
     plt.ylabel("Accuracy")
+    plt.tight_layout()
     plt.savefig("C_perf_kernel_lin.png")
 
 
@@ -154,13 +157,15 @@ def box_times(df):
     data["L2+sh"] = linear_df[(linear_df.param_penalty == "l2") & (linear_df.param_loss == "squared_hinge")].mean_fit_time
     
     
-    plt.figure(figsize=(8, 4))
+    #plt.figure(figsize=(8, 4))
+    plt.figure(figsize=(7, 3),dpi=200)
     plt.boxplot(data.values(),labels=data.keys())
     plt.vlines(7.5,0,30)
     
     plt.ylabel("Train time (sec)")
     plt.text(6,15,"SVC",horizontalalignment="center",fontsize=16)
     plt.text(9,15,"LinearSVC",horizontalalignment="center",fontsize=16)
+    plt.tight_layout()
     plt.savefig("bplot_speed.png")
     
 if __name__ == "__main__":

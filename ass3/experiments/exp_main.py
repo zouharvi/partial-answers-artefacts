@@ -1,56 +1,28 @@
 import numpy as np
-import pandas as pd
 
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.model_selection import GridSearchCV
-from sklearn.svm import SVC, LinearSVC
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.svm import SVC
 
+from utils.report_utils import complete_scoring, report_score
 
-def experiment_main(X, y, data_out):
+def experiment_main(
+        X_train, y_train, 
+        X_test, y_test,
+        table_format="default"):
     vec = TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
-    X = vec.fit_transform(X)
+    vec.fit(X_train)
     
-    svm = SVC()
-    l_svm = LinearSVC(max_iter=100000)
+    X_train = vec.transform(X_train)
+    X_test = vec.transform(X_test)
     
-    gs_svm = GridSearchCV(
-        svm,
-        param_grid=[
-            dict(
-                C=np.exp2(np.linspace(-4,4,9)),
-                kernel=("linear","rbf","sigmoid"),
-            ),
-            dict(
-                C=np.exp2(np.linspace(-4,4,9)),
-                kernel=("poly",),
-                degree=(2,3,4,5))],
-        verbose=2,
-        n_jobs=-1,
-        cv=10)
+    svm = SVC(kernel="rbf",C=2) # Best parameters found in grid-search
+    svm.fit(X_train, y_train)
     
-    gs_l_svm = GridSearchCV(
-        l_svm,
-        param_grid=[
-            dict(
-                C=np.exp2(np.linspace(-4,4,9)),
-                penalty=("l2",),
-                loss=("hinge","squared_hinge")),
-            dict(
-                C=np.exp2(np.linspace(-4,4,9)),
-                penalty=("l1",),
-                loss=("squared_hinge",),
-                dual=(False,)),
-        ],
-        verbose=2,
-        n_jobs=-1,
-        cv=10)
+    y_pred = svm.predict(X_test)
     
-    gs_svm.fit(X,y)
-    gs_l_svm.fit(X,y)
+    score = complete_scoring(y_pred, y_test)
+    report_score(score,["Negative","Positive"],table_format=table_format)
     
-    results = pd.DataFrame(gs_svm.cv_results_)
-    results_l = pd.DataFrame(gs_l_svm.cv_results_)
     
-    results = results.append(results_l)
-    if data_out:
-        results.to_csv(data_out, index=False)
+    
+    
