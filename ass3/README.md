@@ -1,10 +1,18 @@
 This document provides a very brief introduction on how the code is structured, how to run the experiments and plot results.
 
+## Evaluation
+
+Run the main script as follows to train the best model on `reviews_train.txt` and evaluate on `reviews_test.txt`:
+
+```
+./main.py -i ./reviews_train.txt -ts ./reviews_test.txt 
+```
+
 ## Experiments
 This project provides the following experiments and they are all run through `./main.py --experiment {EXP_NAME}`.
 We list the available experiment names together with their description (can be found in code in `experiments/`).
 
-- `main`:
+- `main` (default):
   Train a hand-picked (after GS) SVM model on a trainset and test it
   on a testset or (if missing a testset) on the trainset. Print out 
   relevant classification metrics: Accuracy, F1, Precision, Recall and Confusion-matrix.
