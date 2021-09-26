@@ -13,8 +13,8 @@ def experiment_main(
         Compute performance metrics for the best performing model (according to GS)
         on a train-test split setting.
     """
-    
-    vec = TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
+    vec = TfidfVectorizer(max_features=100000, ngram_range=(1,3),
+        preprocessor=lambda x: x, tokenizer=lambda x: x)
     vec.fit(X_train)
     
     # Vecotrize inputs
@@ -22,7 +22,7 @@ def experiment_main(
     X_test = vec.transform(X_test)
     
     # Fit model
-    svm = SVC(kernel="rbf",C=2) # Best parameters found in grid-search
+    svm = SVC(kernel="rbf",C=2,gamma=0.6) # Best parameters found in grid-search
     svm.fit(X_train, y_train)
     
     # Make predictions

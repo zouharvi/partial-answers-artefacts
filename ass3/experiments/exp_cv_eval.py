@@ -5,7 +5,7 @@ from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import KFold
 
-from utils.report_utils import complete_scoring, report_score, avg_dict
+from utils.report_utils import complete_scoring, report_score, avg_dict, dict_op
 
 def experiment_cv_eval(
         X_full, y_full,
@@ -14,10 +14,12 @@ def experiment_cv_eval(
         Compute 10 fold cross-validated metrics of the best performing model (according to GS).
     """
     
-    X_full, y_full = map(np.array, (X_full, y_full))
+    X_full, y_full = map(np.array,(X_full,y_full))
     
-    vec = TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
-    svm = SVC(kernel="rbf",C=2) # Best parameters found in grid-search
+    vec = TfidfVectorizer(max_features=100000, ngram_range=(1,3),
+        preprocessor=lambda x: x, tokenizer=lambda x: x)
+    svm = SVC(kernel="rbf",C=2,gamma=0.6) # Best parameters found in grid-search
+    
     
     k_fold = KFold(n_splits=10)
     
@@ -39,7 +41,7 @@ def experiment_cv_eval(
         scores.append(score)
     
     #Average scores
-    score = dict_op(avg_dict, *scores)
+    score = avg_dict(*scores)
     
     # Report scores
     report_score(score,["Negative","Positive"],table_format=table_format)
