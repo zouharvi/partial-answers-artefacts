@@ -32,6 +32,7 @@ from experiments.exp_features import experiment_features
 from experiments.exp_confidence import experiment_confidence
 from experiments.exp_errors import experiment_errors
 from experiments.exp_examples import experiment_examples
+from experiments.exp_main import experiment_main
 
 def parse_args() -> Namespace:
     """Function containing all the argument parsing logic. Parses command line arguments and
@@ -145,8 +146,6 @@ def report_score(score: dict, labels, args: Namespace):
     with open(args.data_out, "wb") as f:
         pickle.dump(score, f)
 
-def experiment_main():
-    pass
 
 # Script logic
 if __name__ == "__main__":
