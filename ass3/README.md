@@ -5,6 +5,13 @@ This project provides the following experiments and they are all run through `./
 We list the available experiment names together with their description (can be found in code in `experiments/`).
 
 - `main`:
+  Train a hand-picked (after GS) SVM model on a trainset and test it
+  on a testset or (if missing a testset) on the trainset. Print out 
+  relevant classification metrics: Accuracy, F1, Precision, Recall and Confusion-matrix.
+- `cv_eval`:
+  Same as `main` but uses a cross-validation evaluation strategy as opposed to
+  train-test split. Works on top of the trainset.
+- `gridsearch`:
   Perform an extensive gridsearch on the SVM parameter space.
   Associated plotting file is `fig_grid_search.py`.
 - `examples`:
@@ -41,12 +48,15 @@ Please see the corresponding `--help` call to see what the specific requirements
 Run `./main.py --help` to get the following parameter overview:
 
 ```
-usage: main.py [-h] [-i INPUT_FILE] [-t] [-tp TEST_PERCENTAGE] [--experiment EXPERIMENT] [-sh] [--seed SEED] [--max-features MAX_FEATURES] [--ngrams] [--data-out DATA_OUT]
+usage: main.py [-h] [-i INPUT_FILE] [-ts TEST_SET] [-t] [-tp TEST_PERCENTAGE] [--experiment EXPERIMENT] [-sh] [--seed SEED]
+               [--max-features MAX_FEATURES] [--ngrams] [--data-out DATA_OUT] [--table-format TABLE_FORMAT]
 
 optional arguments:
   -h, --help            show this help message and exit
   -i INPUT_FILE, --input-file INPUT_FILE
                         Input file with all data
+  -ts TEST_SET, --test-set TEST_SET
+                        Input file with data for test
   -t, --tf-idf          Use the TF-IDF vectorizer instead of Bag of Words
   -tp TEST_PERCENTAGE, --test-percentage TEST_PERCENTAGE
                         Percentage of the data that is used for the test set
@@ -58,4 +68,6 @@ optional arguments:
                         Maximum number of features in the vectorizer
   --ngrams              Use ngrams for feature exploration
   --data-out DATA_OUT   Where to store experiment data
+  --table-format TABLE_FORMAT
+                        How to format table: default or latex
 ```
