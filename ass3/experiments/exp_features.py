@@ -6,8 +6,15 @@ import pickle
 import numpy as np
 
 def experiment_features(X_full, Y_full, tf_idf, use_ngrams, max_features, data_out=None):
+    """
+    Examine the SVM coefficients associated with input features (tokens or n-grams).
+    Relevant plotting file is `fig_features.py`.
+    """
+
+    # determine whether single tokens or n-grams will be evaluated
     ngram_range = (2, 3) if use_ngrams else (1, 1)
 
+    # define, train and evaluate the model
     model = Pipeline([
         ("vec",
          TfidfVectorizer(
@@ -29,13 +36,15 @@ def experiment_features(X_full, Y_full, tf_idf, use_ngrams, max_features, data_o
     score = accuracy_score(Y_full, Y_pred)
     print(f"train acc: {score:.2%}")
 
+    # retrieve the coefficients, add indicies and sort
     coefs_original = model.get_params()["svm"].coef_.toarray().reshape(-1)
     coefs = sorted(enumerate(coefs_original), key=lambda x: x[1])
 
+    # retrieve and inverse the vocabulary
     vocab = model.get_params()["vec"].vocabulary_
     vec = {v: k for k, v in vocab.items()}
 
-    # Print
+    # print top/neutral/bottom coefficients 
     pivot = (len(coefs) - 8) // 2
     print("positive:\n", "\n".join(
         [f" {vec[ind]} ({v:.2f})" for ind, v in coefs[-8:]]), sep="")
@@ -44,12 +53,12 @@ def experiment_features(X_full, Y_full, tf_idf, use_ngrams, max_features, data_o
     print("negative:\n", "\n".join(
         [f" {vec[ind]} ({v:.2f})" for ind, v in coefs[:8]]), sep="")
 
-    # Store coefficients if argument is passed
+    # store coefficients if argument is passed
     if data_out is not None:
         with open(data_out, "wb") as f:
             pickle.dump([(vec[ind], v) for ind, v in coefs], f)
 
-    # Compute norms
+    # compute coefficient norms
     X_vec = model["vec"].transform(X_full).toarray()
     print(
         "avg data norm",

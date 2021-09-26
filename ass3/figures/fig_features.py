@@ -23,7 +23,8 @@ def parse_args() -> Namespace:
     # arguments
     parser.add_argument("--data-bow", default="ass3/features_bow.pkl")
     parser.add_argument("--data-tfidf", default="ass3/features_tfidf.pkl")
-    parser.add_argument("-m", "--multiple", action="store_true")
+    parser.add_argument("-m", "--multiple", action="store_true",
+                        help="Use n-grams instead of a single token for features")
 
     args = parser.parse_args()
     return args
@@ -66,11 +67,11 @@ if __name__ == "__main__":
     ]
 
     print("Pearson's correlation",
-        np.corrcoef(
-            [x[1] for x in data_coefs_tfidf],
-            [coefs_bow_map[x[0]] for x in data_coefs_tfidf],
-        )[0][1]
-    )
+          np.corrcoef(
+              [x[1] for x in data_coefs_tfidf],
+              [coefs_bow_map[x[0]] for x in data_coefs_tfidf],
+          )[0][1]
+          )
 
     # plot each model configuration
     plt.barh(

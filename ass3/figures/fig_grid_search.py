@@ -24,7 +24,6 @@ def parse_args() -> Namespace:
     return args
 
 
-
 COLORS_PLOT = dict(
     linear="tab:blue",
     rbf="tab:orange",

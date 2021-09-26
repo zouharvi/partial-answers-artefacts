@@ -126,6 +126,7 @@ if __name__ == "__main__":
         experiment_size(
             X_full, Y_full,
             data_out=args.data_out,
+            test_percentage=args.test_percentage,
             shuffle=args.shuffle,
             seed=args.seed,
         )
