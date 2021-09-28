@@ -6,3 +6,4 @@ assignment4.pdf
 test_NE_input.txt
 train_NE.txt
 glove_filtered.json
+word2vec
