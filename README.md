@@ -7,3 +7,4 @@ Please don't cheat, you'll get yourself and us into troubles.
 
 - [Assignment 1: Comparison of Baseline Models For Sentiment and Topic Classification](meta/ass1.pdf)
 - [Assignment 3: Analysis and Parameter Search for Sentiment Classification with SVM](meta/ass3.pdf)
+- [Assignment 4: Live Competition Report + Word Similarity](meta/ass4.pdf)
