@@ -1,10 +1,13 @@
-from keras.models import Sequential
-from keras.layers.core import Dense
-from keras.layers import Embedding, LSTM
-from keras.layers.preprocessing.text_vectorization import TextVectorization
-from keras.initializers import Constant
 import numpy as np
 import tensorflow as tf
+from keras import regularizers
+from keras.models import Sequential
+from keras.layers.core import Dense, Dropout
+from keras.layers import Embedding, LSTM, GRU, Bidirectional
+from keras.layers.preprocessing.text_vectorization import TextVectorization
+from keras.initializers import Constant
+from tensorflow_addons.optimizers import AdamW
+from keras.losses import CategoricalCrossentropy
 from utils import report_accuracy_score, get_emb_matrix
 from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
 
@@ -26,21 +29,35 @@ class ModelLSTM():
         voc = self.vectorizer.get_vocabulary()
         embd_matrix = get_emb_matrix(voc, embeddings)
 
-        # Define settings, you might want to create cmd line args for them
-        learning_rate = 0.01
-        loss_function = 'categorical_crossentropy'
-        optim = tf.keras.optimizers.SGD(learning_rate=learning_rate)
         # Take embedding dim and size from emb_matrix
         embedding_dim = len(embd_matrix[0])
         num_tokens = len(embd_matrix)
+
         # Now build the model
         self.model = Sequential()
         self.model.add(Embedding(
             num_tokens, embedding_dim,
-            embeddings_initializer=Constant(embd_matrix), trainable=False,
+            embeddings_initializer=Constant(embd_matrix),
+            trainable=True,
+            embeddings_regularizer=regularizers.l1_l2(l1=1e-6, l2=1e-5),
         ))
+
         # Here you should add LSTM layers (and potentially dropout)
-        self.model.add(LSTM(embedding_dim))
+        self.model.add(Bidirectional(
+            LSTM(units=128, dropout=0.1, return_sequences=True,)
+        ))
+        self.model.add(Bidirectional(
+            LSTM(units=128, dropout=0.1)
+        ))
+
+        self.model.add(Dense(
+            units=128, activation="relu"
+        ))
+        self.model.add(Dropout(0.1))
+        self.model.add(Dense(
+            units=64, activation="relu"
+        ))
+
         # Ultimately, end with dense layer with softmax
         self.model.add(Dense(
             input_dim=embedding_dim,
@@ -48,15 +65,22 @@ class ModelLSTM():
         ))
 
         # Compile model using our settings, check for accuracy
-        self.model.compile(loss=loss_function,
-                           optimizer=optim, metrics=['accuracy'])
+        self.model.compile(
+            loss=CategoricalCrossentropy(label_smoothing=0.1),
+            # optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+            optimizer=AdamW(learning_rate=0.001, weight_decay=0.0001),
+            metrics=['accuracy']
+        )
 
     def train(self, X_train, Y_train, X_dev, Y_dev):
         '''Train the model here. Note the different settings you can experiment with!'''
 
         X_train_vect = self.vectorizer(
-            np.array([[s] for s in X_train])).numpy()
-        X_dev_vect = self.vectorizer(np.array([[s] for s in X_dev])).numpy()
+            np.array([[s] for s in X_train])
+        ).numpy()
+        X_dev_vect = self.vectorizer(
+            np.array([[s] for s in X_dev])
+        ).numpy()
 
         # Potentially change these to cmd line args again
         # And yes, don't be afraid to experiment!
@@ -66,7 +90,7 @@ class ModelLSTM():
         # Early stopping: stop training when there are three consecutive epochs without improving
         # It's also possible to monitor the training loss with monitor="loss"
         callback = tf.keras.callbacks.EarlyStopping(
-            monitor='val_loss', patience=3
+            monitor='val_accuracy', patience=5
         )
 
         # Finally fit the model to our data
