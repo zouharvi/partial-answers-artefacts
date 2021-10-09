@@ -3,6 +3,7 @@ ass1/reviews.txt
 *.pkl
 *.png
 data/glove_filtered.json
+*.log
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
