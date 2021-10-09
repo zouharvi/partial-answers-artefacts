@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelBinarizer
 import tensorflow as tf
 from utils import *
-from model_zoo import *
+from model_bert import *
 
 # Make reproducible as much as possible
 np.random.seed(1234)
@@ -31,23 +31,24 @@ def create_arg_parser():
     parser.add_argument("-lm", "--language-model", default=None, type=str,
                         help="Name of pretrained language model to use.\n" +
                         "If not specified will use a LSTM model.")
-    parser.add_argument("-ep","--epochs", default=None, type=str,
+    parser.add_argument("-ep", "--epochs", default=None, type=str,
                         help="Override the default number of epochs to train the model.")
-    parser.add_argument("-bs","--batch-size", default=None, type=str,
+    parser.add_argument("-bs", "--batch-size", default=None, type=str,
                         help="Override the default batch size.")
-    parser.add_argument("-lr","--learning-rate", default=None, type=str,
+    parser.add_argument("-lr", "--learning-rate", default=None, type=str,
                         help="Override the default learning rate.")
     parser.add_argument("--max-length", default=None, type=str,
                         help="Override the default maximum length of language model input.\n" +
                         "Only affects when using language models.")
-    
-    
+
     args = parser.parse_args()
     return args
 
+
 LM_ALIASES = dict(
     bert="bert-base-uncased",
-    )
+)
+
 
 def main():
     '''Main function to train and test neural network given cmd line arguments'''
@@ -56,7 +57,7 @@ def main():
     # Read in the data and embeddings
     X_train, Y_train = read_corpus(args.train_file)
     X_dev, Y_dev = read_corpus(args.dev_file)
-    
+
     # Transform string labels to one-hot encodings
     encoder = LabelBinarizer()
     # Use encoder.classes_ to find mapping back
@@ -65,20 +66,19 @@ def main():
 
     # Define general model params
     model_params = dict()
-    if args.epochs: model_params["epochs"] = args.epochs
-    if args.batch_size: model_params["batch_size"] = args.batch_size
-    if args.learning_rate: model_params["learning_rate"] = args.learning_rate
-    
+    if args.epochs:
+        model_params["epochs"] = args.epochs
+    if args.batch_size:
+        model_params["batch_size"] = args.batch_size
+    if args.learning_rate:
+        model_params["learning_rate"] = args.learning_rate
+
     # Create model
-    if not args.language_model: 
-        embeddings = read_embeddings(args.embeddings)
-        model = ModelLSTM(embeddings, X_all=X_train+X_dev, **model_params)
-    else:
-        if args.max_length: model_params["max_length"] = args.max_length
-        
-        lm = LM_ALIASES[args.language_model]
-        model = ModelTransformer(lm=lm,**model_params)
-    
+    if args.max_length:
+        model_params["max_length"] = args.max_length
+
+    lm = LM_ALIASES[args.language_model]
+    model = ModelTransformer(lm=lm, **model_params)
 
     # Transform input to vectorized input
 
