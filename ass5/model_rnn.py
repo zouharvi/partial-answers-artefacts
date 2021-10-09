@@ -1,3 +1,4 @@
+from keras.backend import dropout
 import numpy as np
 import tensorflow as tf
 from keras import regularizers
@@ -53,14 +54,29 @@ class ModelRNN():
             "lstm": LSTM,
             "gru": GRU,
             "rnn": SimpleRNN,
-        }[args.embd_unit.lower()]
+        }[args.rnn_unit.lower()]
 
-        self.model.add(Bidirectional(
-            UNIT(units=128, dropout=0.1, return_sequences=True,)
-        ))
-        self.model.add(Bidirectional(
-            UNIT(units=128, dropout=0.1)
-        ))
+        rnn_params = {
+            "units": 128,
+            "dropout": 0.1,
+            "go_backwards": args.rnn_backwards,
+        }
+
+        for _ in range(args.rnn_layers-1):
+            if args.rnn_not_bi:
+                self.model.add(
+                    UNIT(**rnn_params, return_sequences=True,)
+                )
+            else:
+                self.model.add(Bidirectional(
+                    UNIT(**rnn_params, return_sequences=True,),
+                    merge_mode=args.rnn_bimerge
+                ))
+
+        if args.rnn_not_bi:
+            self.model.add(UNIT(**rnn_params))
+        else:
+            self.model.add(Bidirectional(UNIT(**rnn_params), merge_mode=args.rnn_bimerge))
 
         self.model.add(Dense(
             units=128, activation="relu"
@@ -97,19 +113,15 @@ class ModelRNN():
             np.array([[s] for s in X_dev])
         ).numpy()
 
-        # Potentially change these to cmd line args again
-        # And yes, don't be afraid to experiment!
-        verbose = 1
-        
         # Early stopping: stop training when there are three consecutive epochs without improving
         # It's also possible to monitor the training loss with monitor="loss"
         callback = tf.keras.callbacks.EarlyStopping(
-            monitor='val_accuracy', patience=5,# restore_best_weights=True
+            monitor='val_accuracy', patience=10,# restore_best_weights=True
         )
 
         # Finally fit the model to our data
         self.model.fit(
-            X_train_vect, Y_train, verbose=verbose, epochs=self.epochs,
+            X_train_vect, Y_train, verbose=1, epochs=self.epochs,
             callbacks=[callback], batch_size=self.batch_size,
             validation_data=(X_dev_vect, Y_dev)
         )

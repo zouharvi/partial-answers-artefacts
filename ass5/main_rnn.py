@@ -38,10 +38,16 @@ def create_arg_parser():
                         help="Regularize embeddings")
     parser.add_argument("--embd-not-trainable", action="store_true",
                         help="Do not finetune embeddings")
-    parser.add_argument("--embd-unit", default="lstm",
+    parser.add_argument("--rnn-unit", default="lstm",
                         help="Which recurrent unit to use (lstm, gru, rnn)")
-    parser.add_argument("--embd-layers", default=2, type=int,
+    parser.add_argument("--rnn-layers", default=2, type=int,
                         help="Number of recurrent layers")
+    parser.add_argument("--rnn-not-bi", action="store_true",
+                        help="Do not use bidirectional RNN")
+    parser.add_argument("--rnn-backwards", action="store_true",
+                        help="Process words backward")
+    parser.add_argument("--rnn-bimerge", default="concat",
+                        help="Which merge operation to use after bidirectional layer")
 
     args = parser.parse_args()
     return args
