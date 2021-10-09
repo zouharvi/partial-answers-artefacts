@@ -1,14 +1,18 @@
+from shutil import ExecError
 import numpy as np
 from transformers import AutoTokenizer, AutoModel
 from transformers import BertTokenizer, BertModel
+from transformers import DPRQuestionEncoder, DPRQuestionEncoderTokenizer, DPRContextEncoder, DPRContextEncoderTokenizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 import torch
 
 
 def encoder_tfidf(X_data, max_features):
-    reviews_all = TfidfVectorizer(max_features=max_features).fit_transform(X_data)
+    reviews_all = TfidfVectorizer(
+        max_features=max_features).fit_transform(X_data)
     print(reviews_all.shape)
     return reviews_all.toarray()
+
 
 def encoder_glove(X_data, embeddings, action):
     reviews_all = []
@@ -82,7 +86,6 @@ def encoder_sbert(X_data, type_out):
     model = AutoModel.from_pretrained(
         "sentence-transformers/bert-base-nli-cls-token")
     model.train(False)
-    model.train(False)
 
     for review in X_data:
         encoded_input = tokenizer(
@@ -97,6 +100,57 @@ def encoder_sbert(X_data, type_out):
         elif type_out == "tokens":
             sentence_embedding = mean_pooling(
                 output, encoded_input['attention_mask']
+            )
+            review = sentence_embedding.cpu().numpy()
+        else:
+            raise Exception("Unknown type out")
+
+        reviews_all.append(review)
+
+    reviews_all = np.array(reviews_all)
+    print(reviews_all.shape)
+    return reviews_all
+
+
+def encoder_dpr(X_data, type_out, version):
+    reviews_all = []
+
+    if version == "query":
+        tokenizer = DPRQuestionEncoderTokenizer.from_pretrained(
+            'facebook/dpr-question_encoder-single-nq-base'
+        )
+        model = DPRQuestionEncoder.from_pretrained(
+            'facebook/dpr-question_encoder-single-nq-base'
+        )
+    elif version == "doc":
+        tokenizer = DPRContextEncoderTokenizer.from_pretrained(
+            'facebook/dpr-ctx_encoder-single-nq-base'
+        )
+        model = DPRContextEncoder.from_pretrained(
+            'facebook/dpr-ctx_encoder-single-nq-base'
+        )
+    else:
+        raise Exception("Unknown model version")
+    model.train(False)
+
+    for review in X_data:
+        encoded_input = tokenizer(
+            review, padding=True,
+            truncation=True, max_length=128,
+            return_tensors='pt'
+        )
+        with torch.no_grad():
+            output = model(
+                **encoded_input, output_hidden_states=type_out in {"tokens", "cls"}
+            )
+
+        if type_out == "cls":
+            review = output["hidden_states"][-1][0, 0].cpu().numpy()
+        elif type_out == "pooler":
+            review = output.pooler_output[0].detach().cpu().numpy()
+        elif type_out == "tokens":
+            sentence_embedding = mean_pooling(
+                output["hidden_states"], encoded_input['attention_mask'], layer_i=-1
             )
             review = sentence_embedding.cpu().numpy()
         else:

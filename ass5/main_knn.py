@@ -71,6 +71,14 @@ def main():
         X_all = encoder_sbert(X_train+X_dev, type_out="cls")
     elif args.encoder == "sbert-t":
         X_all = encoder_sbert(X_train+X_dev, type_out="tokens")
+    elif args.encoder == "dpr-c-q":
+        X_all = encoder_dpr(X_train+X_dev, type_out="cls", version="query")
+    elif args.encoder == "dpr-t-q":
+        X_all = encoder_dpr(X_train+X_dev, type_out="tokens", version="query")
+    elif args.encoder == "dpr-c-d":
+        X_all = encoder_dpr(X_train+X_dev, type_out="cls", version="doc")
+    elif args.encoder == "dpr-t-d":
+        X_all = encoder_dpr(X_train+X_dev, type_out="tokens", version="doc")
     else:
         raise Exception("Unknown encoder model")
 
