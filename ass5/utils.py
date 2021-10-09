@@ -40,3 +40,12 @@ def get_emb_matrix(voc, emb):
             embedding_matrix[i] = embedding_vector
     # Final matrix with pretrained embeddings that we can feed to embedding layer
     return embedding_matrix
+
+def center_norm(X_data):
+    X_data -= X_data.mean(axis=0)
+    X_data /= np.linalg.norm(X_data, axis=0)
+
+    # print(np.linalg.norm(reviews_all[0,:]))
+    # print(np.linalg.norm(reviews_all[:,0]))
+
+    return X_data

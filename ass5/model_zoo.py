@@ -1,29 +1,30 @@
 from keras.models import Sequential
 from keras.layers.core import Dense
 from keras.layers import Embedding, LSTM
+from keras.layers.preprocessing.text_vectorization import TextVectorization
 from keras.initializers import Constant
 import numpy as np
 import tensorflow as tf
-from utils import report_accuracy_score
+from utils import report_accuracy_score, get_emb_matrix
 from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
 
 
 class ModelLSTM():
-    def __init__(self, embd_matrix):
+    def __init__(self, embeddings, X_all=None):
         '''Create the Keras model to use'''
+        self.embeddings = embeddings
 
         # VECTORIZE
         # Transform words to indices using a vectorizer
-        vectorizer = TextVectorization(
-            standardize=None, output_sequence_length=50)
+        self.vectorizer = TextVectorization(
+            standardize=None, output_sequence_length=50
+        )
         # Use train and dev to create vocab - could also do just train
-        text_ds = tf.data.Dataset.from_tensor_slices(X_train + X_dev)
-        vectorizer.adapt(text_ds)
+        text_ds = tf.data.Dataset.from_tensor_slices(X_all)
+        self.vectorizer.adapt(text_ds)
         # Dictionary mapping words to idx
-        voc = vectorizer.get_vocabulary()
-        emb_matrix = get_emb_matrix(voc, embeddings)
-        X_train_vect = vectorizer(np.array([[s] for s in X_train])).numpy()
-        X_dev_vect = vectorizer(np.array([[s] for s in X_dev])).numpy()
+        voc = self.vectorizer.get_vocabulary()
+        embd_matrix = get_emb_matrix(voc, embeddings)
 
         # Define settings, you might want to create cmd line args for them
         learning_rate = 0.01
@@ -32,7 +33,6 @@ class ModelLSTM():
         # Take embedding dim and size from emb_matrix
         embedding_dim = len(embd_matrix[0])
         num_tokens = len(embd_matrix)
-        num_labels = len(6)
         # Now build the model
         self.model = Sequential()
         self.model.add(Embedding(
@@ -40,16 +40,24 @@ class ModelLSTM():
             embeddings_initializer=Constant(embd_matrix), trainable=False,
         ))
         # Here you should add LSTM layers (and potentially dropout)
-        raise NotImplementedError("Add LSTM layer(s) here")
+        self.model.add(LSTM(embedding_dim))
         # Ultimately, end with dense layer with softmax
-        self.model.add(Dense(input_dim=embedding_dim,
-                       units=num_labels, activation="softmax"))
+        self.model.add(Dense(
+            input_dim=embedding_dim,
+            units=6, activation="softmax"
+        ))
+
         # Compile model using our settings, check for accuracy
         self.model.compile(loss=loss_function,
                            optimizer=optim, metrics=['accuracy'])
 
     def train(self, X_train, Y_train, X_dev, Y_dev):
         '''Train the model here. Note the different settings you can experiment with!'''
+
+        X_train_vect = self.vectorizer(
+            np.array([[s] for s in X_train])).numpy()
+        X_dev_vect = self.vectorizer(np.array([[s] for s in X_dev])).numpy()
+
         # Potentially change these to cmd line args again
         # And yes, don't be afraid to experiment!
         verbose = 1
@@ -70,9 +78,12 @@ class ModelLSTM():
         # Print final accuracy for the model (clearer overview)
         report_accuracy_score(self.model.predict(X_dev), Y_dev)
 
+    def predict(self, X_test):
+        X_test_vect = self.vectorizer(np.array([[s] for s in X_test])).numpy()
+        return self.model.predict(X_test_vect)
 
 class ModelBERT():
-    def __init__(self, embd_matrix):
+    def __init__(self, embd_matrix, X_all=None):
         '''Create the Keras model to use'''
         lm = "bert-base-uncased"
         self.tokenizer = AutoTokenizer.from_pretrained(lm)

@@ -7,7 +7,6 @@ import argparse
 import numpy as np
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import LabelBinarizer
-from tensorflow.keras.layers import TextVectorization
 import tensorflow as tf
 from utils import *
 from model_zoo import *
@@ -48,8 +47,8 @@ def main():
     Y_dev_bin = encoder.fit_transform(Y_dev)
 
     # Create model
-    # model = ModelLSTM(emb_matrix)
-    model = ModelBERT(embeddings)
+    # model = ModelBERT(embeddings, X_all=X_train+X_dev)
+    model = ModelLSTM(embeddings, X_all=X_train+X_dev)
 
     # Transform input to vectorized input
 
@@ -61,9 +60,9 @@ def main():
         # Read in test set and vectorize
         X_test, Y_test = read_corpus(args.test_file)
         Y_test_bin = encoder.fit_transform(Y_test)
-        X_test_vect = vectorizer(np.array([[s] for s in X_test])).numpy()
+
         # Finally do the predictions
-        report_accuracy_score(model.predict(X_test_vect), Y_test_bin)
+        report_accuracy_score(model.predict(X_test), Y_test_bin)
 
 
 if __name__ == '__main__':
