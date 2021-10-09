@@ -119,7 +119,11 @@ class ModelTransformer():
         max_length=100,
         epochs=3,
         batch_size=8,
-        learning_rate=5e-5):
+        learning_rate=5e-5,
+        polinomial_decay_args=dict(
+            decay_steps=10000,
+            )
+        ):
         '''Create the Keras model to use'''
         
         # Create and compile model

@@ -31,13 +31,13 @@ def create_arg_parser():
     parser.add_argument("-lm", "--language-model", default=None, type=str,
                         help="Name of pretrained language model to use.\n" +
                         "If not specified will use a LSTM model.")
-    parser.add_argument("-ep","--epochs", default=None, type=str,
+    parser.add_argument("-ep","--epochs", default=None, type=int,
                         help="Override the default number of epochs to train the model.")
-    parser.add_argument("-bs","--batch-size", default=None, type=str,
+    parser.add_argument("-bs","--batch-size", default=None, type=int,
                         help="Override the default batch size.")
-    parser.add_argument("-lr","--learning-rate", default=None, type=str,
+    parser.add_argument("-lr","--learning-rate", default=None, type=float,
                         help="Override the default learning rate.")
-    parser.add_argument("--max-length", default=None, type=str,
+    parser.add_argument("--max-length", default=None, type=int,
                         help="Override the default maximum length of language model input.\n" +
                         "Only affects when using language models.")
     
