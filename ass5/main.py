@@ -25,11 +25,29 @@ def create_arg_parser():
                         help="Separate dev set to read in (default dev.txt)")
     parser.add_argument("-t", "--test_file", type=str,
                         help="If added, use trained model to predict on test set")
-    parser.add_argument("-e", "--embeddings", default='glove_reviews.json', type=str,
-                        help="Embedding file we are using (default glove_reviews.json)")
+    parser.add_argument("-emb", "--embeddings", default='glove_reviews.json', type=str,
+                        help="Embedding file we are using (default glove_reviews.json).\n" +
+                        "Has no effect when using pretrained language models.")
+    parser.add_argument("-lm", "--language-model", default=None, type=str,
+                        help="Name of pretrained language model to use.\n" +
+                        "If not specified will use a LSTM model.")
+    parser.add_argument("-ep","--epochs", default=None, type=str,
+                        help="Override the default number of epochs to train the model.")
+    parser.add_argument("-bs","--batch-size", default=None, type=str,
+                        help="Override the default batch size.")
+    parser.add_argument("-lr","--learning-rate", default=None, type=str,
+                        help="Override the default learning rate.")
+    parser.add_argument("--max-length", default=None, type=str,
+                        help="Override the default maximum length of language model input.\n" +
+                        "Only affects when using language models.")
+    
+    
     args = parser.parse_args()
     return args
 
+LM_ALIASES = dict(
+    bert="bert-base-uncased",
+    )
 
 def main():
     '''Main function to train and test neural network given cmd line arguments'''
@@ -38,17 +56,29 @@ def main():
     # Read in the data and embeddings
     X_train, Y_train = read_corpus(args.train_file)
     X_dev, Y_dev = read_corpus(args.dev_file)
-    embeddings = read_embeddings(args.embeddings)
-
+    
     # Transform string labels to one-hot encodings
     encoder = LabelBinarizer()
     # Use encoder.classes_ to find mapping back
     Y_train_bin = encoder.fit_transform(Y_train)
     Y_dev_bin = encoder.fit_transform(Y_dev)
 
+    # Define general model params
+    model_params = dict()
+    if args.epochs: model_params["epochs"] = args.epochs
+    if args.batch_size: model_params["batch_size"] = args.batch_size
+    if args.learning_rate: model_params["learning_rate"] = args.learning_rate
+    
     # Create model
-    model = ModelTransformer()
-    #model = ModelLSTM(embeddings, X_all=X_train+X_dev)
+    if not args.language_model: 
+        embeddings = read_embeddings(args.embeddings)
+        model = ModelLSTM(embeddings, X_all=X_train+X_dev, **model_params)
+    else:
+        if args.max_length: model_params["max_length"] = args.max_length
+        
+        lm = LM_ALIASES[args.language_model]
+        model = ModelTransformer(lm=lm,**model_params)
+    
 
     # Transform input to vectorized input
 

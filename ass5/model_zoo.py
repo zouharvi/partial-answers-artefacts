@@ -13,7 +13,12 @@ from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
 
 
 class ModelLSTM():
-    def __init__(self, embeddings, X_all=None):
+    def __init__(self, 
+            embeddings,
+            X_all=None,
+            epochs=50,
+            batch_size=16,
+            learning_rate=1e-3):
         '''Create the Keras model to use'''
         self.embeddings = embeddings
 
@@ -68,9 +73,12 @@ class ModelLSTM():
         self.model.compile(
             loss=CategoricalCrossentropy(label_smoothing=0.1),
             # optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-            optimizer=AdamW(learning_rate=0.001, weight_decay=0.0001),
+            optimizer=AdamW(learning_rate=learning_rate, weight_decay=0.0001),
             metrics=['accuracy']
         )
+        
+        self.batch_size = batch_size
+        self.epochs = epochs
 
     def train(self, X_train, Y_train, X_dev, Y_dev):
         '''Train the model here. Note the different settings you can experiment with!'''
@@ -85,18 +93,17 @@ class ModelLSTM():
         # Potentially change these to cmd line args again
         # And yes, don't be afraid to experiment!
         verbose = 1
-        batch_size = 16
-        epochs = 50
+        
         # Early stopping: stop training when there are three consecutive epochs without improving
         # It's also possible to monitor the training loss with monitor="loss"
         callback = tf.keras.callbacks.EarlyStopping(
-            monitor='val_accuracy', patience=5
+            monitor='val_accuracy', patience=5,# restore_best_weights=True
         )
 
         # Finally fit the model to our data
         self.model.fit(
-            X_train_vect, Y_train, verbose=verbose, epochs=epochs,
-            callbacks=[callback], batch_size=batch_size,
+            X_train_vect, Y_train, verbose=verbose, epochs=self.epochs,
+            callbacks=[callback], batch_size=self.batch_size,
             validation_data=(X_dev_vect, Y_dev)
         )
         # Print final accuracy for the model (clearer overview)
