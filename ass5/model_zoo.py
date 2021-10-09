@@ -11,7 +11,6 @@ from keras.losses import CategoricalCrossentropy
 from utils import report_accuracy_score, get_emb_matrix
 from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
 
-
 class ModelLSTM():
     def __init__(self, 
             embeddings,
@@ -25,7 +24,7 @@ class ModelLSTM():
         # VECTORIZE
         # Transform words to indices using a vectorizer
         self.vectorizer = TextVectorization(
-            standardize=None, output_sequence_length=50
+            standardize=None, output_sequence_length=300
         )
         # Use train and dev to create vocab - could also do just train
         text_ds = tf.data.Dataset.from_tensor_slices(X_all)
@@ -42,9 +41,12 @@ class ModelLSTM():
         self.model = Sequential()
         self.model.add(Embedding(
             num_tokens, embedding_dim,
-            embeddings_initializer=Constant(embd_matrix),
+            # embeddings_initializer=Constant(embd_matrix),
             trainable=True,
-            embeddings_regularizer=regularizers.l1_l2(l1=1e-6, l2=1e-5),
+            embeddings_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4),
+        ))
+        self.model.add(Dense(
+            units=300, activation=None, use_bias=True
         ))
 
         # Here you should add LSTM layers (and potentially dropout)
@@ -71,7 +73,7 @@ class ModelLSTM():
 
         # Compile model using our settings, check for accuracy
         self.model.compile(
-            loss=CategoricalCrossentropy(label_smoothing=0.1),
+            loss=CategoricalCrossentropy(label_smoothing=0.0),
             # optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
             optimizer=AdamW(learning_rate=learning_rate, weight_decay=0.0001),
             metrics=['accuracy']
