@@ -47,8 +47,8 @@ def main():
     Y_dev_bin = encoder.fit_transform(Y_dev)
 
     # Create model
-    # model = ModelBERT(embeddings, X_all=X_train+X_dev)
-    model = ModelLSTM(embeddings, X_all=X_train+X_dev)
+    model = ModelTransformer()
+    #model = ModelLSTM(embeddings, X_all=X_train+X_dev)
 
     # Transform input to vectorized input
 
