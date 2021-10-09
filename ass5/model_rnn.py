@@ -3,29 +3,26 @@ import tensorflow as tf
 from keras import regularizers
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout
-from keras.layers import Embedding, LSTM, GRU, Bidirectional
+from keras.layers import Embedding, LSTM, GRU, SimpleRNN, Bidirectional
 from keras.layers.preprocessing.text_vectorization import TextVectorization
 from keras.initializers import Constant
 from tensorflow_addons.optimizers import AdamW
 from keras.losses import CategoricalCrossentropy
 from utils import report_accuracy_score, get_emb_matrix
-from transformers import AutoTokenizer, TFAutoModelForSequenceClassification
 
-
-class ModelLSTM():
+class ModelRNN():
     def __init__(self, 
             embeddings,
             X_all=None,
-            epochs=50,
-            batch_size=16,
-            learning_rate=1e-3):
-        '''Create the Keras model to use'''
+            args=None):
+        '''TODO xxxxxxxxx'''
+        
         self.embeddings = embeddings
 
         # VECTORIZE
         # Transform words to indices using a vectorizer
         self.vectorizer = TextVectorization(
-            standardize=None, output_sequence_length=50
+            standardize=None, output_sequence_length=300
         )
         # Use train and dev to create vocab - could also do just train
         text_ds = tf.data.Dataset.from_tensor_slices(X_all)
@@ -42,17 +39,27 @@ class ModelLSTM():
         self.model = Sequential()
         self.model.add(Embedding(
             num_tokens, embedding_dim,
-            embeddings_initializer=Constant(embd_matrix),
-            trainable=True,
-            embeddings_regularizer=regularizers.l1_l2(l1=1e-6, l2=1e-5),
+            embeddings_initializer=None if args.embd_random else Constant(embd_matrix),
+            trainable=not args.embd_not_trainable,
+            embeddings_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4) if args.embd_reg else None,
         ))
 
-        # Here you should add LSTM layers (and potentially dropout)
+        if args.embd_dense:
+            self.model.add(Dense(
+                units=300, activation=None, use_bias=True
+            ))
+
+        UNIT = {
+            "lstm": LSTM,
+            "gru": GRU,
+            "rnn": SimpleRNN,
+        }[args.embd_unit.lower()]
+
         self.model.add(Bidirectional(
-            LSTM(units=128, dropout=0.1, return_sequences=True,)
+            UNIT(units=128, dropout=0.1, return_sequences=True,)
         ))
         self.model.add(Bidirectional(
-            LSTM(units=128, dropout=0.1)
+            UNIT(units=128, dropout=0.1)
         ))
 
         self.model.add(Dense(
@@ -71,14 +78,14 @@ class ModelLSTM():
 
         # Compile model using our settings, check for accuracy
         self.model.compile(
-            loss=CategoricalCrossentropy(label_smoothing=0.1),
+            loss=CategoricalCrossentropy(label_smoothing=0.0),
             # optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-            optimizer=AdamW(learning_rate=learning_rate, weight_decay=0.0001),
+            optimizer=AdamW(learning_rate=args.learning_rate, weight_decay=0.0001),
             metrics=['accuracy']
         )
         
-        self.batch_size = batch_size
-        self.epochs = epochs
+        self.batch_size = args.batch_size
+        self.epochs = args.epochs
 
     def train(self, X_train, Y_train, X_dev, Y_dev):
         '''Train the model here. Note the different settings you can experiment with!'''
@@ -112,57 +119,3 @@ class ModelLSTM():
     def predict(self, X_test):
         X_test_vect = self.vectorizer(np.array([[s] for s in X_test])).numpy()
         return self.model.predict(X_test_vect)
-
-class ModelTransformer():
-    def __init__(self,
-        lm="bert-base-uncased",
-        max_length=100,
-        epochs=3,
-        batch_size=8,
-        learning_rate=5e-5,
-        polinomial_decay_args=dict(
-            decay_steps=10000,
-            )
-        ):
-        '''Create the Keras model to use'''
-        
-        # Create and compile model
-        model = TFAutoModelForSequenceClassification.from_pretrained(
-            lm, num_labels=6
-        )
-        loss_function = tf.keras.losses.CategoricalCrossentropy(
-            from_logits=True
-        )
-        optim = tf.keras.optimizers.Adam(learning_rate=learning_rate)
-        model.compile(
-            loss=loss_function, optimizer=optim,
-            metrics=['accuracy']
-        )
-        
-        # Assign class attributes
-        self.tokenizer = AutoTokenizer.from_pretrained(lm)
-        self.model = model
-        self.max_length = max_length
-        self.epochs = epochs
-        self.batch_size = batch_size
-
-    def train(self, X_train, Y_train, X_dev, Y_dev):
-        '''Train the model here. Note the different settings you can experiment with!'''
-        tokens_train = self.tokenizer(
-            X_train, padding=True, max_length=self.max_length,
-            truncation=True, return_tensors="np").data
-        tokens_dev = self.tokenizer(
-            X_dev, padding=True, max_length=self.max_length,
-            truncation=True, return_tensors="np").data
-        self.model.fit(
-            tokens_train, Y_train, verbose=1, epochs=self.epochs,
-            batch_size=self.batch_size, validation_data=(tokens_dev, Y_dev)
-        )
-        Y_pred = self.model.predict(tokens_dev)["logits"]
-        report_accuracy_score(Y_dev, Y_pred)
-        
-    def predict(self, X_test):
-        x_tokens = self.tokenizer(
-            X_test, padding=True, max_length=self.max_length,
-            truncation=True, return_tensors="np").data
-        return self.model.predict(x_tokens)["logits"]
