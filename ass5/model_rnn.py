@@ -58,7 +58,8 @@ class ModelRNN():
 
         rnn_params = {
             "units": 128,
-            "dropout": 0.1,
+            "dropout": args.rnn_dropout,
+            "recurrent_dropout": args.rnn_dropout_rec,
             "go_backwards": args.rnn_backwards,
         }
 
@@ -81,7 +82,7 @@ class ModelRNN():
         self.model.add(Dense(
             units=128, activation="relu"
         ))
-        self.model.add(Dropout(0.1))
+        self.model.add(Dropout(args.dense_dropout))
         self.model.add(Dense(
             units=64, activation="relu"
         ))
@@ -92,11 +93,18 @@ class ModelRNN():
             units=6, activation="softmax"
         ))
 
+        optimizer = {
+            "adamw": AdamW(learning_rate=args.learning_rate, weight_decay=1e-4),
+            "adam": tf.keras.optimizers.Adam(learning_rate=args.learning_rate),
+            "sgd": tf.keras.optimizers.SGD(learning_rate=args.learning_rate),
+            "rmsprop": tf.keras.optimizers.RMSprop(learning_rate=args.learning_rate),
+        }[args.optimizer.lower()]
+
         # Compile model using our settings, check for accuracy
         self.model.compile(
             loss=CategoricalCrossentropy(label_smoothing=0.0),
             # optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-            optimizer=AdamW(learning_rate=args.learning_rate, weight_decay=0.0001),
+            optimizer=optimizer,
             metrics=['accuracy']
         )
         

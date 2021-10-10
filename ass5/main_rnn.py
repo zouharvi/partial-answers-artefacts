@@ -30,6 +30,8 @@ def create_arg_parser():
     parser.add_argument("-ep", "--epochs", default=50, type=int)
     parser.add_argument("-bs", "--batch-size", default=16, type=int)
     parser.add_argument("-lr", "--learning-rate", default=1e-3, type=float)
+    parser.add_argument("--optimizer", default="AdamW",
+                        help="Which optimizer to use (AdamW, Adam, SGD, RMSProp)")
     parser.add_argument("--embd-dense", action="store_true",
                         help="Use a dense layer after embedding")
     parser.add_argument("--embd-random", action="store_true",
@@ -48,9 +50,18 @@ def create_arg_parser():
                         help="Process words backward")
     parser.add_argument("--rnn-bimerge", default="concat",
                         help="Which merge operation to use after bidirectional layer")
+    parser.add_argument("--dense-dropout", type=float, default=0.1,
+                        help="Dropout after the first dense layer after RNN")
+    parser.add_argument("--rnn-dropout", type=float, default=0.1,
+                        help="Dropout after the recurrent layers (not recurrent dropout)")
+    parser.add_argument("--rnn-dropout-rec", type=float, default=0.0,
+                        help="Recurrent dropout after the recurrent layers")
+    parser.add_argument("--label-smoothing", type=float, default=0.0,
+                        help="How much to smooth the labels")
 
     args = parser.parse_args()
     return args
+
 
 def main():
     '''Main function to train and test neural network given cmd line arguments'''
@@ -87,6 +98,7 @@ def main():
 
         # Finally do the predictions
         report_accuracy_score(model.predict(X_test), Y_test_bin)
+
 
 if __name__ == '__main__':
     main()
