@@ -28,10 +28,6 @@ def create_arg_parser():
                         help="Which encoder to use: glove-{a,m}, {bert,sbert,dpr}-{c,t}")
     parser.add_argument("--embeddings", default='glove_reviews.json',
                         help="Path to glove file embedding")
-    parser.add_argument("--cn", action="store_true",
-                        help="Whether to center and normalize")
-    parser.add_argument("-k", type=int, default=3, help="Number of nearest neighbours")
-    parser.add_argument("-w", default="distance", help="What weighting scheme to use")
     
     args = parser.parse_args()
     return args
