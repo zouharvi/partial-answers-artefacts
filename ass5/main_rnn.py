@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-'''TODO: add high-level description of this Python script'''
+'''Train a customizable RNN model'''
 
 import random as python_random
 import argparse
@@ -85,19 +85,20 @@ def main():
         args=args,
     )
 
-    # Transform input to vectorized input
-
     # Train the model
     model.train(X_train, Y_train_bin, X_dev, Y_dev_bin)
 
-    # Do predictions on specified test set
+    # compute test accuracy if a test file has been passed 
     if args.test_file:
-        # Read in test set and vectorize
+        # read in test set and vectorize
         X_test, Y_test = read_corpus(args.test_file)
         Y_test_bin = encoder.fit_transform(Y_test)
+        X_test_vect = model.vectorizer(
+            np.array([[s] for s in X_test])
+        ).numpy()
 
-        # Finally do the predictions
-        report_accuracy_score(model.predict(X_test), Y_test_bin)
+        # compute predictions and report results
+        report_accuracy_score(model.model.predict(X_test_vect), Y_test_bin)
 
 
 if __name__ == '__main__':

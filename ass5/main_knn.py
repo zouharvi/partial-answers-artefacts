@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-'''TODO: add high-level description of this Python script'''
+'''Perform 6-way review classification using embeddings based on BERT-like models'''
 
 import random as python_random
 import argparse
@@ -42,13 +42,15 @@ def main():
     X_dev, Y_dev = read_corpus(args.dev_file)
     embeddings = read_embeddings(args.embeddings)
 
-    # Transform string labels to one-hot encodings
+    # transform string labels to one-hot encodings
     encoder = LabelBinarizer()
-    # Use encoder.classes_ to find mapping back
     Y_train_bin = encoder.fit_transform(Y_train)
     Y_dev_bin = encoder.fit_transform(Y_dev)
     Y_dev_m = np.argmax(Y_dev_bin, axis=1)
 
+    # compute the encoding for all reviews
+    # note: this could be perhaps hidden behind a lazy lambda to reduce the number of lines
+    # but this seems more straightforward
     if args.encoder == "tfidf":
         X_all = encoder_tfidf(X_train+X_dev, max_features=None)
     elif args.encoder == "tfidf-m":
@@ -78,6 +80,7 @@ def main():
     else:
         raise Exception("Unknown encoder model")
 
+    # Iterate 3 levels of parameters (centering, voting, n_neighbors)
     for center in [False, True]:
         if center:
             X_cur = center_norm(X_all)
@@ -85,13 +88,14 @@ def main():
             X_cur = X_all
         X_train, X_dev = X_cur[:len(X_train)], X_cur[len(X_train):]
         for weights in ["uniform", "distance"]:
-
             for k in [1, 3, 5, 7, 9, 11, 13, 15, 17]:
+                # create, "fit" and evaluate the KNN
                 model = KNeighborsClassifier(n_neighbors=k, weights=weights)
                 model.fit(X_train, Y_train_bin)
                 Y_dev_pred = model.predict(X_dev)
                 Y_dev_pred_m = np.argmax(Y_dev_pred, axis=1)
 
+                # compute score and print
                 score = accuracy_score(Y_dev_m, Y_dev_pred_m)
                 print(
                     ("c" if center else "-") +
