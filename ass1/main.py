@@ -19,6 +19,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.dummy import DummyClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.base import BaseEstimator
+from sklearn.svm import SVC
 
 # Misc
 from typing import Union
@@ -43,10 +44,14 @@ def parse_args() -> Namespace:
     # Arguments
     parser.add_argument("-i", "--input-file", default='reviews.txt', type=str,
                         help="Input file to learn from (default reviews.txt)")
+    parser.add_argument("-d", "--dev_file", default='dev.txt',
+                        help="Separate dev set to read in")
     parser.add_argument("-s", "--sentiment", action="store_true",
                         help="Do sentiment analysis (2-class problem)")
     parser.add_argument("-t", "--tf-idf", action="store_true",
                         help="Use the TF-IDF vectorizer instead of CountVectorizer")
+    parser.add_argument("--tf-idf-boost", action="store_true",
+                        help="Add extra tf-idf parameters to boost performance")
     parser.add_argument("-tp", "--test-percentage", default=0.1, type=float,
                         help="Percentage of the data that is used for the test set (default 0.20)")
     parser.add_argument("--model", default="nb",
@@ -121,6 +126,7 @@ def model_factory(model: str) -> BaseEstimator:
 
     model_lib = {
         "nb": lambda: MultinomialNB(),
+        "svc": lambda: SVC(),
         "lr": lambda: LogisticRegression(max_iter=5000),
         "mccc": lambda: DummyClassifier(strategy="most_frequent"),
     }
@@ -190,17 +196,25 @@ if __name__ == "__main__":
     # load the corpus and split the data
     X_full, Y_full = read_corpus(args.input_file, args.sentiment)
 
-    # use scikit's built-in splitting function to save space
-    X_train, X_test, Y_train, Y_test = train_test_split(
-        X_full, Y_full,
-        test_size=args.test_percentage,
-        random_state=args.seed,
-        shuffle=args.shuffle
-    )
+    if args.dev_file:
+        X_train, Y_train = X_full, Y_full
+        X_test, Y_test = read_corpus(args.dev_file, args.sentiment)
+        
+    else:
+        # use scikit's built-in splitting function to save space
+        X_train, X_test, Y_train, Y_test = train_test_split(
+            X_full, Y_full,
+            test_size=args.test_percentage,
+            random_state=args.seed,
+            shuffle=args.shuffle
+        )
 
     # compute features
     if args.tf_idf:
-        vec = TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
+        if args.tf_idf_boost:
+            vec = TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x, ngram_range=(1,3), max_features=80*10**3)
+        else:
+            vec = TfidfVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
     else:  # Bag of words
         vec = CountVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
 
@@ -214,9 +228,12 @@ if __name__ == "__main__":
         # Fit classifier and make predictions
         classifier.fit(X_train, Y_train)
         Y_pred = classifier.predict(X_test)
+        Y_pred_train = classifier.predict(X_train)
 
         # Compute metrics
         score = complete_scoring(Y_test, Y_pred)
+        score_train = accuracy_score(Y_train, Y_pred_train)
+        print(f"Accuracy train: {score_train:.2%}")
 
         # Report scores
         labels = np.unique(Y_full)
