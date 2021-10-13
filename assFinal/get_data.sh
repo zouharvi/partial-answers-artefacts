@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo "Make sure you're running me from the top-level directory, so that data will be stored in 'data/final/' [ctrl-C to exit]"
+echo "Make sure you're running me from the top-level directory, so that data will be stored in 'data/final/' [Ctrl-C to exit]"
 read _
 
 mkdir -p data/final/
