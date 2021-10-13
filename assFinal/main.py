@@ -14,8 +14,7 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
     data = load_data(args.data)
-    assert len(data) == 33660
-    assert all([
-        set(article.keys()) == {'path', 'raw_text', 'newspaper', 'date', 'headline', 'body', 'classification', 'cop_edition'}
-        for article in data
-    ])
+    binarizer, data = streamline_data(data)
+    print(binarizer.classes_)
+    print(data[0][0]) # headline
+    print(data[0][1]) # class
