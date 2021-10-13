@@ -2,6 +2,7 @@
 
 import argparse
 from utils import *
+import numpy as np
 
 def parse_args():
     args = argparse.ArgumentParser()
@@ -14,12 +15,15 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
     data = load_data(args.data)
-    # data[2].pop("body")
-    # data[2].pop("raw_text")
-    # print(data[2])
-    input()
-    binarizer, data = streamline_data(data, y_filter="newspaper")
+    binarizer, data = streamline_data(data, y_filter="subject")
+    
+    print(len(data), "samples loaded")
     print(list(binarizer.classes_))
     print(len(binarizer.classes_), "classes in total")
-    print("X[0]:", data[0][0]) # headline
-    print("Y[0]:", data[0][1]) # class
+    
+    example = data[10]
+    print("exampleX:", example[0])
+    print("exampleY:", example[1])
+    for i, val in enumerate(example[1]):
+        if val:
+            print(binarizer.classes_[i])

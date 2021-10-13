@@ -49,6 +49,10 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper", freq_cutoff
         def x_filter(x): return x["headline"]
     elif x_filter == "body":
         def x_filter(x): return x["body"]
+    elif callable(x_filter):
+        pass
+    else:
+        raise Exception("Invalid x_filter parameter")
 
     if y_filter == "newspaper":
         def y_filter(x): return [x["newspaper"]]
@@ -56,8 +60,14 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper", freq_cutoff
         def y_filter(x): return [NEWSPAPER_TO_COUNTRY[x["newspaper"]]]
     elif y_filter == "newspaper_compas":
         def y_filter(x): return [NEWSPAPER_TO_COMPAS[x["newspaper"]]]
+    elif y_filter == "month":
+        def y_filter(x): return [x["date"].split()[0]]
+    elif y_filter == "year":
+        def y_filter(x): return [x["date"].split()[-1]]
     elif y_filter == "organization":
         raise DeprecationWarning("The class ORGANIZATION has been deprecated because of low diverse frequency representation")
+    elif y_filter == "industry":
+        raise DeprecationWarning("The class INDUSTRY has been deprecated because of high overlap with SUBJECT")
     elif y_filter in {"subject", "industry", "geographic"}:
         y_filter_key = str(y_filter)
 
@@ -73,9 +83,13 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper", freq_cutoff
         if freq_cutoff is None:
             freq_cutoff = {
                 "subject": 1000,
-                "industry": 1000,
-                "geographic": 500,
+                "geographic": 250,
             }[y_filter_key]
+    elif callable(y_filter):
+        pass
+    else:
+        raise Exception("Invalid y_filter parameter")
+
 
     data_x = [
         x_filter(article)
@@ -100,4 +114,7 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper", freq_cutoff
     binarizer = MultiLabelBinarizer()
     data_y = binarizer.fit_transform(data_y)
 
-    return binarizer, list(zip(data_x, data_y))
+    # remove articles with no classes
+    data = [(x, y) for x, y in zip(data_x, data_y) if sum(y) != 0]
+
+    return binarizer, data
