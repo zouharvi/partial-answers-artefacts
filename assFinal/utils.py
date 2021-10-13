@@ -20,7 +20,9 @@ def load_data(path, check=False):
     if check:
         assert len(data) == 33660
         assert all([
-            set(article.keys()) == {'path', 'raw_text', 'newspaper', 'date', 'headline', 'body', 'classification', 'cop_edition'}
+            set(article.keys()) == {
+                'path', 'raw_text', 'newspaper', 'date', 'headline', 'body', 'classification', 'cop_edition'
+            }
             for article in data
         ])
 
@@ -35,17 +37,29 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper"):
 
     if y_filter == "newspaper":
         def y_filter(x): return [x["newspaper"]]
-    if y_filter in {"subject", "organization", "industry", "geographic"}:
+    elif y_filter in {"subject", "organization", "industry", "geographic"}:
+        y_filter_key = str(y_filter)
+
         def y_filter(x):
-            return {item["name"] for item in x["classification"]["subject"]}
+            if x["classification"][y_filter_key] is None:
+                return set()
+            else:
+                return {
+                    item["name"]
+                    for item in x["classification"][y_filter_key]
+                    # filter classes which are not composed of uppercase letters
+                    if all([x.isupper() for x in item["name"]])
+                }
 
     data_x = [
         x_filter(article)
         for article in data
     ]
+    
     binarizer = MultiLabelBinarizer()
     data_y = binarizer.fit_transform([
         y_filter(article)
         for article in data
     ])
+
     return binarizer, list(zip(data_x, data_y))
