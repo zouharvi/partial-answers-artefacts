@@ -1,4 +1,5 @@
 import utils
+import utils_data
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -37,7 +38,7 @@ if __name__ == "__main__":
     print(data[0].keys())
     
     df["newspaper"] = list(map(op.itemgetter("newspaper"),data))
-    #df["newspaper_compas"] = list(map(op.itemgetter("newspaper_compas"),data))
+    df["newspaper_compas"] = list(map(utils_data.NEWSPAPER_TO_COMPAS.__getitem__,df["newspaper"]))
 
     plt.figure(figsize=(16,9))
     for label in df[args.label_key].unique():

@@ -1,6 +1,15 @@
-# Learning from Data
+# Learning from Data - Final project
 
 Solutions of me (Vilém) and Edu for 2021/2022 course Learning from Data at RUG (Rijksuniversiteit Groningen).
+
+## Running the code
+
+First download the data by running `assFinal/get_data.sh`.
+The dataset should then be located in `data/final/COP.all.json`.
+
+## Repository structure
+
+TODO:
 
 ## Other Reports
 
