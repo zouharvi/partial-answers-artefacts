@@ -2,6 +2,13 @@ import json
 from sklearn.preprocessing import MultiLabelBinarizer
 from utils_data import *
 from collections import Counter
+import torch
+
+if torch.cuda.is_available():
+    DEVICE = torch.device("cuda")
+else:
+    DEVICE = torch.device("cpu")
+DEVICE_CPU = torch.device("cpu")
 
 def load_data(path, check=False):
     """
@@ -34,6 +41,8 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper", freq_cutoff
     Automatically prepare and sanitize data to list of (text, class) where class has been binarized.
     Available y_filter are newspaper, newspaper_country, newspaper_compas, subject, industry, geographic.
     If freq_cutoff is None, then defaults for subject, industry and geographic will be used.
+
+    Returns (Binarizer, [(text, binarized class)])
     """
 
     if x_filter == "headline":

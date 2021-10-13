@@ -17,6 +17,7 @@ if __name__ == "__main__":
     # data[2].pop("body")
     # data[2].pop("raw_text")
     # print(data[2])
+    input()
     binarizer, data = streamline_data(data, y_filter="newspaper")
     print(list(binarizer.classes_))
     print(len(binarizer.classes_), "classes in total")
