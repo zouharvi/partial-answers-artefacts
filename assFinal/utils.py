@@ -1,6 +1,6 @@
 import json
 from sklearn.preprocessing import MultiLabelBinarizer
-
+from utils_data import *
 
 def load_data(path, check=False):
     """
@@ -28,7 +28,6 @@ def load_data(path, check=False):
 
     return data
 
-
 def streamline_data(data, x_filter="headline", y_filter="newspaper"):
     if x_filter == "headline":
         def x_filter(x): return x["headline"]
@@ -37,6 +36,10 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper"):
 
     if y_filter == "newspaper":
         def y_filter(x): return [x["newspaper"]]
+    elif y_filter == "newspaper_country":
+        def y_filter(x): return [NEWSPAPER_TO_COUNTRY[x["newspaper"]]]
+    elif y_filter == "newspaper_compas":
+        def y_filter(x): return [NEWSPAPER_TO_COMPAS[x["newspaper"]]]
     elif y_filter in {"subject", "organization", "industry", "geographic"}:
         y_filter_key = str(y_filter)
 

@@ -7,14 +7,14 @@ def parse_args():
     args = argparse.ArgumentParser()
     args.add_argument(
         "-d", "--data", default="data/final/COP.all.json",
-        help="Location of joined data JSON"
+        help="Location of joined data JSON",
     )
     return args.parse_args()
 
 if __name__ == "__main__":
     args = parse_args()
     data = load_data(args.data)
-    binarizer, data = streamline_data(data, y_filter="newspaper")
+    binarizer, data = streamline_data(data, y_filter="newspaper_compas")
     print(list(binarizer.classes_))
     print(len(binarizer.classes_), "classes in total")
     print("X[0]:", data[0][0]) # headline
