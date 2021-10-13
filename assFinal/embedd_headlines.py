@@ -1,20 +1,5 @@
-#!/usr/bin/env python3
-
-'''TODO: add high-level description of this Python script'''
-
-import random as python_random
+import utils
 import argparse
-import numpy as np
-from sklearn.metrics import accuracy_score
-from sklearn.preprocessing import LabelBinarizer
-import tensorflow as tf
-from utils import *
-from model_bert import *
-
-# Make reproducible as much as possible
-np.random.seed(1234)
-tf.random.set_seed(1234)
-python_random.seed(1234)
 
 
 def create_arg_parser():
@@ -49,58 +34,3 @@ def create_arg_parser():
 
     args = parser.parse_args()
     return args
-
-
-LM_ALIASES = dict(
-    bert="bert-base-uncased",
-    roberta="roberta-base",
-    albert="albert-base-v2",
-    distilroberta="distilroberta-base"
-)
-
-
-def main():
-    '''Main function to train and test neural network given cmd line arguments'''
-    args = create_arg_parser()
-
-    # Read in the data and embeddings
-    X_train, Y_train = read_corpus(args.train_file)
-    X_dev, Y_dev = read_corpus(args.dev_file)
-
-    # Transform string labels to one-hot encodings
-    encoder = LabelBinarizer()
-    # Use encoder.classes_ to find mapping back
-    Y_train_bin = encoder.fit_transform(Y_train)
-    Y_dev_bin = encoder.fit_transform(Y_dev)
-
-    # Define general model params
-    model_params = dict(embedd_strategy=args.strategy,freeze_lm=args.freeze)
-    if args.epochs:
-        model_params["epochs"] = args.epochs
-    if args.batch_size:
-        model_params["batch_size"] = args.batch_size
-    if args.learning_rate:
-        model_params["learning_rate"] = args.learning_rate
-    if args.max_length:
-        model_params["max_length"] = args.max_length
-
-    lm = LM_ALIASES[args.language_model]
-    model = ModelTransformer(lm=lm, **model_params)
-
-    # Transform input to vectorized input
-
-    # Train the model
-    model.train(X_train, Y_train_bin, X_dev, Y_dev_bin)
-
-    # Do predictions on specified test set
-    if args.test_file:
-        # Read in test set and vectorize
-        X_test, Y_test = read_corpus(args.test_file)
-        Y_test_bin = encoder.fit_transform(Y_test)
-
-        # Finally do the predictions
-        report_accuracy_score(model.predict(X_test), Y_test_bin)
-
-
-if __name__ == '__main__':
-    main()

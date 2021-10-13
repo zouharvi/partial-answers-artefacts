@@ -1,0 +1,2 @@
+run,lm,epochs,batch_size,learning_rate,max_length,comments,train_acc,dev_acc
+,bert,3,16,5e-5,128,Adam,0.9734,0.9360
