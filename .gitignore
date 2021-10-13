@@ -9,6 +9,7 @@ data/glove_filtered.json
 data/glove_reviews.json
 *.log
 pertrubed_data/
+data/final
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
