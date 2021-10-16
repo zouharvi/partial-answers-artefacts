@@ -15,7 +15,8 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
     data = load_data(args.data)
-    binarizer, data = streamline_data(data, y_filter="subject")
+    # binarizer, data = streamline_data(data, y_filter="subject")
+    binarizer, data = streamline_data_craftRestv1(data, y_filter="year")
     
     print(len(data), "samples loaded")
     print(list(binarizer.classes_))

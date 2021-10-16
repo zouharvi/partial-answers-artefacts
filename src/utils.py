@@ -1,7 +1,6 @@
 import json
 from sklearn.preprocessing import MultiLabelBinarizer
 from utils_data import *
-from collections import Counter
 import torch
 
 if torch.cuda.is_available():
@@ -37,69 +36,20 @@ def load_data_raw(path, check=False):
 
     return data
 
+
 def load_data(path):
     with open(path, "r") as f:
         return json.load(f)
+
 
 def save_data(path, data):
     with open(path, "w") as f:
         return json.dump(data, f)
 
-def filter_data(data, cutoff=False):
-    data_x = [
-        {
-            "headline": article["headline"],
-            "body": article["body"],
-        }
-        for article in data
-    ]
 
-    def y_filter(x, y_filter_key):
-        if x["classification"][y_filter_key] is None:
-            return []
-        else:
-            return [
-                item["name"]
-                for item in x["classification"][y_filter_key]
-            ]
-
-    data_y = [
-        {
-            "newspaper": article["newspaper"],
-            "newspaper_country": NEWSPAPER_TO_COUNTRY[article["newspaper"]],
-            "newspaper_compas": NEWSPAPER_TO_COMPAS[article["newspaper"]],
-            "month": article["date"].split()[0],
-            "year": article["date"].split()[-1],
-            "subject": y_filter(article, "subject"),
-            "geographic": y_filter(article, "geographic"),
-        }
-        for article in data
-    ]
-
-    counter_sub = Counter()
-    counter_geo = Counter()
-    for article_y in data_y:
-        counter_sub.update(article_y["subject"])
-        counter_geo.update(article_y["geographic"])
-    allowed_sub = {x[0] for x in counter_sub.most_common() if x[1] >= 1000}
-    allowed_geo = {x[0] for x in counter_geo.most_common() if x[1] >= 250}
-
-    data_y = [
-        {
-            **article_y,
-            "subject": [x for x in article_y["subject"] if x in allowed_sub],
-            "geographic": [x for x in article_y["geographic"] if x in allowed_geo],
-        }
-        for article_y in data_y
-    ]
-
-    data = [
-        (x, y)
-        for x, y in zip(data_x, data_y)
-        if (not cutoff) or (len(y["subject"]) != 0 and len(y["geographic"]) != 0)
-    ]
-
-    return data
+X_KEYS = {"headline", "body"}
+Y_KEYS = {"newspaper", "newspaper_country", "newspaper_compas",
+          "month", "year", "subject", "geographic"}
 
 
 def streamline_data(data, x_filter="headline", y_filter="newspaper"):
@@ -111,7 +61,7 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper"):
     Returns (Binarizer, [(text, binarized class)])
     """
 
-    if x_filter in {"headline", "body"}:
+    if x_filter in X_KEYS:
         x_filter_name = str(x_filter)
         def x_filter(x): return x[x_filter_name]
     elif callable(x_filter):
@@ -119,7 +69,7 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper"):
     else:
         raise Exception("Invalid x_filter parameter")
 
-    if y_filter in {"newspaper", "newspaper_country", "newspaper_compas", "month", "year", "subject", "geographic"}:
+    if y_filter in Y_KEYS:
         y_filter_name = str(y_filter)
         def y_filter(y): return y[y_filter_name]
     elif callable(y_filter):
@@ -128,11 +78,41 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper"):
         raise Exception("Invalid x_filter parameter")
 
     data_x, data_y = zip(*data)
-
     data_x = [x_filter(x) for x in data_x]
     data_y = [y_filter(y) for y in data_y]
 
+    return binarize_data(data_x, data_y)
+
+
+def binarize_data(data_x, data_y):
     binarizer = MultiLabelBinarizer()
     data_y = binarizer.fit_transform(data_y)
 
     return binarizer, list(zip(data_x, data_y))
+
+
+def streamline_data_craftRestv1(data, x_filter="headline", y_filter="newspaper"):
+    """
+    Prepends all answers to the input apart from the one specified by "y_filter_key"
+
+    Returns (Binarizer, [(text, binarized class)])
+    """
+    assert y_filter in Y_KEYS
+    assert x_filter in X_KEYS
+
+    # TODO: for now drop these lists because they are long and there is no clean way to fuse them into the model
+    Y_KEYS_LOCAL = Y_KEYS - {"subject", "geographic"} 
+    def x_manipulator(x, y):
+        y = {**y, y_filter: "None"}
+        return ' | '.join([y[k] for k in Y_KEYS_LOCAL]) + " | " + x[x_filter]
+
+    data_x = [
+        x_manipulator(x, y)
+        for x, y in data
+    ]
+    data_y = [
+        [y[y_filter]]
+        for x, y in data
+    ]
+
+    return binarize_data(data_x, data_y)

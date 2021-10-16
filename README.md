@@ -4,8 +4,16 @@ Solutions of me (Vilém) and Edu for 2021/2022 course Learning from Data at RUG 
 
 ## Running the code
 
-First download the data by running `assFinal/get_data.sh`.
-The dataset should then be located in `data/final/COP.all.json`.
+Run `make data_all` to load the data into `data/final/COP.clean.json`.
+
+## TODO
+- Joint models:
+  - BERT-based with independent classification "heads"
+  - BERT-based with predictions being individual tokens (early exit)
+- Individual models:
+  - BERT-based with single classification "head"
+  - BERT-based with first token begin the prediction (early exit)
+  - baseline models
 
 ## Repository structure
 
