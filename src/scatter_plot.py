@@ -12,7 +12,7 @@ import operator as op
 def parse_args():
     parser = argparse.ArgumentParser()
     
-    parser.add_argument("-i", "--input", default='data/final/COP.all.json', type=str,
+    parser.add_argument("-i", "--input", default='data/final/COP.clean.json', type=str,
                         help="Path to the news dataset.")
     parser.add_argument("-e", "--embeddings", type=str,
                         help="Path to the embeddings file to plot.")

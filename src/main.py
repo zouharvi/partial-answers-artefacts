@@ -7,7 +7,7 @@ import numpy as np
 def parse_args():
     args = argparse.ArgumentParser()
     args.add_argument(
-        "-d", "--data", default="data/final/COP.all.json",
+        "-d", "--data", default="data/final/COP.clean.json",
         help="Location of joined data JSON",
     )
     return args.parse_args()

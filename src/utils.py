@@ -10,7 +10,8 @@ else:
     DEVICE = torch.device("cpu")
 DEVICE_CPU = torch.device("cpu")
 
-def load_data(path, check=False):
+
+def load_data_raw(path, check=False):
     """
     Loads raw JSON file and parses it into a list of articles
     """
@@ -36,7 +37,72 @@ def load_data(path, check=False):
 
     return data
 
-def streamline_data(data, x_filter="headline", y_filter="newspaper", freq_cutoff=None):
+def load_data(path):
+    with open(path, "r") as f:
+        return json.load(f)
+
+def save_data(path, data):
+    with open(path, "w") as f:
+        return json.dump(data, f)
+
+def filter_data(data, cutoff=False):
+    data_x = [
+        {
+            "headline": article["headline"],
+            "body": article["body"],
+        }
+        for article in data
+    ]
+
+    def y_filter(x, y_filter_key):
+        if x["classification"][y_filter_key] is None:
+            return []
+        else:
+            return [
+                item["name"]
+                for item in x["classification"][y_filter_key]
+            ]
+
+    data_y = [
+        {
+            "newspaper": article["newspaper"],
+            "newspaper_country": NEWSPAPER_TO_COUNTRY[article["newspaper"]],
+            "newspaper_compas": NEWSPAPER_TO_COMPAS[article["newspaper"]],
+            "month": article["date"].split()[0],
+            "year": article["date"].split()[-1],
+            "subject": y_filter(article, "subject"),
+            "geographic": y_filter(article, "geographic"),
+        }
+        for article in data
+    ]
+
+    counter_sub = Counter()
+    counter_geo = Counter()
+    for article_y in data_y:
+        counter_sub.update(article_y["subject"])
+        counter_geo.update(article_y["geographic"])
+    allowed_sub = {x[0] for x in counter_sub.most_common() if x[1] >= 1000}
+    allowed_geo = {x[0] for x in counter_geo.most_common() if x[1] >= 250}
+
+    data_y = [
+        {
+            **article_y,
+            "subject": [x for x in article_y["subject"] if x in allowed_sub],
+            "geographic": [x for x in article_y["geographic"] if x in allowed_geo],
+        }
+        for article_y in data_y
+    ]
+
+    data = [
+        (x, y)
+        for x, y in zip(data_x, data_y)
+        if (not cutoff) or (len(y["subject"]) != 0 and len(y["geographic"]) != 0)
+    ]
+
+    return data
+
+
+def streamline_data(data, x_filter="headline", y_filter="newspaper"):
     """
     Automatically prepare and sanitize data to list of (text, class) where class has been binarized.
     Available y_filter are newspaper, newspaper_country, newspaper_compas, subject, industry, geographic.
@@ -45,76 +111,28 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper", freq_cutoff
     Returns (Binarizer, [(text, binarized class)])
     """
 
-    if x_filter == "headline":
-        def x_filter(x): return x["headline"]
-    elif x_filter == "body":
-        def x_filter(x): return x["body"]
+    if x_filter in {"headline", "body"}:
+        x_filter_name = str(x_filter)
+        def x_filter(x): return x[x_filter_name]
     elif callable(x_filter):
         pass
     else:
         raise Exception("Invalid x_filter parameter")
 
-    if y_filter == "newspaper":
-        def y_filter(x): return [x["newspaper"]]
-    elif y_filter == "newspaper_country":
-        def y_filter(x): return [NEWSPAPER_TO_COUNTRY[x["newspaper"]]]
-    elif y_filter == "newspaper_compas":
-        def y_filter(x): return [NEWSPAPER_TO_COMPAS[x["newspaper"]]]
-    elif y_filter == "month":
-        def y_filter(x): return [x["date"].split()[0]]
-    elif y_filter == "year":
-        def y_filter(x): return [x["date"].split()[-1]]
-    elif y_filter == "organization":
-        raise DeprecationWarning("The class ORGANIZATION has been deprecated because of low diverse frequency representation")
-    elif y_filter == "industry":
-        raise DeprecationWarning("The class INDUSTRY has been deprecated because of high overlap with SUBJECT")
-    elif y_filter in {"subject", "industry", "geographic"}:
-        y_filter_key = str(y_filter)
-
-        def y_filter(x):
-            if x["classification"][y_filter_key] is None:
-                return set()
-            else:
-                return [
-                    item["name"]
-                    for item in x["classification"][y_filter_key]
-                ]
-
-        if freq_cutoff is None:
-            freq_cutoff = {
-                "subject": 1000,
-                "geographic": 250,
-            }[y_filter_key]
+    if y_filter in {"newspaper", "newspaper_country", "newspaper_compas", "month", "year", "subject", "geographic"}:
+        y_filter_name = str(y_filter)
+        def y_filter(y): return y[y_filter_name]
     elif callable(y_filter):
         pass
     else:
-        raise Exception("Invalid y_filter parameter")
+        raise Exception("Invalid x_filter parameter")
 
+    data_x, data_y = zip(*filter_data(data, cutoff=True))
 
-    data_x = [
-        x_filter(article)
-        for article in data
-    ]
-    data_y = [
-        y_filter(article)
-        for article in data
-    ]
+    data_x = [x_filter(x) for x in data_x]
+    data_y = [y_filter(y) for y in data_y]
 
-    if freq_cutoff is not None:
-        counter = Counter()
-        for article_y in data_y:
-            counter.update(article_y)
-        allowed = {x[0] for x in counter.most_common() if x[1] >= freq_cutoff}
-        
-        data_y = [
-            [item for item in article_y if item in allowed]
-            for article_y in data_y
-        ]
-    
     binarizer = MultiLabelBinarizer()
     data_y = binarizer.fit_transform(data_y)
 
-    # remove articles with no classes
-    data = [(x, y) for x, y in zip(data_x, data_y) if sum(y) != 0]
-
-    return binarizer, data
+    return binarizer, list(zip(data_x, data_y))
