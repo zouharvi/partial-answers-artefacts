@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Script for preparing and cleaning the data
+"""
+
 import argparse
 from utils import *
 

@@ -24,4 +24,4 @@ _data:
 data: assert_top _data
 
 data_all: assert_top _data
-	python3 ./src/prepare_data.py --data-in data/final/COP.all.json --data-out data/final/COP.cleaned.json
+	python3 ./src/prepare_data.py --data-in data/final/COP.all.json --data-out data/final/COP.clean.json

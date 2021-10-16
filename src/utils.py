@@ -127,7 +127,7 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper"):
     else:
         raise Exception("Invalid x_filter parameter")
 
-    data_x, data_y = zip(*filter_data(data, cutoff=True))
+    data_x, data_y = zip(*data)
 
     data_x = [x_filter(x) for x in data_x]
     data_y = [y_filter(y) for y in data_y]
