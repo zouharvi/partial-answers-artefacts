@@ -11,11 +11,11 @@ from utils import *
 def parse_args():
     args = argparse.ArgumentParser()
     args.add_argument(
-        "--data-in", default="data/final/COP.all.json",
+        "--data-in", default="data/final/all.json",
         help="Location of joined data JSON",
     )
     args.add_argument(
-        "--data-out", default="data/final/COP.clean.json",
+        "--data-out", default="data/final/clean.json",
         help="Location of cleaned data JSON",
     )
     return args.parse_args()
@@ -42,8 +42,8 @@ def filter_data(data, cutoff=False):
     data_y = [
         {
             "newspaper": article["newspaper"],
-            "newspaper_country": NEWSPAPER_TO_COUNTRY[article["newspaper"]],
-            "newspaper_compas": NEWSPAPER_TO_COMPAS[article["newspaper"]],
+            "ncountry": NEWSPAPER_TO_COUNTRY[article["newspaper"]],
+            "ncompas": NEWSPAPER_TO_COMPAS[article["newspaper"]],
             "month": article["date"].split()[0],
             "year": article["date"].split()[-1],
             "subject": y_filter(article, "subject"),

@@ -11,17 +11,18 @@ _data:
 	unzip -j -d data/final/ data/final/COP.filt3.sub.zip
 
 	# join all JSON files together in a hacky way
-	echo "[" > data/final/COP.all.json
+	echo "[" > data/final/all.json
 	for f in data/final/COP*.filt3.sub.json ; do \
 		cat $$f ; \
 		echo -n "," ; \
-	done >> data/final/COP.all.json;
-	echo "]" >> data/final/COP.all.json
+	done >> data/final/all.json;
+	echo "]" >> data/final/all.json
 
 	# remove trailing comma
-	sed 's/,]/]/' -i data/final/COP.all.json
+	sed 's/,]/]/' -i data/final/all.json
 
 data: assert_top _data
 
 data_all: assert_top _data
-	python3 ./src/prepare_data.py --data-in data/final/COP.all.json --data-out data/final/COP.clean.json
+	python3 ./src/prepare_data.py --data-in data/final/all.json --data-out data/final/clean.json
+	python3 ./src/craft_data.py --data-in data/final/clean.json --data-out data/final/{LABEL}.json

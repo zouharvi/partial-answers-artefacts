@@ -10,7 +10,7 @@ import tqdm
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input", default='data/final/COP.clean.json', type=str,
+    parser.add_argument("-i", "--input", default='data/final/clean.json', type=str,
                         help="Path of the data file.")
     parser.add_argument("-o", "--output", default='data/final/embeddings.pkl', type=str,
                         help="Path where to store the embeddings.")

@@ -8,82 +8,52 @@ import argparse
 from collections import Counter
 from utils import *
 
+
+def craft_rv1(data, x_filter="headline", y_filter="newspaper"):
+    """
+    Rest vs. 1: Prepends all answers to the input apart from the one specified by "y_filter_key"
+
+    TODO returns?
+    """
+    assert y_filter in Y_KEYS
+    assert x_filter in X_KEYS
+
+    # TODO: for now drop these lists because they are long and there is no clean way to fuse them into the model
+    Y_KEYS_LOCAL = Y_KEYS - {"subject", "geographic"}
+
+    def x_manipulator(x, y):
+        y = {**y, y_filter: "None"}
+        return {
+            **x,
+            "craft": ' | '.join([y[k] for k in Y_KEYS_LOCAL]) + " | " + x[x_filter]
+        }
+
+    return [
+        (
+            x_manipulator(x, y),
+            {**y, "craft": y[y_filter]}
+        )
+        for x, y in data
+    ]
+
+
 def parse_args():
-    args = argparse.ArgumentParser()
+    args=argparse.ArgumentParser()
     args.add_argument(
-        "--data-in", default="data/final/COP.all.json",
+        "--data-in", default="data/final/clean.json",
         help="Location of joined data JSON",
     )
     args.add_argument(
-        "--data-out", default="data/final/COP.clean.json",
-        help="Location of cleaned data JSON",
+        "--data-out", default="data/final/{LABEL}.json",
+        help="Location of creafted data JSON, the {LABEL} token (including curly brakets) is going to be replaced by the data label",
     )
     return args.parse_args()
 
 
-def filter_data(data, cutoff=False):
-    data_x = [
-        {
-            "headline": article["headline"],
-            "body": article["body"],
-        }
-        for article in data
-    ]
-
-    def y_filter(x, y_filter_key):
-        if x["classification"][y_filter_key] is None:
-            return []
-        else:
-            return [
-                item["name"]
-                for item in x["classification"][y_filter_key]
-            ]
-
-    data_y = [
-        {
-            "newspaper": article["newspaper"],
-            "newspaper_country": NEWSPAPER_TO_COUNTRY[article["newspaper"]],
-            "newspaper_compas": NEWSPAPER_TO_COMPAS[article["newspaper"]],
-            "month": article["date"].split()[0],
-            "year": article["date"].split()[-1],
-            "subject": y_filter(article, "subject"),
-            "geographic": y_filter(article, "geographic"),
-        }
-        for article in data
-    ]
-
-    counter_sub = Counter()
-    counter_geo = Counter()
-    for article_y in data_y:
-        counter_sub.update(article_y["subject"])
-        counter_geo.update(article_y["geographic"])
-    allowed_sub = {x[0] for x in counter_sub.most_common() if x[1] >= 1000}
-    allowed_geo = {x[0] for x in counter_geo.most_common() if x[1] >= 250}
-
-    data_y = [
-        {
-            **article_y,
-            "subject": [x for x in article_y["subject"] if x in allowed_sub],
-            "geographic": [x for x in article_y["geographic"] if x in allowed_geo],
-        }
-        for article_y in data_y
-    ]
-
-    data = [
-        (x, y)
-        for x, y in zip(data_x, data_y)
-        if (not cutoff) or (len(y["subject"]) != 0 and len(y["geographic"]) != 0)
-    ]
-
-    return data
-
-
 if __name__ == "__main__":
-    args = parse_args()
-    data = load_data_raw(args.data_in)
-    print(len(data), "samples loaded")
-    data = filter_data(data, cutoff=True)
-    print(len(data), "samples after cleaning")
-    print("Fields X:", data[0][0].keys())
-    print("Fields Y:", data[0][1].keys())
-    save_data(args.data_out, data)
+    args=parse_args()
+    data=load_data(args.data_in)
+    for y_filter in Y_KEYS - {"subject", "geographic"}:
+        print("Crafting Rv1", y_filter)
+        data_new = craft_rv1(data, x_filter="headline", y_filter=y_filter)
+        save_data(args.data_out.replace("{LABEL}", y_filter+"_Rv1"), data_new)

@@ -48,20 +48,20 @@ def save_data(path, data):
 
 
 X_KEYS = {"headline", "body"}
-Y_KEYS = {"newspaper", "newspaper_country", "newspaper_compas",
+Y_KEYS = {"newspaper", "ncountry", "ncompas",
           "month", "year", "subject", "geographic"}
 
 
 def streamline_data(data, x_filter="headline", y_filter="newspaper"):
     """
     Automatically prepare and sanitize data to list of (text, class) where class has been binarized.
-    Available y_filter are newspaper, newspaper_country, newspaper_compas, subject, industry, geographic.
+    Available y_filter are newspaper, ncountry, ncompas, subject, industry, geographic.
     If freq_cutoff is None, then defaults for subject, industry and geographic will be used.
 
     Returns (Binarizer, [(text, binarized class)])
     """
 
-    if x_filter in X_KEYS:
+    if x_filter in X_KEYS | {"craft"}:
         x_filter_name = str(x_filter)
         def x_filter(x): return x[x_filter_name]
     elif callable(x_filter):
@@ -69,9 +69,9 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper"):
     else:
         raise Exception("Invalid x_filter parameter")
 
-    if y_filter in Y_KEYS:
+    if y_filter in Y_KEYS | {"craft"}:
         y_filter_name = str(y_filter)
-        def y_filter(y): return y[y_filter_name]
+        def y_filter(y): return [y[y_filter_name]]
     elif callable(y_filter):
         pass
     else:
@@ -91,28 +91,3 @@ def binarize_data(data_x, data_y):
     return binarizer, list(zip(data_x, data_y))
 
 
-def streamline_data_craftRestv1(data, x_filter="headline", y_filter="newspaper"):
-    """
-    Prepends all answers to the input apart from the one specified by "y_filter_key"
-
-    Returns (Binarizer, [(text, binarized class)])
-    """
-    assert y_filter in Y_KEYS
-    assert x_filter in X_KEYS
-
-    # TODO: for now drop these lists because they are long and there is no clean way to fuse them into the model
-    Y_KEYS_LOCAL = Y_KEYS - {"subject", "geographic"} 
-    def x_manipulator(x, y):
-        y = {**y, y_filter: "None"}
-        return ' | '.join([y[k] for k in Y_KEYS_LOCAL]) + " | " + x[x_filter]
-
-    data_x = [
-        x_manipulator(x, y)
-        for x, y in data
-    ]
-    data_y = [
-        [y[y_filter]]
-        for x, y in data
-    ]
-
-    return binarize_data(data_x, data_y)
