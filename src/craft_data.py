@@ -53,7 +53,7 @@ def parse_args():
 if __name__ == "__main__":
     args=parse_args()
     data=load_data(args.data_in)
-    for y_filter in Y_KEYS - {"subject", "geographic"}:
+    for y_filter in Y_KEYS:
         print("Crafting Rv1", y_filter)
         data_new = craft_rv1(data, x_filter="headline", y_filter=y_filter)
         save_data(args.data_out.replace("{LABEL}", y_filter+"_Rv1"), data_new)

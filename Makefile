@@ -23,6 +23,10 @@ _data:
 
 data: assert_top _data
 
-data_all: assert_top _data
+data_all: assert_top _data prepare_data craft_data
+
+prepare_data:
 	python3 ./src/prepare_data.py --data-in data/final/all.json --data-out data/final/clean.json
+
+craft_data:
 	python3 ./src/craft_data.py --data-in data/final/clean.json --data-out data/final/{LABEL}.json
