@@ -1,9 +1,11 @@
+#!/usr/bin/env python3
+
 import utils
 
-from transformers import TFAutoModel,AutoTokenizer
+from transformers import AutoModel,AutoTokenizer
 import numpy as np
+import torch
 
-import pickle
 import argparse
 import operator as op
 import tqdm
@@ -12,7 +14,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", default='data/final/clean.json', type=str,
                         help="Path of the data file.")
-    parser.add_argument("-o", "--output", default='data/final/embeddings.pkl', type=str,
+    parser.add_argument("-o", "--output", default='data/embeddings/embeddings_{m}_{t}_{ml}.npz', type=str,
                         help="Path where to store the embeddings.")
     parser.add_argument("-t", "--target", default='headline', type=str,
                         help="Target field of the new to use for embedding.")
@@ -32,41 +34,44 @@ LM_ALIASES = dict(
     distilroberta="distilroberta-base"
 )
 
-KEY_ID = "path"
-
 if __name__ == "__main__":
     args = parse_args()
     
+    # Format output name
+    output_name = args.output.format(
+        m=args.language_model,
+        t=args.target,
+        ml=args.max_length)
+    
     # Read data
     data = utils.load_data(args.input)
+    data, _ = zip(*data)
+    
+    print("Number of articles: ", len(data))
     
     target = list(map(op.itemgetter(args.target),data))
-    ids = list(map(op.itemgetter(KEY_ID),data))
     
     ## Instantiate transformer and tokenizer
     lm_name = LM_ALIASES[args.language_model] if args.language_model in LM_ALIASES else args.language_model
     
     tokenizer = AutoTokenizer.from_pretrained(lm_name)
-    lm = TFAutoModel.from_pretrained(lm_name)
+    lm = AutoModel.from_pretrained(lm_name).to(utils.DEVICE)
     
     target = tokenizer(
             target, padding=True, max_length=args.max_length,
-            truncation=True, return_tensors="np").data
-    
+            truncation=True, return_tensors="pt").data
+
     start_ids = tqdm.trange(0,len(data),args.batch_size)
     
     embeddings = []
-    for s_i in start_ids:
-        e_i = s_i + args.batch_size
-        batch = {k: v[s_i:e_i] for k,v in target.items()}
-        
-        emb = lm(batch)[0].numpy()
-        embeddings.append(emb)
+    lm.eval()
+    with torch.no_grad():
+        for s_i in start_ids:
+            e_i = s_i + args.batch_size
+            batch = {k: v[s_i:e_i].to(utils.DEVICE) for k,v in target.items()}
+
+            emb = lm(**batch)[0].cpu().numpy()
+            embeddings.append(emb)
         
     embeddings = np.concatenate(embeddings,axis=0)
-    result = dict(
-        ids=ids,
-        embeddings=embeddings)
-
-    with open(args.output,"wb") as f:
-        pickle.dump(result,f)
+    np.savez_compressed(output_name,data=embeddings)
