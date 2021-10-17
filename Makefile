@@ -21,6 +21,10 @@ _data:
 	# remove trailing comma
 	sed 's/,]/]/' -i data/final/all.json
 
+	# remove temporary files
+	rm data/final/COP*.filt3.sub.json
+	rm data/final/COP.filt3.sub.zip
+
 data: assert_top _data
 
 data_all: assert_top _data prepare_data craft_data

@@ -5,11 +5,11 @@ Script for preparing and cleaning the data
 """
 
 import argparse
-from collections import Counter
+import random
 from utils import *
 
 
-def craft_rv1(data, x_filter="headline", y_filter="newspaper"):
+def craft_rv1(data, x_filter="headline", y_filter="newspaper", dropout=0):
     """
     Rest vs. 1: Prepends all answers to the input apart from the one specified by "y_filter_key"
 
@@ -23,9 +23,14 @@ def craft_rv1(data, x_filter="headline", y_filter="newspaper"):
 
     def x_manipulator(x, y):
         y = {**y, y_filter: "None"}
+        # apply dropout to artefacts
+        artefacts = [
+            y[k] if random.random() >= dropout else "None"
+            for k in Y_KEYS_LOCAL
+        ]
         return {
             **x,
-            "craft": ' | '.join([y[k] for k in Y_KEYS_LOCAL]) + " | " + x[x_filter]
+            "craft": ' | '.join(artefacts) + " | " + x[x_filter]
         }
 
     return [
@@ -38,7 +43,7 @@ def craft_rv1(data, x_filter="headline", y_filter="newspaper"):
 
 
 def parse_args():
-    args=argparse.ArgumentParser()
+    args = argparse.ArgumentParser()
     args.add_argument(
         "--data-in", default="data/final/clean.json",
         help="Location of joined data JSON",
@@ -47,13 +52,44 @@ def parse_args():
         "--data-out", default="data/final/{LABEL}.json",
         help="Location of creafted data JSON, the {LABEL} token (including curly brakets) is going to be replaced by the data label",
     )
+    args.add_argument(
+        "--seed", type=int, default=0,
+    )
     return args.parse_args()
 
 
 if __name__ == "__main__":
-    args=parse_args()
-    data=load_data(args.data_in)
+    args = parse_args()
+    data = load_data(args.data_in)
+
+    random.seed(args.seed)
+
+    # Rv1_00
     for y_filter in Y_KEYS:
-        print("Crafting Rv1", y_filter)
-        data_new = craft_rv1(data, x_filter="headline", y_filter=y_filter)
-        save_data(args.data_out.replace("{LABEL}", y_filter+"_Rv1"), data_new)
+        print("Crafting Rv1_00", y_filter)
+        data_new = craft_rv1(
+            data, x_filter="headline",
+            y_filter=y_filter, dropout=0.0
+        )
+        save_data(args.data_out.replace(
+            "{LABEL}", "Rv1_00_" + y_filter), data_new)
+
+    # Rv1_50
+    for y_filter in Y_KEYS:
+        print("Crafting Rv1_50", y_filter)
+        data_new = craft_rv1(
+            data, x_filter="headline",
+            y_filter=y_filter, dropout=0.5
+        )
+        save_data(args.data_out.replace(
+            "{LABEL}", "Rv1_50_" + y_filter), data_new)
+
+    # Rv1_75
+    for y_filter in Y_KEYS:
+        print("Crafting Rv1_75", y_filter)
+        data_new = craft_rv1(
+            data, x_filter="headline",
+            y_filter=y_filter, dropout=0.75
+        )
+        save_data(args.data_out.replace(
+            "{LABEL}", "Rv1_75_" + y_filter), data_new)
