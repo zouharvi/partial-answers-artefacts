@@ -1,17 +1,21 @@
+#!/usr/bin/env python3
+
 import numpy as np
 from sklearn.manifold import TSNE
 from sklearn.decomposition import IncrementalPCA, PCA
 
 import argparse
-import pickle
+import os.path as path
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input", default='data/final/embeddings.pkl', type=str,
+    parser.add_argument("-i", "--input", type=str,
                         help="Path to the embeddings file.")
-    parser.add_argument("-o", "--output", default='data/final/emb_{h}_{p}_{d}.pkl', type=str,
+    parser.add_argument("-o", "--output", default='data/embeddings/{i}_reduced_{h}_{p}_{d}.npz', type=str,
                         help="Path where to store the dimensionality reduced embeddings.")
-    parser.add_argument("-p","--projection-method",default="tsne")
+    parser.add_argument("-p","--projection-method",default="tsne",
+                        help="What projection method to use to implement dimensionality reduction.")
     parser.add_argument("-d","--dimension",default=2,
                         help="How many dimensions to reduce to.")
     parser.add_argument("-rh","--reduction-heuristic",default="cls")
@@ -22,16 +26,17 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
         
+        
     output_name = args.output.format(
+        i=path.basename(args.input[:-4]),
         h=args.reduction_heuristic,
         p=args.projection_method,
         d=args.dimension)
         
+    print(output_name)
+        
     # Read data
-    with open(args.input,"rb") as f:
-        embeddings = pickle.load(f)
-    ids = embeddings["ids"]
-    embeddings = embeddings["embeddings"]
+    embeddings = np.load(args.input)["data"]
     
     # Use reduction heuristic
     if args.reduction_heuristic == "cls":
@@ -46,11 +51,7 @@ if __name__ == "__main__":
         
         
     projected_emb = reducer.fit_transform(embeddings)
-    output = dict(ids=ids,
-                  embeddings=projected_emb)
-    
-    with open(output_name,"wb") as f:
-        pickle.dump(output,f)
+    np.savez(output_name,data=projected_emb)
     
     
     

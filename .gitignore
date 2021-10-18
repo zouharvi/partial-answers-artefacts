@@ -1,5 +1,6 @@
 # added by edu
-ass5/glove_reviews.json
+data/embeddings/
+data/figures/
 
 # added by zouharvi
 ass1/reviews.txt
@@ -12,6 +13,7 @@ pertrubed_data/
 data/final/
 
 # Byte-compiled / optimized / DLL files
+__pycache__
 __pycache__/
 *.py[cod]
 *$py.class
