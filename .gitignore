@@ -8,9 +8,10 @@ ass1/reviews.txt
 *.png
 data/glove_filtered.json
 data/glove_reviews.json
-*.log
 pertrubed_data/
 data/final/
+*.log
+computed/
 
 # Byte-compiled / optimized / DLL files
 __pycache__
