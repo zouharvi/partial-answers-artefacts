@@ -64,18 +64,26 @@ Y_KEYS_TO_CODE = {
 }
 
 
-def streamline_data(data, x_filter="headline", y_filter="newspaper"):
+def streamline_data(data, x_filter="headline", y_filter="newspaper", binarize_input=False):
     """
     Automatically prepare and sanitize data to list of (text, class) where class has been binarized.
     Available y_filter are newspaper, ncountry, ncompas, subject, industry, geographic.
     If freq_cutoff is None, then defaults for subject, industry and geographic will be used.
 
-    Returns (Binarizer, [(text, binarized class)])
+    Returns (binarizer, [(text, binarized_class_2)])
+
+    If binarize_input is True, then the input is also turned into a class.
+    The output is then
+    Returns ((binarizer_1, binarizer_2), [(binarizerd_class_1, binarized_class_2)])
     """
 
+    # TODO: this may potentially cause an issue in the future if "craft" is stored on y
     if x_filter in X_KEYS | {"craft"}:
         x_filter_name = str(x_filter)
-        def x_filter(x): return x[x_filter_name]
+        def x_filter(x, y): return [x[x_filter_name]]
+    elif x_filter in Y_KEYS:
+        x_filter_name = str(x_filter)
+        def x_filter(x, y): return [y[x_filter_name]]
     elif callable(x_filter):
         pass
     else:
@@ -83,21 +91,28 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper"):
 
     if y_filter in Y_KEYS | {"craft"}:
         y_filter_name = str(y_filter)
-        def y_filter(y): return [y[y_filter_name]]
+        def y_filter(x, y): return [y[y_filter_name]]
     elif callable(y_filter):
         pass
     else:
         raise Exception("Invalid x_filter parameter")
 
-    data_x, data_y = zip(*data)
-    data_x = [x_filter(x) for x in data_x]
-    data_y = [y_filter(y) for y in data_y]
+    data_x = [x_filter(x,y) for x,y in data]
+    data_y = [y_filter(x,y) for x,y in data]
 
-    return binarize_data(data_x, data_y)
+    binarizer_1, data_y = binarize_data(data_y)
+
+    if not binarize_input:
+        return binarizer_1, list(zip(data_x, data_y))
+    else:
+        binarizer_2, data_x = binarize_data(data_x)
+        return (binarizer_1, binarizer_2), list(zip(data_x, data_y))
 
 
-def binarize_data(data_x, data_y):
+def binarize_data(data_y):
     binarizer = MultiLabelBinarizer()
     data_y = binarizer.fit_transform(data_y)
 
-    return binarizer, list(zip(data_x, data_y))
+    return binarizer, data_y
+
+    # return binarizer, list(zip(data_x, data_y))
