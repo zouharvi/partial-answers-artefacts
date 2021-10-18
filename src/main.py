@@ -7,7 +7,7 @@ import numpy as np
 def parse_args():
     args = argparse.ArgumentParser()
     args.add_argument(
-        "-d", "--data", default="data/final/newspaper_Rv1.json",
+        "-d", "--data", default="data/final/Rv1_75_newspaper.json",
         help="Location of joined data JSON",
     )
     return args.parse_args()
@@ -16,7 +16,7 @@ if __name__ == "__main__":
     args = parse_args()
     data = load_data(args.data)
     # binarizer, data = streamline_data(data, y_filter="newspaper")
-    binarizer, data = streamline_data(data, x_filter="craft", y_filter="newspaper")
+    binarizer, data = streamline_data(data, x_filter="craft", y_filter="craft")
     
     print(len(data), "samples loaded")
     print(list(binarizer.classes_))

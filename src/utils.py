@@ -48,8 +48,20 @@ def save_data(path, data):
 
 
 X_KEYS = {"headline", "body"}
-Y_KEYS = {"newspaper", "ncountry", "ncompas",
-          "month", "year", "subject", "geographic"}
+Y_KEYS = {
+    "newspaper", "ncountry", "ncompas",
+    "month", "year", "subject", "geographic"
+}
+Y_KEYS_LOCAL = Y_KEYS - {"subject", "geographic"}
+Y_KEYS_TO_CODE = {
+    "newspaper": "n",
+    "ncountry": "c",
+    "ncompas": "o",
+    "month": "m",
+    "year": "y",
+    "subject": "s",
+    "geographic": "g"
+}
 
 
 def streamline_data(data, x_filter="headline", y_filter="newspaper"):
@@ -89,5 +101,3 @@ def binarize_data(data_x, data_y):
     data_y = binarizer.fit_transform(data_y)
 
     return binarizer, list(zip(data_x, data_y))
-
-
