@@ -62,7 +62,16 @@ Y_KEYS_TO_CODE = {
     "month": "m",
     "year": "y",
     "subject": "s",
-    "geographic": "g"
+    "geographic": "g",
+}
+Y_KEYS_PRETTY = {
+    "newspaper": "Newspaper",
+    "ncountry": "News. country",
+    "ncompas": "News. align.",
+    "month": "Month",
+    "year": "Year",
+    "subject": "Subject",
+    "geographic": "Geographic",
 }
 
 

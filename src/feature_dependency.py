@@ -101,7 +101,7 @@ if __name__ == "__main__":
                 "y_filter_2": y_filter_2,
                 "dummy": rprec_val_dummy,
             })
-            print(f"rprec: {rprec_val:.2%} ({y_filter_1} -> {y_filter_2}), dummy: {rprec_val_dummy:.2%}")
+            print(f"RPREC: {rprec_val:.2%} ({y_filter_1} -> {y_filter_2}), dummy: {rprec_val_dummy:.2%}")
 
 
     with open(args.logfile, "wb") as f:
