@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 
 import utils
+from lm_model import LMModel
 
-from transformers import AutoModel,AutoTokenizer
 import numpy as np
-import torch
 
 import argparse
 import operator as op
-import tqdm
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -48,30 +46,16 @@ if __name__ == "__main__":
     data, _ = zip(*data)
     
     print("Number of articles: ", len(data))
-    
     target = list(map(op.itemgetter(args.target),data))
     
-    ## Instantiate transformer and tokenizer
+    ## Instantiate model
     lm_name = LM_ALIASES[args.language_model] if args.language_model in LM_ALIASES else args.language_model
+    lm = LMModel(
+            embed_strategy="all"
+            lm=lm_name, 
+            batch_size=args.batch_size,
+            max_length=args.max_length)
     
-    tokenizer = AutoTokenizer.from_pretrained(lm_name)
-    lm = AutoModel.from_pretrained(lm_name).to(utils.DEVICE)
-    
-    target = tokenizer(
-            target, padding=True, max_length=args.max_length,
-            truncation=True, return_tensors="pt").data
-
-    start_ids = tqdm.trange(0,len(data),args.batch_size)
-    
-    embeddings = []
-    lm.eval()
-    with torch.no_grad():
-        for s_i in start_ids:
-            e_i = s_i + args.batch_size
-            batch = {k: v[s_i:e_i].to(utils.DEVICE) for k,v in target.items()}
-
-            emb = lm(**batch)[0].cpu().numpy()
-            embeddings.append(emb)
+    embeddings = lm.predict(target)
         
-    embeddings = np.concatenate(embeddings,axis=0)
     np.savez_compressed(output_name,data=embeddings)

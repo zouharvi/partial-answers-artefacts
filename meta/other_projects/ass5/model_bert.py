@@ -26,8 +26,7 @@ class ModelTransformer():
         epochs=3,
         batch_size=16,
         learning_rate=5e-5,
-        weight_decay=None,
-        ):
+        weight_decay=None,):
         '''Create the Keras model to use.
         
         Parameters:
