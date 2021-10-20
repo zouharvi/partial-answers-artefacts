@@ -18,6 +18,7 @@ def parse_args():
                         help="Path where to store the model.")
     parser.add_argument("-ti", "--target-input", default='headline',type=str,
                         help="Input of the model.")
+    # TODO: does this really work if I pass this via the command line?
     parser.add_argument("-to", "--target-output", default=['newspaper'], type=str,
                         help="Target output of the model")
     parser.add_argument("-bs","--batch-size", default=16, type=int,
@@ -45,7 +46,8 @@ if __name__ == "__main__":
         m=args.language_model,
         ti=args.target_input,
         to=args.target_output,
-        ml=args.max_length)
+        ml=args.max_length
+        )
     
     # Read data
     data = utils.load_data(args.input)
@@ -55,12 +57,19 @@ if __name__ == "__main__":
     
     target_input = list(map(op.itemgetter(args.target_input),data_x))
     
-    target_outputs = list(list(map(op.itemgetter(to),data_y)) for to in args.target_output)
-    print(target_outputs)
-    target_outputs = map(utils.binarize_data,target_outputs)
-    target_outputs = list(map(op.itemgetter(-1),target_outputs))
-    
-    print(target_outputs)
+    # idk how to rewrite this to functional format sorry
+    target_outputs = {to:[[x[to]] for x in data_y] for to in args.target_output}
+    target_outputs = {k:utils.binarize_data(v)[1] for k,v in target_outputs.items()}
+    # flatten, this makes "newspaper" first index
+    # I'd advise to keep using dictionary to make it easier to navigate though
+    target_outputs = list(target_outputs.values())
+    # idk what this does?
+    # target_outputs = list(map(op.itemgetter(-1),target_outputs))
+    print(target_outputs[0])
+    # sanity check
+    assert all(
+        [sum(x) == 1 for x in target_outputs[0]]
+    )
     
     targets = map(op.itemgetter(0),target_outputs)
     targets = list(map(len,targets))
