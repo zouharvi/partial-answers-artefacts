@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+raise Warning("TODO: move me to figures/")
+
 import utils
 import utils_data
 
