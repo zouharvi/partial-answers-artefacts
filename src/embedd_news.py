@@ -51,6 +51,7 @@ if __name__ == "__main__":
     ## Instantiate model
     lm_name = LM_ALIASES[args.language_model] if args.language_model in LM_ALIASES else args.language_model
     lm = LMModel(
+            embed_strategy="all"
             lm=lm_name, 
             batch_size=args.batch_size,
             max_length=args.max_length)

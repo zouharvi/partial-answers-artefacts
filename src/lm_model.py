@@ -3,7 +3,7 @@ import utils
 import torch
 import torch.nn as nn
 import torch.optim
-from torch.utils.data import DataLoader, TensorDataset, ConcatDataset
+from torch.utils.data import DataLoader, TensorDataset
 from transformers import AutoTokenizer, AutoModel
 
 import operator as op
@@ -67,7 +67,13 @@ class LMModel(nn.Module):
                     attention_mask=attention_mask,
                     token_type_ids=token_type_ids)[0]
         
-        x = x[:,0,:] if self.embed_strategy == "cls" else torch.mean(x,1)
+        if self.embed_strategy == "cls":
+            x = x[:,0,:]
+        elif self.embed_strategy == "avg":
+            x = torch.mean(x,1)
+        elif self.embed_strategy != "all":
+            raise ValueError("Embed strategy {} is not recognized as valid.".format(self.embed_strategy))
+            
         y = [self.softmax(ch(x)) for ch in self.classification_heads]
         
         return y or x # The classification or the embeddings
@@ -96,25 +102,39 @@ class LMModel(nn.Module):
         
     ## Private functions
     def _convert2batched(self,X,ys=None,shuffle=False):
+        
+        def collate_fn(data):
+            data = zip(*data)
+            data = map(torch.stack,data)
+            data = list(map(op.methodcaller("to",self.device),data))
+            
+            X = data[:3]
+            y = data[3:]
+            
+            return (X, y) if y else X
+        
         # Convert to tensors
         X = self.tokenizer(
             X, padding=True, max_length=self.max_length,
             truncation=True, return_tensors="pt").data
-        ds = TensorDataset(*X.values())
+        
+        tensors = list(X.values())
         
         if ys:
-            ys = map(torch.tensor,ys)
-            ys = list(map(TensorDataset,ys))
-            ys = ConcatDataset(ys)
+            tensors.extend(map(torch.tensor,ys))
+            
+        tensors = TensorDataset(*tensors)
         
-            ds = ConcatDataset((ds,ys))
-        return DataLoader(
-                ds,
+        dl = DataLoader(
+                tensors,
                 batch_size=self.batch_size,
                 shuffle=shuffle,
-                pin_memory=True,
-                collate_fn=lambda x:x)
-    
+                collate_fn=collate_fn,
+                #pin_memory=True,
+                )
+        
+        return dl
+                
     def _train(self, X_train, y_train):
         dl = self._convert2batched(X_train,y_train,shuffle=True)
         
@@ -137,14 +157,14 @@ class LMModel(nn.Module):
         self.optimizer.step()
         
     def _predict(self,X):
-        input_ids, token_type_ids, attention_mask = map(op.methodcaller("to",self.device),X)
+        input_ids, token_type_ids, attention_mask = X #map(op.methodcaller("to",self.device),X)
         return self(
             input_ids=input_ids,
             token_type_ids=token_type_ids,
             attention_mask=attention_mask)
     
     def _compute_loss(self,y_pred,y_true):
-        y_true = map(op.methodcaller("to",self.device),y_true)
+        #y_true = map(op.methodcaller("to",self.device),y_true)
         
         losses = list(it.starmap(self.loss,zip(ys_pred,y_true)))
         return torch.mean(losses)

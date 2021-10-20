@@ -55,9 +55,12 @@ if __name__ == "__main__":
     
     target_input = list(map(op.itemgetter(args.target_input),data_x))
     
-    target_outputs = (list(map(op.itemgetter(to),data_y)) for to in args.target_output)
+    target_outputs = list(list(map(op.itemgetter(to),data_y)) for to in args.target_output)
+    print(target_outputs)
     target_outputs = map(utils.binarize_data,target_outputs)
     target_outputs = list(map(op.itemgetter(-1),target_outputs))
+    
+    print(target_outputs)
     
     targets = map(op.itemgetter(0),target_outputs)
     targets = list(map(len,targets))
