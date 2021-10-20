@@ -149,8 +149,6 @@ def binarize_data(data_y):
 
     return binarizer, data_y
 
-    # return binarizer, list(zip(data_x, data_y))
-
 def argmax_n(arr, n):
     n = min(len(arr), n)
     return np.argpartition(arr, -n)[-n:]
