@@ -5,10 +5,12 @@
 from lm_model import LMModel
 import utils
 
+import sklearn.model_selection
 import numpy as np
 
 import argparse
 import operator as op
+import itertools as it
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -18,13 +20,16 @@ def parse_args():
                         help="Path where to store the model.")
     parser.add_argument("-ti", "--target-input", default='headline',type=str,
                         help="Input of the model.")
-    # TODO: does this really work if I pass this via the command line?
-    parser.add_argument("-to", "--target-output", default=['newspaper'], type=str,
+    parser.add_argument("-to", "--target-output", default=['newspaper'], type=str, nargs="+",
+                        help="Target output of the model")
+    parser.add_argument("-ts", "--train-samples", default=-2000, type=int, nargs="+",
+                        help="Target output of the model")
+    parser.add_argument("-ds", "--dev-samples", default=1000, type=int, nargs="+",
                         help="Target output of the model")
     parser.add_argument("-bs","--batch-size", default=16, type=int,
                         help="Override the default batch size.")
     parser.add_argument("-lm", "--language-model", default="bert", type=str,
-                        help="Name of pretrained language model to use for the embeddings.")
+                        help="Name of pretrained language model.")
     parser.add_argument("--max-length", default=256, type=int,
                         help="Maximum length of language model input.")
     
@@ -45,42 +50,42 @@ if __name__ == "__main__":
     output_name = args.output.format(
         m=args.language_model,
         ti=args.target_input,
-        to=args.target_output,
+        to="_".join(args.target_output),
         ml=args.max_length
         )
     
     # Read data
     data = utils.load_data(args.input)
-    data_x, data_y = zip(*data)
+    print("Number of articles: ", len(data))
     
-    print("Number of articles: ", len(data_y))
+    target_input = utils.get_x(data,args.target_input)
+    target_outputs, label_names, labels = utils.get_y(data,args.target_output)    
     
-    target_input = list(map(op.itemgetter(args.target_input),data_x))
-    
-    # idk how to rewrite this to functional format sorry
-    target_outputs = {to:[[x[to]] for x in data_y] for to in args.target_output}
-    target_outputs = {k:utils.binarize_data(v)[1] for k,v in target_outputs.items()}
-    # flatten, this makes "newspaper" first index
-    # I'd advise to keep using dictionary to make it easier to navigate though
-    target_outputs = list(target_outputs.values())
-    # idk what this does?
-    # target_outputs = list(map(op.itemgetter(-1),target_outputs))
-    print(target_outputs[0])
-    # sanity check
-    assert all(
-        [sum(x) == 1 for x in target_outputs[0]]
+    # Split
+    test_size = abs(args.train_samples + args.dev_samples) % len(data)
+    data_train, _ = sklearn.model_selection.train_test_split(
+        list(zip(target_input,labels)),
+        test_size=test_size,
+        random_state=0,
     )
     
-    targets = map(op.itemgetter(0),target_outputs)
-    targets = list(map(len,targets))
+    data_train, data_dev = sklearn.model_selection.train_test_split(
+        data_train,
+        test_size=args.dev_samples,
+        random_state=0,
+    )
+
+    x_train, y_train = zip(*data_train)
+    x_dev, y_dev = zip(*data_dev)
     
     ## Instantiate transformer
     lm_name = LM_ALIASES[args.language_model] if args.language_model in LM_ALIASES else args.language_model
     lm = LMModel(
-        classification_targets=targets,
+        cls_target_dimensions=list(map(len,label_names)),
         lm=lm_name,
         batch_size=args.batch_size,
         max_length=args.max_length)
     
-    lm.fit(target_input,target_outputs)
+    lm.fit(x_train,y_train,x_dev,y_dev)
+    lm.save_to_file(output_name)
     
