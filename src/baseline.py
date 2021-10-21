@@ -49,15 +49,17 @@ if __name__ == "__main__":
 
     if args.target_output in {"subject", "geographic"}:
         args.model = "multi_" + args.model
-        data_x, data_y = zip(*data)
-        _, data_y = binarize_data(data_y)
-        data = list(zip(data_x, data_y))
+        # data_x, data_y = zip(*data)
+        # _, data_y = binarize_data(data_y)
+        # data = list(zip(data_x, data_y))
 
     MODEL_CLASS = {
-        "multi_svc": MultiOutputClassifier(SVC(probability=True)),
-        "multi_linear_svc": MultiOutputClassifier(SVC(probability=True, kernel="linear")),
+        "multi_svc_2": MultiOutputClassifier(SVC(probability=True)),
+        "multi_linear_svc_2": MultiOutputClassifier(SVC(probability=True, kernel="linear")),
         "multi_linear_lr": MultiOutputClassifier(LogisticRegression()),
         "svc": SVC(),
+        "multi_svc": SVC(),
+        "multi_linear_svc": LinearSVC(),
         "linear_svc": LinearSVC(),
         "lr": LogisticRegression(),
         "nb": MultinomialNB(),
@@ -79,18 +81,37 @@ if __name__ == "__main__":
     # unravel
     data_x_train = [x[0] for x in data_x_train]
     data_x_test = [x[0] for x in data_x_test]
-    if args.target_output not in {"subject", "geographic"}:
+
+    if args.target_output in {"subject", "geographic"}:
+        # expand items but only for train
+        data_y_train_new = []
+        data_x_train_new = []
+        for x, y in zip(data_x_train, data_y_train):
+            for yi in y:
+                data_y_train_new.append(yi)
+                data_x_train_new.append(x)
+        data_x_train, data_y_train = data_x_train_new, data_y_train_new
+
+        # binarize test
+        _, data_y_test = binarize_data(data_y_test)
+
+    else:
+        # unravel
         data_y_train = [y[0] for y in data_y_train]
         data_y_test = [y[0] for y in data_y_test]
+
+    print(len(data_x_train))
 
     model.fit(data_x_train, data_y_train)
 
     if args.target_output in {"subject", "geographic"}:
         # Use probabilities as scores
         # For some reason the data needs to be transported for the dimension to match
-        pred_y = np.array(model.predict_proba(data_x_test))[:,:,1].transpose()
+        pred_y = model.decision_function(data_x_test)
         rprec_val = rprec(data_y_test, pred_y)
         print(f"Dev RPrec: {rprec_val:.2%}")
+        exit()
+        pred_y = np.array(model.predict_proba(data_x_test))[:,:,1].transpose()
     else:
         acc_val = model.score(data_x_test, data_y_test)
         print(f"Dev ACC: {acc_val:.2%}")
