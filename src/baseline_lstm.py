@@ -27,10 +27,11 @@ def parse_args():
 
 
 class Model(torch.nn.Module):
-    def __init__(self, output_dim):
+    def __init__(self, output_dim, single_class):
         super().__init__()
         self.tfidf_dim = 4096
         self.glove_dim = 100
+        self.single_class = single_class
 
         self.lstm = torch.nn.LSTM(
             input_size=self.glove_dim,
@@ -41,7 +42,7 @@ class Model(torch.nn.Module):
             torch.nn.Linear(256+self.tfidf_dim, 128),
             torch.nn.ReLU(),
             torch.nn.Linear(128, output_dim),
-            torch.nn.Softmax(dim=1),
+            torch.nn.Softmax(dim=1) if single_class else torch.nn.Sigmoid()
         )
 
     def forward(self, x):
@@ -69,19 +70,30 @@ class Model(torch.nn.Module):
                 glove[word] if word in glove else [0.0]*self.glove_dim
                 for word in words
             ]
+
+            if self.single_class:
+                output = torch.LongTensor([
+                    np.argmax(line[1])
+                ])
+            else:
+                output = torch.FloatTensor([
+                    line[1]
+                ])
+
             data_new.append((
                 (
                     torch.Tensor([words_glove]).to(DEVICE),
                     torch.Tensor(body_tfidf.toarray()).to(DEVICE),
                 ),
-                torch.LongTensor([
-                    np.argmax(line[1])
-                ]).to(DEVICE),
+                output.to(DEVICE),
             ))
         return data_new
 
     def train_epochs(self, data_train, data_dev, epochs, batch_size=32):
-        loss_function = torch.nn.CrossEntropyLoss()
+        if self.single_class:
+            loss_function = torch.nn.CrossEntropyLoss()
+        else:
+            loss_function = torch.nn.MSELoss()
 
         optimizer = torch.optim.Adam(
             self.parameters(),
@@ -103,16 +115,29 @@ class Model(torch.nn.Module):
                 optimizer.step()
 
             self.eval()
-            print(f"Train ACC: {self.eval_data(data_train):.2%}")
-            print(f"Dev   ACC: {self.eval_data(data_dev):.2%}")
+            if self.single_class:
+                print(f"Train ACC: {self.eval_data_acc(data_train):.2%}")
+                print(f"Dev   ACC: {self.eval_data_acc(data_dev):.2%}")
+            else:
+                print(f"Train RPrec: {self.eval_data_rprec(data_train):.2%}")
+                print(f"Dev   RPrec: {self.eval_data_rprec(data_dev):.2%}")
 
-    def eval_data(self, data):
+    def eval_data_acc(self, data):
         hits = []
         for x, y in data:
             with torch.no_grad():
                 output = self(x)
                 hits.append(y[0].item() == torch.argmax(output[0], dim=0).item())
         return np.average(hits)
+
+    def eval_data_rprec(self, data):
+        scores = []
+        for x, y in data:
+            with torch.no_grad():
+                output = self(x)
+                # print(output[0].shape)
+                scores.append(output[0].tolist())
+        return rprec([x[1][0].tolist() for x in data], scores)
 
 
 if __name__ == "__main__":
@@ -127,9 +152,11 @@ if __name__ == "__main__":
         glove = pickle.load(f)
 
     if args.target_output in {"subject", "geographic"}:
-        raise NotImplementedError()
+        single_classs = False
+    else:
+        single_classs = True
 
-    model = Model(output_dim=len(data[0][1]))
+    model = Model(output_dim=len(data[0][1]), single_class=single_classs)
     data = model.preprocess(data, glove)
     print("Total data:", len(data))
     print("Glove len:", len(data[0][0][0]))
