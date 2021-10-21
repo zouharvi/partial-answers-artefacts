@@ -34,3 +34,8 @@ prepare_data:
 
 craft_data:
 	python3 ./src/craft_data.py --data-in data/final/clean.json --data-out data/final/{LABEL}.json
+
+get_glove:
+	wget -P data/ http://nlp.stanford.edu/data/wordvecs/glove.6B.zip
+	unzip -d data/ data/glove.6B.zip
+	python3 ./src/prepare_glove.py --data-in data/glove.6B.100d.txt --data-out data/glove.pkl

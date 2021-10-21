@@ -110,8 +110,8 @@ if __name__ == "__main__":
         pred_y = model.decision_function(data_x_test)
         rprec_val = rprec(data_y_test, pred_y)
         print(f"Dev RPrec: {rprec_val:.2%}")
-        exit()
-        pred_y = np.array(model.predict_proba(data_x_test))[:,:,1].transpose()
+        # used for forced multioutput
+        # pred_y = np.array(model.predict_proba(data_x_test))[:,:,1].transpose()
     else:
         acc_val = model.score(data_x_test, data_y_test)
         print(f"Dev ACC: {acc_val:.2%}")

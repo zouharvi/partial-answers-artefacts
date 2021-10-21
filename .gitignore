@@ -12,6 +12,7 @@ pertrubed_data/
 data/final/
 *.log
 computed/
+data/glove*
 
 # Byte-compiled / optimized / DLL files
 __pycache__
