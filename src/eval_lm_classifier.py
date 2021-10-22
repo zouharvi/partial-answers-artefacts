@@ -6,10 +6,12 @@ from lm_model import LMModel
 import utils
 import utils_eval
 
-import sklearn.model_selection
 import numpy as np
 
+import json
 import argparse
+import os.path as path
+
 import operator as op
 import itertools as it
 
@@ -17,20 +19,18 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", default='data/final/clean.json', type=str,
                         help="Path of the data file.")
-    parser.add_argument("-o", "--output", default='data/models/{m}_{ml}_{ti}_{to}.pt', type=str,
-                        help="Path where to store the model.")
+    parser.add_argument("-o", "--output", default='data/eval/{}_eval.json', type=str,
+                        help="Path of the data file.")
+    parser.add_argument("-mp", "--model_path", required=True, type=str,
+                        help="Path where to load the model from.")
     parser.add_argument("-ti", "--target-input", default='body',type=str,
                         help="Input of the model.")
     parser.add_argument("-to", "--target-output", default=['newspaper'], type=str, nargs="+",
                         help="Target output of the model")
-    parser.add_argument("-ts", "--train-samples", default=-2000, type=int,
-                        help="Target output of the model")
-    parser.add_argument("-ds", "--dev-samples", default=1000, type=int,
-                        help="Target output of the model")
-    parser.add_argument("-ep","--epochs", default=2, type=int,
-                        help="Override the default number of epochs.")
-    parser.add_argument("-bs","--batch-size", default=16, type=int,
-                        help="Override the default batch size.")
+    parser.add_argument("-ts", "--test-samples", default=1000, type=int,
+                        help="Amount of samples with which to test.")
+    parser.add_argument("-bs","--batch-size", default=128, type=int,
+                        help="Evaluation batch size.")
     parser.add_argument("-lm", "--language-model", default="bert", type=str,
                         help="Name of pretrained language model.")
     parser.add_argument("--max-length", default=256, type=int,
@@ -50,12 +50,7 @@ if __name__ == "__main__":
     args = parse_args()
     
     # Format output name
-    output_name = args.output.format(
-        m=args.language_model,
-        ti=args.target_input,
-        to="_".join(args.target_output),
-        ml=args.max_length
-        )
+    output_name = args.output.format(path.basename(args.model_path[:-3]))
     
     # Read data
     data = utils.load_data(args.input)
@@ -63,38 +58,26 @@ if __name__ == "__main__":
     target_input = utils.get_x(data,args.target_input)
     target_outputs, label_names, labels = utils.get_y(data,args.target_output)    
     
-    train_size = (len(data) + args.train_samples) % len(data)
-    dev_size = args.dev_samples
-    test_size = len(data) - train_size - dev_size
-    _, (x_dev, y_dev), (x_train, y_train),_ = utils.make_split(
-                                                (target_input,labels),
-                                                splits=(test_size,dev_size,1000),
-                                                random_state=0)
-    
+    (x_test, y_test), _ = utils.make_split((target_input,labels),
+                                            splits=(args.test_samples,),
+                                            random_state=0)
     ## Instantiate transformer
     lm_name = LM_ALIASES[args.language_model] if args.language_model in LM_ALIASES else args.language_model
     lm = LMModel(
         cls_target_dimensions=list(map(len,label_names)),
         lm=lm_name,
-        epochs=args.epochs,
         batch_size=args.batch_size,
         max_length=args.max_length)
     
-    lm.fit(x_train,y_train,x_dev,y_dev)
-    lm.save_to_file(output_name)
-    
-    
-    lm = LMModel(
-        cls_target_dimensions=list(map(len,label_names)),
-        lm=lm_name,
-        epochs=args.epochs,
-        batch_size=args.batch_size,
-        max_length=args.max_length)
-    lm.load_from_file(output_name)
-    
-    y_logits = lm.predict(x_dev)
+    lm.load_from_file(args.model_path)
+    y_logits = lm.predict(x_test)
         
-    evaluation = utils_eval.complete_evaluation(y_dev,y_logits,
+    evaluation = utils_eval.complete_evaluation(y_test,y_logits,
                                    evaluation_targets=target_outputs,
                                    target_names=label_names)
-    print(evaluation)
+    
+    with open(output_name,"w") as f:
+        json.dump(evaluation,f)
+    
+    
+    
