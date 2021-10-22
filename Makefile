@@ -38,4 +38,4 @@ craft_data:
 get_glove:
 	wget -P data/ http://nlp.stanford.edu/data/wordvecs/glove.6B.zip
 	unzip -d data/ data/glove.6B.zip
-	python3 ./src/prepare_glove.py --data-in data/glove.6B.100d.txt --data-out data/glove.pkl
+	python3 ./src/prepare_glove.py --data-in data/glove.6B.200d.txt --data-out data/glove.pkl
