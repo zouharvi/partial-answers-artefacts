@@ -94,33 +94,36 @@ if __name__ == "__main__":
 
     # Rv1_00
     for y_filter in Y_KEYS:
+        y_filter_code = Y_KEYS_TO_CODE[y_filter]
         print("Crafting Rv1_00_", y_filter, sep="")
         data_new = craft_rv1(
             data, x_filter=X_FILTER,
             y_filter=y_filter, dropout=0.0
         )
         save_data(args.data_out.replace(
-            "{LABEL}", "Rv1_00_" + y_filter), data_new)
+            "{LABEL}", "Rv1_00_" + y_filter_code), data_new)
 
     # Rv1_50
     for y_filter in Y_KEYS:
+        y_filter_code = Y_KEYS_TO_CODE[y_filter]
         print("Crafting Rv1_50_", y_filter, sep="")
         data_new = craft_rv1(
             data, x_filter=X_FILTER,
             y_filter=y_filter, dropout=0.5
         )
         save_data(args.data_out.replace(
-            "{LABEL}", "Rv1_50_" + y_filter), data_new)
+            "{LABEL}", "Rv1_50_" + y_filter_code), data_new)
 
     # Rv1_75
     for y_filter in Y_KEYS:
+        y_filter_code = Y_KEYS_TO_CODE[y_filter]
         print("Crafting Rv1_75_", y_filter, sep="")
         data_new = craft_rv1(
             data, x_filter=X_FILTER,
             y_filter=y_filter, dropout=0.75
         )
         save_data(args.data_out.replace(
-            "{LABEL}", "Rv1_75_" + y_filter), data_new)
+            "{LABEL}", "Rv1_75_" + y_filter_code), data_new)
 
     # 1v1
     for y_filter_1 in Y_KEYS_LOCAL:

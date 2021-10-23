@@ -42,10 +42,10 @@ get_glove:
 	python3 ./src/prepare_glove.py --data-in data/glove.6B.200d.txt --data-out data/glove.pkl
 
 run_rv1:
-	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_geographic.json
-	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_year.json
-	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_month.json
-	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_ncompas.json
-	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_ncountry.json
-	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_newspaper.json
-	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_subject.json
+	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_n.json
+	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_c.json
+	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_o.json
+	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_m.json
+	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_y.json
+	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_s.json
+	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_g.json
