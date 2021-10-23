@@ -9,7 +9,7 @@ from transformers import AutoTokenizer, AutoModel
 
 import operator as op
 import itertools as it
-import functools as ftools
+import functools as ft
 import tqdm
 
 class LMModel(nn.Module):
@@ -116,7 +116,7 @@ class LMModel(nn.Module):
     def load_from_file(self,filename):
         s_dict = torch.load(filename)
         self.load_state_dict(s_dict)
-        
+                
     ## Private functions
     def _convert2batched(self,X,y=None,shuffle=False):
         
@@ -154,7 +154,6 @@ class LMModel(nn.Module):
         dl_train = self._convert2batched(X_train,y_train,shuffle=True)
         dl_dev = self._convert2batched(X_dev,y_dev)
         
-        print("Training {} epochs".format(self.epochs))
         for e in range(self.epochs):
             self._train_epoch(dl_train,dl_dev,epoch_i=e)
             
@@ -162,6 +161,8 @@ class LMModel(nn.Module):
             dl_train: DataLoader,
             dl_dev: DataLoader = None,
             epoch_i=None):
+        
+        self.train()
         
         # Train loop
         dl_train = tqdm.tqdm(dl_train,desc="Epoch {}".format(epoch_i + 1))
@@ -176,7 +177,7 @@ class LMModel(nn.Module):
             
             dl_train.set_postfix(dict(loss=losses,acc=accs))
             
-        # Validation loop
+        # Validation loop # This is ugly
         if dl_dev is None: return
         with torch.no_grad():
             dl_dev = tqdm.tqdm(dl_dev,desc="Validation")
@@ -192,7 +193,7 @@ class LMModel(nn.Module):
                 losses.append(loss.item())
                 accs.append(acc.item())
                 
-            print(dict(loss=np.mean(losses),acc=np.mean(accs)))
+            print("Dev evaluation", dict(loss=np.mean(losses),acc=np.mean(accs)))
             
     def _train_step(self,X,y):
         self.optimizer.zero_grad()
@@ -208,6 +209,7 @@ class LMModel(nn.Module):
         return loss, acc
         
     def _predict(self,X):
+        
         return self(*X)
     
     def _compute_loss(self,y_pred,y):

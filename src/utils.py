@@ -1,9 +1,14 @@
 import json
 import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
+import sklearn.model_selection
 from utils_data import *
 import random
 import torch
+
+import operator as op
+import itertools as it
+import functools as ft
 
 if torch.cuda.is_available():
     DEVICE = torch.device("cuda")
@@ -91,19 +96,21 @@ def get_y(data,targets):
     
     labels = list()
     
+    # Extract local targets
     label_names_local = list()
-    if local_t: # Extract local targets
+    if local_t: 
         y_local = (list(map(op.itemgetter(t),data_y)) for t in local_t)
         y_local = ([[x] for x in t] for t in y_local)
         bin_local, y_local = zip(*map(binarize_data,y_local))
-        y_local = np.array([np.argmax(y,axis=1) for y in y_local]).T
+        y_local = np.array(list(map(ft.partial(np.argmax,axis=1),y_local))).T
 
         labels.append(y_local)
         
         label_names_local = list(map(op.attrgetter("classes_"),bin_local))
     
+    # Extract non-local targets
     global_t_post = list()
-    if global_t: # Extract non-local targets
+    if global_t: 
         y_global = (list(map(op.itemgetter(t),data_y)) for t in global_t)
         bin_global, y_global = zip(*map(binarize_data,y_global))
         y_global = np.concatenate(list(y_global),axis=1)
@@ -113,13 +120,32 @@ def get_y(data,targets):
         label_names_global = list(map(op.attrgetter("classes_"),bin_global))
         global_t_post = ["{}_{}".format(gt,label) for gt,labels in zip(global_t,label_names_global) for label in labels]
     
+    # Put everything together
     targets_post = local_t + global_t_post
     label_names = label_names_local + [["False","True"]]*len(global_t_post)
     label_names = list(map(list,label_names))
     labels = np.concatenate(labels,axis=1)
     
     return targets_post, label_names, labels
+
+def make_split(data_list, splits, random_state=0):
+    data_list = list(zip(*data_list))
+    data_splits = []
+    for split in splits:
+        data_list, data_split = sklearn.model_selection.train_test_split(
+                                    data_list,
+                                    test_size=split,
+                                    random_state=random_state)
+        
+        data_splits.append(data_split)
+    if len(data_list) > 0: data_splits.append(data_list)
     
+    r = tuple(it.starmap(zip,data_splits))
+    
+    r_x, r_y = zip(*r)
+    r_y = tuple(map(np.array,r_y))
+    
+    return tuple(zip(r_x,r_y))
 
 
 def streamline_data(data, x_filter="headline", y_filter="newspaper", binarize="output"):
