@@ -15,6 +15,7 @@ import tqdm
 class LMModel(nn.Module):
     def __init__(self,
             cls_target_dimensions=list(),
+            loss_weights=None,
             lm="bert-base-uncased",
             embed_strategy="cls",
             freeze_lm=False,
@@ -40,6 +41,11 @@ class LMModel(nn.Module):
                                       *it.chain(*map(op.methodcaller("parameters"),classification_heads))],
                               **optimizer_params)
         
+        if loss_weights is None:
+            loss_weights = torch.ones(len(cls_target_dimensions),device=device)
+        else:
+            loss_weights = torch.tensor(loss_weights,device=device)
+        
         ## Set attributes
         # Config
         self.embed_strategy = embed_strategy
@@ -57,6 +63,7 @@ class LMModel(nn.Module):
         self.freeze_lm = freeze_lm
         self.batch_size = batch_size
         self.epochs = epochs
+        self.loss_weights = loss_weights
         
         self.loss = loss
         self.optimizer = optimizer
@@ -229,6 +236,7 @@ class LMModel(nn.Module):
         return losses
         
     def _reduce_losses(self,losses):
+        losses = losses*self.loss_weights
         return torch.mean(losses)
     
     def _compute_acc(self,y_pred,y):

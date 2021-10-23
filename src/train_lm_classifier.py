@@ -9,9 +9,12 @@ import utils_eval
 import sklearn.model_selection
 import numpy as np
 
+import os.path as path
+import json
 import argparse
 import operator as op
 import itertools as it
+import collections as col
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -66,15 +69,22 @@ if __name__ == "__main__":
     train_size = (len(data) + args.train_samples) % len(data)
     dev_size = args.dev_samples
     test_size = len(data) - train_size - dev_size
-    _, (x_dev, y_dev), (x_train, y_train),_ = utils.make_split(
+    (x_test, y_test), (x_dev, y_dev), (x_train, y_train) = utils.make_split(
                                                 (target_input,labels),
-                                                splits=(test_size,dev_size,1000),
+                                                splits=(test_size,dev_size,),
                                                 random_state=0)
     
+    print(label_names)
     ## Instantiate transformer
     lm_name = LM_ALIASES[args.language_model] if args.language_model in LM_ALIASES else args.language_model
+    
+    dimensions = list(map(len,label_names))
+    count_targets = col.Counter(target_outputs)
+    weights = 1 / np.array(list(map(count_targets.__getitem__,target_outputs)))
+    
     lm = LMModel(
-        cls_target_dimensions=list(map(len,label_names)),
+        cls_target_dimensions=dimensions,
+        loss_weights=weights,
         lm=lm_name,
         epochs=args.epochs,
         batch_size=args.batch_size,
@@ -83,18 +93,24 @@ if __name__ == "__main__":
     lm.fit(x_train,y_train,x_dev,y_dev)
     lm.save_to_file(output_name)
     
+    ## TODO put these in eval script
+    ## Evaluations
+    evals = dict()
     
-    lm = LMModel(
-        cls_target_dimensions=list(map(len,label_names)),
-        lm=lm_name,
-        epochs=args.epochs,
-        batch_size=args.batch_size,
-        max_length=args.max_length)
-    lm.load_from_file(output_name)
-    
-    y_logits = lm.predict(x_dev)
-        
-    evaluation = utils_eval.complete_evaluation(y_dev,y_logits,
-                                   evaluation_targets=target_outputs,
+    # Development eval
+    y_pred_dev = lm.predict(x_dev)
+    evals["dev"] = utils_eval.complete_evaluation(target_outputs,
+                                   y_dev,y_pred_dev,
                                    target_names=label_names)
-    print(evaluation)
+    
+    # Test eval
+    y_pred_test = lm.predict(x_test)
+    evals["test"] = utils_eval.complete_evaluation(target_outputs,
+                                   y_test,y_pred_test,
+                                   target_names=label_names)
+    
+    
+    save_path = "data/eval/{}_eval.json".format(path.basename(output_name)[:-3])
+    with open(save_path,"w") as f:
+        json.dump(evals,f)
+        

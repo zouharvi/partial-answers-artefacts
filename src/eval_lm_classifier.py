@@ -50,7 +50,7 @@ if __name__ == "__main__":
     args = parse_args()
     
     # Format output name
-    output_name = args.output.format(path.basename(args.model_path[:-3]))
+    output_name = args.output.format(path.basename(args.model_path)[:-3])
     
     # Read data
     data = utils.load_data(args.input)

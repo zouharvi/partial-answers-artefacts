@@ -105,24 +105,27 @@ def get_y(data,targets):
         y_local = np.array(list(map(ft.partial(np.argmax,axis=1),y_local))).T
 
         labels.append(y_local)
-        
         label_names_local = list(map(op.attrgetter("classes_"),bin_local))
     
     # Extract non-local targets
     global_t_post = list()
+    label_names_global = list()
     if global_t: 
         y_global = (list(map(op.itemgetter(t),data_y)) for t in global_t)
         bin_global, y_global = zip(*map(binarize_data,y_global))
         y_global = np.concatenate(list(y_global),axis=1)
 
         labels.append(y_global)
-        
         label_names_global = list(map(op.attrgetter("classes_"),bin_global))
-        global_t_post = ["{}_{}".format(gt,label) for gt,labels in zip(global_t,label_names_global) for label in labels]
-    
+        
+        global_t_post = it.chain(*[[gt]*len(labels) for gt,labels in zip(global_t,label_names_global)])
+        global_t_post = list(global_t_post)
+        
+        label_names_global = ["{l}_F¡{l}_T".format(l=l).split("¡") for l in it.chain(*label_names_global)]
+        
     # Put everything together
     targets_post = local_t + global_t_post
-    label_names = label_names_local + [["False","True"]]*len(global_t_post)
+    label_names = label_names_local + label_names_global
     label_names = list(map(list,label_names))
     labels = np.concatenate(labels,axis=1)
     
