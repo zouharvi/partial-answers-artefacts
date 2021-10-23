@@ -9,7 +9,7 @@ import random
 from utils import *
 
 
-def craft_rv1(data, x_filter="headline", y_filter="newspaper", dropout=0):
+def craft_rv1(data, x_filter, y_filter, dropout=0):
     """
     Rest vs. 1: Prepends all answers to the input apart from the one specified by "y_filter_key"
 
@@ -43,7 +43,7 @@ def craft_rv1(data, x_filter="headline", y_filter="newspaper", dropout=0):
     ]
 
 
-def craft_1v1(data, x_filter="headline", y_filter_1="newspaper", y_filter_2="subject"):
+def craft_1v1(data, x_filter, y_filter_1, y_filter_2):
     """
     1 vs. 1: Prepends y_filter_1 key to the input and makes y_filter_2 key the target class
 
@@ -90,12 +90,13 @@ if __name__ == "__main__":
     data = load_data(args.data_in)
 
     random.seed(args.seed)
+    X_FILTER = "body"
 
     # Rv1_00
     for y_filter in Y_KEYS:
         print("Crafting Rv1_00_", y_filter, sep="")
         data_new = craft_rv1(
-            data, x_filter="headline",
+            data, x_filter=X_FILTER,
             y_filter=y_filter, dropout=0.0
         )
         save_data(args.data_out.replace(
@@ -105,7 +106,7 @@ if __name__ == "__main__":
     for y_filter in Y_KEYS:
         print("Crafting Rv1_50_", y_filter, sep="")
         data_new = craft_rv1(
-            data, x_filter="headline",
+            data, x_filter=X_FILTER,
             y_filter=y_filter, dropout=0.5
         )
         save_data(args.data_out.replace(
@@ -115,7 +116,7 @@ if __name__ == "__main__":
     for y_filter in Y_KEYS:
         print("Crafting Rv1_75_", y_filter, sep="")
         data_new = craft_rv1(
-            data, x_filter="headline",
+            data, x_filter=X_FILTER,
             y_filter=y_filter, dropout=0.75
         )
         save_data(args.data_out.replace(
@@ -128,7 +129,7 @@ if __name__ == "__main__":
             y_filter_2_code = Y_KEYS_TO_CODE[y_filter_2]
             print("Crafting 1v1_", y_filter_1, "-", y_filter_2, sep="")
             data_new = craft_1v1(
-                data, x_filter="headline",
+                data, x_filter=X_FILTER,
                 y_filter_1=y_filter_1,
                 y_filter_2=y_filter_2,
             )
