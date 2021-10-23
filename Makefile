@@ -7,6 +7,7 @@ assert_top:
 
 _data:
 	mkdir -p data/final/
+	mkdir -p data/models/
 	wget --user finalproject --password Rik@LfD21 -P data/final/ https://teaching.stijneikelboom.nl/lfd2122/COP.filt3.sub.zip
 	unzip -j -d data/final/ data/final/COP.filt3.sub.zip
 
