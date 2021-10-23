@@ -56,7 +56,7 @@ def save_data(path, data):
 
 X_KEYS = {"headline", "body"}
 Y_KEYS = {
-    "newspaper", "ncountry", "ncompas",
+        "newspaper", "ncountry", "ncompas",
     "month", "year", "subject", "geographic"
 }
 Y_KEYS_LOCAL = Y_KEYS - {"subject", "geographic"}
@@ -69,6 +69,7 @@ Y_KEYS_TO_CODE = {
     "subject": "s",
     "geographic": "g",
 }
+CODE_TO_Y_KEYS = {v:k for k,v in Y_KEYS_TO_CODE.items()}
 Y_KEYS_PRETTY = {
     "newspaper": "Newspaper",
     "ncountry": "News. country",
@@ -86,9 +87,6 @@ def get_x(data,target): # Make modifications for craft
     
 def get_y(data,targets):
     _, data_y = zip(*data)
-    
-    if len(targets) == 1 and targets[0] == "all":
-        targets = list(Y_KEYS)
     
     # Get targets
     local_t = list(filter(Y_KEYS_LOCAL.__contains__,targets))

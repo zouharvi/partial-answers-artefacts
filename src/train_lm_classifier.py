@@ -9,6 +9,7 @@ import utils_eval
 import sklearn.model_selection
 import numpy as np
 
+import random
 import os.path as path
 import json
 import argparse
@@ -20,7 +21,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", default='data/final/clean.json', type=str,
                         help="Path of the data file.")
-    parser.add_argument("-o", "--output", default='data/models/{m}_{ml}_{ti}_{to}.pt', type=str,
+    parser.add_argument("-o", "--output", default='data/models/{m}_{ml}_{ti}_{to}_{inp}.pt', type=str,
                         help="Path where to store the model.")
     parser.add_argument("-ti", "--target-input", default='body',type=str,
                         help="Input of the model.")
@@ -57,14 +58,24 @@ if __name__ == "__main__":
         m=args.language_model,
         ti=args.target_input,
         to="_".join(args.target_output),
-        ml=args.max_length
+        ml=args.max_length,
+        inp=path.basename(args.input)[:-5]
         )
     
     # Read data
     data = utils.load_data(args.input)
     
+    targets = args.target_output
+    if len(targets) == 1:
+        if targets[0] == "all":
+            targets = list(utils.Y_KEYS)
+        elif targets[0] == "craft":
+            code = path.basename(args.input)[-6]
+            targets = [utils.CODE_TO_Y_KEYS[code]]
+       
+    
     target_input = utils.get_x(data,args.target_input)
-    target_outputs, label_names, labels = utils.get_y(data,args.target_output)    
+    target_outputs, label_names, labels = utils.get_y(data,targets)    
     
     train_size = (len(data) + args.train_samples) % len(data)
     dev_size = args.dev_samples
