@@ -27,9 +27,9 @@ def parse_args():
     parser.add_argument("-to", "--target-output", default=['newspaper'], type=str, nargs="+",
                         help="Target output of the model")
     parser.add_argument("-ts", "--train-samples", default=-2000, type=int,
-                        help="Target output of the model")
+                        help="Number of samples for the training (may be negative to get all except a given number)")
     parser.add_argument("-ds", "--dev-samples", default=1000, type=int,
-                        help="Target output of the model")
+                        help="Number of samples for the validation.")
     parser.add_argument("-ep","--epochs", default=2, type=int,
                         help="Override the default number of epochs.")
     parser.add_argument("-bs","--batch-size", default=16, type=int,
