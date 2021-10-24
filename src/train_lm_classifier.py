@@ -31,6 +31,8 @@ def parse_args():
                         help="Number of samples for the training (may be negative to get all except a given number)")
     parser.add_argument("-ds", "--dev-samples", default=1000, type=int,
                         help="Number of samples for the validation.")
+    parser.add_argument("-ht", "--head-thickness", default='shallow',
+                        help="Architecture of the classification head (shallow/mid)")
     parser.add_argument("-ep","--epochs", default=2, type=int,
                         help="Override the default number of epochs.")
     parser.add_argument("-bs","--batch-size", default=16, type=int,
@@ -97,9 +99,11 @@ if __name__ == "__main__":
         cls_target_dimensions=dimensions,
         loss_weights=weights,
         lm=lm_name,
+        head_thickness=args.head_thickness,
         epochs=args.epochs,
         batch_size=args.batch_size,
-        max_length=args.max_length)
+        max_length=args.max_length,
+        )
     
     lm.fit(x_train,y_train,x_dev,y_dev)
     lm.save_to_file(output_name)
