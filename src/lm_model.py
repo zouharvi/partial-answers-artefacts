@@ -55,10 +55,6 @@ class LMModel(nn.Module):
 
         # Create loss and optimizer
         loss = nn.CrossEntropyLoss()
-        # optimizer = optimizer(params=[*lm.parameters(),
-        #                               *it.chain(*map(op.methodcaller("parameters"), classification_heads))],
-        #                       **optimizer_params)
-        optimizer = optimizer(self.params())
 
         if loss_weights is None:
             loss_weights = torch.ones(
@@ -88,6 +84,16 @@ class LMModel(nn.Module):
         self.weights_total = weights_total
 
         self.loss = loss
+
+        # The optimizer has to be set last because self.parameters() scans class variables
+        # optimizer = optimizer(
+        #     params=[
+        #         *lm.parameters(),
+        #         *it.chain(*map(op.methodcaller("parameters"), classification_heads))
+        #     ],
+        #     **optimizer_params
+        # )
+        optimizer = optimizer(params=self.parameters(), **optimizer_params)
         self.optimizer = optimizer
 
     def forward(
@@ -170,7 +176,7 @@ class LMModel(nn.Module):
         X = self.tokenizer(
             X, padding=True, max_length=self.max_length,
             truncation=True, return_tensors="pt"
-            ).data
+        ).data
         tensors = list(X.values())
         if y is not None:
             tensors.append(torch.tensor(y))
