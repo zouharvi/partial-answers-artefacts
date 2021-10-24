@@ -1,7 +1,7 @@
 #!/bin/bash
 
 files=(data/final/1v1_*)
-for (( index=0; index<${#files[@]}; index+=3 )); do
+for (( index=1; index<${#files[@]}; index+=3 )); do
     f=${files[index]}
     echo $f
     python src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input $f

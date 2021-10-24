@@ -45,6 +45,7 @@ class LMModel(nn.Module):
             loss_weights = torch.ones(len(cls_target_dimensions),device=device)
         else:
             loss_weights = torch.tensor(loss_weights,device=device)
+        weights_total = torch.sum(loss_weights)
         
         ## Set attributes
         # Config
@@ -64,6 +65,7 @@ class LMModel(nn.Module):
         self.batch_size = batch_size
         self.epochs = epochs
         self.loss_weights = loss_weights
+        self.weights_total = weights_total
         
         self.loss = loss
         self.optimizer = optimizer
@@ -237,7 +239,7 @@ class LMModel(nn.Module):
         
     def _reduce_losses(self,losses):
         losses = losses*self.loss_weights
-        return torch.mean(losses)
+        return torch.sum(losses)/self.weights_total
     
     def _compute_acc(self,y_pred,y):
 
