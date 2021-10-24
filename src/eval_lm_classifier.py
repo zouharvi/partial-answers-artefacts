@@ -29,6 +29,8 @@ def parse_args():
                         help="Target output of the model")
     parser.add_argument("-ts", "--test-samples", default=1000, type=int,
                         help="Amount of samples with which to test.")
+    parser.add_argument("-ht", "--head-thickness", default='shallow',
+                        help="Architecture of the classification head (shallow/mid)")
     parser.add_argument("-bs","--batch-size", default=128, type=int,
                         help="Evaluation batch size.")
     parser.add_argument("-lm", "--language-model", default="bert", type=str,
@@ -66,6 +68,7 @@ if __name__ == "__main__":
     lm = LMModel(
         cls_target_dimensions=list(map(len,label_names)),
         lm=lm_name,
+        head_thickness=args.head_thickness,
         batch_size=args.batch_size,
         max_length=args.max_length)
     
