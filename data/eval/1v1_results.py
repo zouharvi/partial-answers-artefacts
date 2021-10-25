@@ -1,5 +1,5 @@
 # dev accuracies/r-precisions
-scores = {
+{
     ("ncountry", "ncountry"): 1.0,
     ("ncountry", "geographic"): 0.803,
     ("ncountry", "newspaper"): 0.875,
