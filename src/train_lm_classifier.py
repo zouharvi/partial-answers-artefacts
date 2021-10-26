@@ -1,15 +1,10 @@
 #!/usr/bin/env python3
 
-# TODO segregate into fucntions
-
 from lm_model import LMModel
 import utils
 import utils_eval
 
-import sklearn.model_selection
 import numpy as np
-
-import random
 import os.path as path
 import json
 import argparse

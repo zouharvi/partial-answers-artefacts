@@ -86,15 +86,8 @@ class LMModel(nn.Module):
         self.loss = loss
 
         # The optimizer has to be set last because self.parameters() scans class variables
-        # optimizer = optimizer(
-        #     params=[
-        #         *lm.parameters(),
-        #         *it.chain(*map(op.methodcaller("parameters"), classification_heads))
-        #     ],
-        #     **optimizer_params
-        # )
-        optimizer = optimizer(params=self.parameters(), **optimizer_params)
-        self.optimizer = optimizer
+        self.optimizer = optimizer(
+            params=self.parameters(), **optimizer_params)
 
     def forward(
         self,
@@ -115,8 +108,8 @@ class LMModel(nn.Module):
         elif self.embed_strategy == "avg":
             x = torch.mean(x, 1)
         elif self.embed_strategy != "all":
-            raise ValueError(
-                "Embed strategy {} is not recognized as valid.".format(self.embed_strategy))
+            raise Exception(
+                f"Embed strategy {self.embed_strategy} is not valid.")
 
         # For each head make classification
         if self.classification_heads:
@@ -143,9 +136,7 @@ class LMModel(nn.Module):
                 x = zip(*x)
                 x = map(torch.cat, x)
 
-            x = map(op.methodcaller("cpu"), x)
-            x = map(op.methodcaller("numpy"), x)
-            x = list(x)
+            x = [t.cpu().numpy() for t in x]
 
             if not self.classification_heads:
                 x = np.concatenate(x)
@@ -199,10 +190,12 @@ class LMModel(nn.Module):
         for e in range(self.epochs):
             self._train_epoch(dl_train, dl_dev, epoch_i=e)
 
-    def _train_epoch(self,
-                     dl_train: DataLoader,
-                     dl_dev: DataLoader = None,
-                     epoch_i=None):
+    def _train_epoch(
+        self,
+        dl_train: DataLoader,
+        dl_dev: DataLoader = None,
+        epoch_i=None
+    ):
 
         self.train()
 
@@ -219,9 +212,10 @@ class LMModel(nn.Module):
 
             dl_train.set_postfix(dict(loss=losses, acc=accs))
 
-        # Validation loop # This is ugly
+        # Validation loop
         if dl_dev is None:
             return
+
         with torch.no_grad():
             dl_dev = tqdm.tqdm(dl_dev, desc="Validation")
             losses = []
