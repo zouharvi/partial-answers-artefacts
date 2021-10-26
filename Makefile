@@ -49,3 +49,13 @@ run_rv1:
 	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_y.json
 	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_s.json
 	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_g.json
+
+train_all_1v1:
+	@echo "TODO: this script may not work as expected"
+	@read _
+	files=(data/final/1v1_*) \
+	for (( index=5; index<${#files[@]}; index+=3 )); do \
+		f=${files[index]} \
+		echo $$f \
+		python3 ./src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input $$f \
+	done \

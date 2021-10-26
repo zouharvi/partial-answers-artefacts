@@ -3,7 +3,6 @@ import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
 import sklearn.model_selection
 from utils_data import *
-import random
 import torch
 
 import operator as op
