@@ -34,7 +34,7 @@ prepare_data:
 	python3 ./src/data/prepare_clean.py --data-in data/final/all.json --data-out data/final/clean.json
 
 craft_data:
-	python3 ./src/craft_data.py --data-in data/final/clean.json --data-out data/final/{LABEL}.json
+	python3 ./src/data/craft.py --data-in data/final/clean.json --data-out data/final/{LABEL}.json
 
 get_glove:
 	wget -P data/ http://nlp.stanford.edu/data/wordvecs/glove.6B.zip

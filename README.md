@@ -14,14 +14,10 @@ Authors: Vilém Zouhar, Edu Vallejo Arguinzoniz.
 
 - TODO
 
-<!-- ## TODO
-- Individual models:
-  - BERT-based with single classification "head"
-  - BERT-based with first token begin the prediction (early exit)
-  - baseline models
-- Joint models:
-  - BERT-based with independent classification "heads"
-  - BERT-based with predictions being individual tokens (early exit) -->
+## TODO:
+- why 256 and not 512 max length?
+- `-mt mid` for joint model
+- redo individual models (better crafting)
 
 ## Repository structure
 
