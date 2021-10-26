@@ -1,3 +1,5 @@
+import sys
+sys.path.append("src")
 import utils
 
 import numpy as np
@@ -9,7 +11,6 @@ from transformers import AutoTokenizer, AutoModel
 
 import operator as op
 import itertools as it
-import functools as ft
 import tqdm
 
 

@@ -7,51 +7,46 @@ from sklearn.decomposition import IncrementalPCA, PCA
 import argparse
 import os.path as path
 
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", type=str,
                         help="Path to the embeddings file.")
     parser.add_argument("-o", "--output", default='data/embeddings/{i}_reduced_{h}_{p}_{d}.npz', type=str,
                         help="Path where to store the dimensionality reduced embeddings.")
-    parser.add_argument("-p","--projection-method",default="tsne",
+    parser.add_argument("-p", "--projection-method", default="tsne",
                         help="What projection method to use to implement dimensionality reduction.")
-    parser.add_argument("-d","--dimension",default=2,
+    parser.add_argument("-d", "--dimension", default=2,
                         help="How many dimensions to reduce to.")
-    parser.add_argument("-rh","--reduction-heuristic",default="cls")
-    
+    parser.add_argument("-rh", "--reduction-heuristic", default="cls")
+
     args = parser.parse_args()
     return args
 
+
 if __name__ == "__main__":
     args = parse_args()
-        
-        
+
     output_name = args.output.format(
         i=path.basename(args.input[:-4]),
         h=args.reduction_heuristic,
         p=args.projection_method,
         d=args.dimension)
-        
+
     print(output_name)
-        
+
     # Read data
     embeddings = np.load(args.input)["data"]
-    
+
     # Use reduction heuristic
     if args.reduction_heuristic == "cls":
-        embeddings = embeddings[:,0]
+        embeddings = embeddings[:, 0]
     elif args.reduction_heuristic == "avg":
-        embeddings = np.mean(embeddings,axis=1)
-        
-    if args.projection_method == "tsne":    
-        reducer = TSNE(args.dimension,n_jobs=-1)
-    elif args.projection_method == "pca":    
+        embeddings = np.mean(embeddings, axis=1)
+
+    if args.projection_method == "tsne":
+        reducer = TSNE(args.dimension, n_jobs=-1)
+    elif args.projection_method == "pca":
         reducer = PCA(args.dimension)
-        
-        
+
     projected_emb = reducer.fit_transform(embeddings)
-    np.savez(output_name,data=projected_emb)
-    
-    
-    
+    np.savez(output_name, data=projected_emb)

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import argparse
+import sys
+sys.path.append("src")
 from utils import *
 import numpy as np
 import sklearn.linear_model

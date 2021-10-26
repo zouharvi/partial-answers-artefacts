@@ -13,7 +13,7 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    plt.figure(figsize=(6,4))
+    plt.figure(figsize=(6, 4))
 
     plt.plot(
         [0.5, 0.7, 0.6, 0.4, 0.1],
@@ -46,7 +46,8 @@ if __name__ == "__main__":
 
     plt.ylabel("$L^2$ distance")
     plt.ylim(0, 2)
-    XTICK_LABELS = ["Input", "Layer 1\n(avg)", "Layer 2\n(avg)", "Layer 3\n(avg)", "Softmax Input"]
+    XTICK_LABELS = [
+        "Input", "Layer 1\n(avg)", "Layer 2\n(avg)", "Layer 3\n(avg)", "Softmax Input"]
     plt.xticks(list(range(len(XTICK_LABELS))), XTICK_LABELS, rotation=0)
     plt.legend()
     plt.tight_layout()

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import sys
+sys.path.append("src")
 import argparse
 from utils import *
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -7,6 +9,7 @@ import sklearn.model_selection
 import torch.nn
 import pickle
 import numpy as np
+
 
 def parse_args():
     args = argparse.ArgumentParser()
@@ -29,7 +32,7 @@ def parse_args():
 class Model(torch.nn.Module):
     def __init__(self, output_dim, single_class):
         super().__init__()
-        self.tfidf_dim = 4096*8
+        self.tfidf_dim = 4096 * 8
         self.glove_dim = 200
         self.single_class = single_class
 
@@ -40,7 +43,7 @@ class Model(torch.nn.Module):
         )
         self.tfidf_dropout = torch.nn.Dropout(p=0.75)
         self.classification = torch.nn.Sequential(
-            torch.nn.Linear(256*2+self.tfidf_dim, 512),
+            torch.nn.Linear(256 * 2 + self.tfidf_dim, 512),
             torch.nn.Dropout(p=0.3),
             torch.nn.ReLU(),
             torch.nn.Linear(512, 512),
@@ -66,7 +69,8 @@ class Model(torch.nn.Module):
         return output
 
     def preprocess(self, data, glove):
-        vectorizer = TfidfVectorizer(max_features=self.tfidf_dim, ngram_range=(1, 2))
+        vectorizer = TfidfVectorizer(
+            max_features=self.tfidf_dim, ngram_range=(1, 2))
         data_tfidf = vectorizer.fit_transform([x[0]["body"] for x in data])
 
         data_new = []
@@ -75,7 +79,7 @@ class Model(torch.nn.Module):
             words_head = line[0]["headline"].lower().split()
             words_body = line[0]["body"].lower().split()[:20]
             words_glove = [
-                glove[word] if word in glove else [0.0]*self.glove_dim
+                glove[word] if word in glove else [0.0] * self.glove_dim
                 for word in words_head + words_body
             ]
 
@@ -135,7 +139,8 @@ class Model(torch.nn.Module):
         for x, y in data:
             with torch.no_grad():
                 output = self(x)
-                hits.append(y[0].item() == torch.argmax(output[0], dim=0).item())
+                hits.append(y[0].item() == torch.argmax(
+                    output[0], dim=0).item())
         return np.average(hits)
 
     def eval_data_rprec(self, data):

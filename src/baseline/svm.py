@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import sys
+sys.path.append("src")
 import argparse
 from utils import *
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer

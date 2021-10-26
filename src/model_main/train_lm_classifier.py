@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from lm_model import LMModel
+import sys
+sys.path.append("src")
 import utils
 import utils_eval
 
@@ -8,8 +10,6 @@ import numpy as np
 import os.path as path
 import json
 import argparse
-import operator as op
-import itertools as it
 import collections as col
 
 

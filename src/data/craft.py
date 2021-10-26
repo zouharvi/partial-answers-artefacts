@@ -6,6 +6,8 @@ Script for preparing and cleaning the data
 
 import argparse
 import random
+import sys
+sys.path.append("src")
 from utils import *
 
 

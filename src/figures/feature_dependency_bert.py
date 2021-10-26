@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-from ast import parse
 import sys
-from types import CodeType
 sys.path.append("src")
 from utils import *
 import numpy as np
