@@ -3,9 +3,7 @@ import utils
 from sklearn.metrics import classification_report, confusion_matrix
 import numpy as np
 
-import itertools as it
 import collections as col
-import functools as ft
 import operator as op
 
 
@@ -39,11 +37,6 @@ def complete_evaluation(evaluation_targets: list, y_true, y_logits, target_names
 
 def eval_from_logits(y_true, logits, target_names=None):
     y_pred = np.argmax(logits, axis=1)
-    print(y_true)
-    print(y_pred)
-    print(y_true.shape)
-    print(y_pred.shape)
-    print(target_names)
     return classification_report(
         y_true=y_true,
         y_pred=y_pred,

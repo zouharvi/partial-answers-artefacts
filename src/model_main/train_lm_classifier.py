@@ -125,6 +125,8 @@ if __name__ == "__main__":
         target_names=label_names
     )
 
+    print(evals)
+
     save_path = "data/eval/{}_eval.json".format(
         path.basename(output_name)[:-3])
     with open(save_path, "w") as f:
