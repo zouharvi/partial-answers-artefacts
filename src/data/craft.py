@@ -12,8 +12,10 @@ from utils import *
 
 
 def plus_var_processor(plus_var):
+    plus_var_smallest = sorted(plus_var, key=lambda x: len(x))[:3]
     return ", ".join(
-        random.sample(plus_var, k=min(5, len(plus_var)))
+        plus_var_smallest
+        # random.sample(plus_var, k=min(5, len(plus_var)))
     ).lower()
 
 

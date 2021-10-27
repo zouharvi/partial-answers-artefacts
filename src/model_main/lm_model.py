@@ -208,8 +208,8 @@ class LMModel(nn.Module):
             X, y = batch
             loss, acc = self._train_step(X, y)
 
-            losses = losses * 0.8 + loss.item() * 0.2
-            accs = accs * 0.8 + acc.item() * 0.2
+            losses = losses * 0.9 + loss.item() * 0.1
+            accs = accs * 0.9 + acc.item() * 0.1
 
             dl_train.set_postfix(dict(loss=losses, acc=accs))
 
