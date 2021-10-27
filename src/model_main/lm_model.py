@@ -110,7 +110,8 @@ class LMModel(nn.Module):
             x = torch.mean(x, 1)
         elif self.embed_strategy != "all":
             raise Exception(
-                f"Embed strategy {self.embed_strategy} is not valid.")
+                f"Embed strategy {self.embed_strategy} is not valid."
+            )
 
         # For each head make classification
         if self.classification_heads:

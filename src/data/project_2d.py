@@ -3,21 +3,22 @@
 import numpy as np
 from sklearn.manifold import TSNE
 from sklearn.decomposition import IncrementalPCA, PCA
+import pickle
 
 import argparse
 import os.path as path
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input", type=str,
+    parser.add_argument("-i", "--input",
                         help="Path to the embeddings file.")
-    parser.add_argument("-o", "--output", default='data/embeddings/{i}_reduced_{h}_{p}_{d}.npz', type=str,
+    parser.add_argument("-o", "--output", default='data/embeddings/{i}_reduced_{h}_{p}_{d}.pkl',
                         help="Path where to store the dimensionality reduced embeddings.")
     parser.add_argument("-p", "--projection-method", default="tsne",
                         help="What projection method to use to implement dimensionality reduction.")
     parser.add_argument("-d", "--dimension", default=2,
                         help="How many dimensions to reduce to.")
-    parser.add_argument("-rh", "--reduction-heuristic", default="cls")
+    parser.add_argument("-rh", "--reduction-heuristic", default=None)
 
     args = parser.parse_args()
     return args
@@ -32,10 +33,11 @@ if __name__ == "__main__":
         p=args.projection_method,
         d=args.dimension)
 
-    print(output_name)
+    print("Output:", output_name)
 
     # Read data
-    embeddings = np.load(args.input)["data"]
+    with open(args.input, "rb") as f:
+        embeddings = pickle.load(f)
 
     # Use reduction heuristic
     if args.reduction_heuristic == "cls":
@@ -49,4 +51,6 @@ if __name__ == "__main__":
         reducer = PCA(args.dimension)
 
     projected_emb = reducer.fit_transform(embeddings)
-    np.savez(output_name, data=projected_emb)
+    
+    with open(output_name, "wb") as f:
+        pickle.dump(projected_emb, f)
