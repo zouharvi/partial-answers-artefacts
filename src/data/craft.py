@@ -12,7 +12,7 @@ from utils import *
 
 
 def plus_var_processor(plus_var):
-    plus_var_smallest = sorted(plus_var, key=lambda x: len(x))[:3]
+    plus_var_smallest = sorted(plus_var, key=lambda x: len(x))[:2]
     return ", ".join(
         plus_var_smallest
         # random.sample(plus_var, k=min(5, len(plus_var)))
@@ -162,7 +162,7 @@ if __name__ == "__main__":
             print(f"Crafting Rv1_{dropout:0>2}_", y_filter, sep="")
             data_new = craft_rv1(
                 data, x_filter=X_FILTER,
-                y_filter=y_filter, dropout=0.0
+                y_filter=y_filter, dropout=dropout/100
             )
             save_data(
                 args.data_out.replace("{LABEL}", f"Rv1_{dropout:0>2}_" + y_filter_code),
