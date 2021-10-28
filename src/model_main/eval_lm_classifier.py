@@ -73,10 +73,11 @@ if __name__ == "__main__":
     y_logits = lm.predict(x_test)
 
     evaluation = utils_eval.complete_evaluation(
-        y_test, y_logits,
+        y_true=y_test, y_logits=y_logits,
         evaluation_targets=target_outputs,
         target_names=label_names
     )
+    print(evaluation)
 
     with open(output_name, "w") as f:
         json.dump(evaluation, f)

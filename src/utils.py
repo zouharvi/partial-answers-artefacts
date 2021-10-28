@@ -55,10 +55,14 @@ def save_data(path, data):
 
 X_KEYS = {"headline", "body"}
 Y_KEYS = {
-        "newspaper", "ncountry", "ncompas",
+    "newspaper", "ncountry", "ncompas",
     "month", "year", "subject", "geographic"
 }
 Y_KEYS_LOCAL = Y_KEYS - {"subject", "geographic"}
+
+Y_KEYS_FIXED = list(Y_KEYS)
+Y_KEYS_LOCAL_FIXED = list(Y_KEYS_LOCAL)
+
 Y_KEYS_TO_CODE = {
     "newspaper": "n",
     "ncountry": "c",
@@ -68,7 +72,7 @@ Y_KEYS_TO_CODE = {
     "subject": "s",
     "geographic": "g",
 }
-CODE_TO_Y_KEYS = {v:k for k,v in Y_KEYS_TO_CODE.items()}
+CODE_TO_Y_KEYS = {v: k for k, v in Y_KEYS_TO_CODE.items()}
 Y_KEYS_PRETTY = {
     "newspaper": "Newspaper",
     "ncountry": "News. country",
@@ -79,73 +83,82 @@ Y_KEYS_PRETTY = {
     "geographic": "Geographic",
 }
 
-def get_x(data,target): # Make modifications for craft    
+
+def get_x(data, target):  # Make modifications for craft
     data_x, _ = zip(*data)
     i_getter = op.itemgetter(target)
-    return list(map(i_getter,data_x))
-    
-def get_y(data,targets):
+    return list(map(i_getter, data_x))
+
+
+def get_y(data, targets):
     _, data_y = zip(*data)
-    
+
     # Get targets
-    local_t = list(filter(Y_KEYS_LOCAL.__contains__,targets))
-    global_t = list(filter({"subject", "geographic"}.__contains__,targets))
-    
+    local_t = list(filter(Y_KEYS_LOCAL.__contains__, targets))
+    global_t = list(filter({"subject", "geographic"}.__contains__, targets))
+
     labels = list()
-    
+
     # Extract local targets
     label_names_local = list()
-    if local_t: 
-        y_local = (list(map(op.itemgetter(t),data_y)) for t in local_t)
+    if local_t:
+        y_local = (list(map(op.itemgetter(t), data_y)) for t in local_t)
         y_local = ([[x] for x in t] for t in y_local)
-        bin_local, y_local = zip(*map(binarize_data,y_local))
-        y_local = np.array(list(map(ft.partial(np.argmax,axis=1),y_local))).T
+        bin_local, y_local = zip(*map(binarize_data, y_local))
+        y_local = np.array(list(map(ft.partial(np.argmax, axis=1), y_local))).T
 
         labels.append(y_local)
-        label_names_local = list(map(op.attrgetter("classes_"),bin_local))
-    
+        label_names_local = list(map(op.attrgetter("classes_"), bin_local))
+
     # Extract non-local targets
     global_t_post = list()
     label_names_global = list()
-    if global_t: 
-        y_global = (list(map(op.itemgetter(t),data_y)) for t in global_t)
-        bin_global, y_global = zip(*map(binarize_data,y_global))
-        y_global = np.concatenate(list(y_global),axis=1)
+    if global_t:
+        y_global = (list(map(op.itemgetter(t), data_y)) for t in global_t)
+        bin_global, y_global = zip(*map(binarize_data, y_global))
+        y_global = np.concatenate(list(y_global), axis=1)
 
         labels.append(y_global)
-        label_names_global = list(map(op.attrgetter("classes_"),bin_global))
-        
-        global_t_post = it.chain(*[[gt]*len(labels) for gt,labels in zip(global_t,label_names_global)])
+        label_names_global = list(map(op.attrgetter("classes_"), bin_global))
+
+        global_t_post = it.chain(
+            *[[gt] * len(labels) for gt, labels in zip(global_t, label_names_global)])
         global_t_post = list(global_t_post)
-        
-        label_names_global = ["{l}_F¡{l}_T".format(l=l).split("¡") for l in it.chain(*label_names_global)]
-        
+
+        # TODO: [l+"_F", l+"_T"] please
+        label_names_global = [
+            "{l}_F¡{l}_T".format(l=l).split("¡")
+            for l in it.chain(*label_names_global)
+        ]
+
     # Put everything together
     targets_post = local_t + global_t_post
     label_names = label_names_local + label_names_global
-    label_names = list(map(list,label_names))
-    labels = np.concatenate(labels,axis=1)
-    
+    label_names = list(map(list, label_names))
+    labels = np.concatenate(labels, axis=1)
+
     return targets_post, label_names, labels
+
 
 def make_split(data_list, splits, random_state=0):
     data_list = list(zip(*data_list))
     data_splits = []
     for split in splits:
         data_list, data_split = sklearn.model_selection.train_test_split(
-                                    data_list,
-                                    test_size=split,
-                                    random_state=random_state)
-        
+            data_list,
+            test_size=split,
+            random_state=random_state)
+
         data_splits.append(data_split)
-    if len(data_list) > 0: data_splits.append(data_list)
-    
-    r = tuple(it.starmap(zip,data_splits))
-    
+    if len(data_list) > 0:
+        data_splits.append(data_list)
+
+    r = tuple(it.starmap(zip, data_splits))
+
     r_x, r_y = zip(*r)
-    r_y = tuple(map(np.array,r_y))
-    
-    return tuple(zip(r_x,r_y))
+    r_y = tuple(map(np.array, r_y))
+
+    return tuple(zip(r_x, r_y))
 
 
 def streamline_data(data, x_filter="headline", y_filter="newspaper", binarize="output"):
@@ -199,8 +212,8 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper", binarize="o
     else:
         raise Exception("Invalid x_filter parameter")
 
-    data_x = [x_filter(x,y) for x,y in data]
-    data_y = [y_filter(x,y) for x,y in data]
+    data_x = [x_filter(x, y) for x, y in data]
+    data_y = [y_filter(x, y) for x, y in data]
 
     if binarize is None or binarize == "none":
         return list(zip(data_x, data_y))
@@ -222,17 +235,28 @@ def binarize_data(data_y):
 
     return binarizer, data_y
 
+
 def argmax_n(arr, n):
     n = min(len(arr), n)
     return np.argpartition(arr, -n)[-n:]
+
 
 def rprec_local(y, pred_y):
     ones_1 = {i for i, t in enumerate(y) if t == 1}
     ones_2 = set(argmax_n(pred_y, len(ones_1)))
     return len(ones_1 & ones_2) / len(ones_1)
 
+
 def rprec(data_y, pred_y):
     return np.average([
         rprec_local(y, pred_y)
         for y, pred_y in zip(data_y, pred_y)
     ])
+
+
+def powerset(iterable, nonempty=False):
+    s = list(iterable)
+    return it.chain.from_iterable(
+        it.combinations(s, r)
+        for r in range(1 if nonempty else 0, len(s) + 1)
+    )

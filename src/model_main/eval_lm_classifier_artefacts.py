@@ -6,12 +6,10 @@ import sys
 import numpy as np
 sys.path.append("src")
 import utils
-import utils_eval
 import json
 import argparse
-import os.path as path
+from collections import Counter
 from lm_model import LMModel
-
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -23,7 +21,7 @@ def parse_args():
                         help="Path where to load the model from.")
     parser.add_argument("-ti", "--target-input", default='body', type=str,
                         help="Input of the model.")
-    parser.add_argument("-to", "--target-output", default=['newspaper'], type=str, nargs="+",
+    parser.add_argument("-to", "--target-output", default=['month'], type=str, nargs="+",
                         help="Target output of the model")
     parser.add_argument("-ts", "--test-samples", default=1000, type=int,
                         help="Amount of samples with which to test.")
@@ -46,22 +44,21 @@ LM_ALIASES = dict(
     distilroberta="distilroberta-base"
 )
 
-def x_manipulator_base(x, y, x_filter, y_filter):
-    artefacts = [
-        "None"
-        for k in utils.Y_KEYS_LOCAL
-    ]
-    return ' | '.join(artefacts) + " | " + x[x_filter]
-
+def artefacts_signature(artefacts, y_filter):
+    return [1 if k in artefacts else 0 for k in utils.Y_KEYS_LOCAL - {y_filter}]
 
 def x_manipulator_all(x, y, x_filter, y_filter):
-    y = {**y, y_filter: "None"}
-    artefacts = [
-        y[k]
-        for k in utils.Y_KEYS_LOCAL
-    ]
-    return ' | '.join(artefacts) + " | " + x[x_filter]
-
+    output = []
+    for subset in utils.powerset(utils.Y_KEYS_LOCAL - {y_filter}, nonempty=False):
+        artefacts = [
+            y[k] if k in subset else "None"
+            for k in utils.Y_KEYS_LOCAL - {y_filter}
+        ]
+        artefacts_str = ' | '.join(artefacts) + " | " + x[x_filter]
+        output.append((
+            artefacts_str, artefacts_signature(subset, y_filter)
+        ))
+    return output
 
 if __name__ == "__main__":
     args = parse_args()
@@ -86,24 +83,41 @@ if __name__ == "__main__":
     )
     # load the weights
     lm.load_from_file(args.model_path)
-    print("Predicting base")
-    data_x_base = [x_manipulator_base(x, y, args.target_input, args.target_output[0]) for x, y in data[:10]]
-    preds_base = lm.predict(data_x_base)[0]
-    print("Predicting all artefacts")
-    data_x_all = [x_manipulator_all(x, y, args.target_input, args.target_output[0]) for x, y in data[:10]]
-    preds_all = lm.predict(data_x_all)[0]
+
+    print("Predicting all subsets of artefacts")
+    data_x_all = [
+        (
+            x_manipulator_all(x, y, args.target_input, args.target_output[0]),
+            y_true[0]
+        )
+        for (x, y), y_true in zip(data[:128], labels)
+    ]
+    # flatten data
+    data_x_all = [
+        (z, true_y)
+        for artefacts, true_y in data_x_all
+        for z in artefacts
+    ]
+    preds_all = lm.predict([x[0] for x, y in data_x_all])[0]
+
+    # print("\n".join([x[:100].replace("\n", " ") for x, y in data_x_all]))
 
     data_out = []
+    hits_full = []
+    hits = []
+    for y_pred, ((x, signature), y_true) in zip(preds_all, data_x_all):
+        y_pred = np.argmax(y_pred)
+        if sum(signature) == 4:
+            hits_full.append(y_pred == y_true)
+        hits.append(y_pred == y_true)
+        print(signature, y_pred, y_true)
 
-    for pred_base, pred_all, gold_label in zip(preds_base, preds_all, labels):
-        y_base = np.argmax(pred_base)
-        y_all = np.argmax(pred_all)
-        gold_label = gold_label[0]
-        data_out.append({
-            "base": (pred_base, y_base==gold_label),
-            "all": (pred_all, y_all==gold_label)
-        })    
-        print(y_base, gold_label)
+    print(labels.shape)
+    print(Counter(labels))
+    print(Counter([np.argmax(x) for x in preds_all]))
+    print("Acc (4 artefacts):", format(np.average(hits_full), ".2%"))
+    print("Acc (any):", format(np.average(hits), ".2%"))
+    exit()
 
-    with open(args.output.format(args.target_output[0]), "wb") as f:
-        pickle.dump(data_out, f)
+    # with open(args.output.format(args.target_output[0]), "wb") as f:
+    #     pickle.dump(data_out, f)
