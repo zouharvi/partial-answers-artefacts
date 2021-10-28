@@ -7,9 +7,7 @@ sys.path.append("src")
 
 import numpy as np
 import utils
-import json
 import argparse
-from collections import Counter
 from lm_model import LMModel
 
 
@@ -40,6 +38,7 @@ def parse_args():
     return args
 
 
+# TODO: move LM_ALIASES inside of LMModel
 LM_ALIASES = dict(
     bert="bert-base-uncased",
     roberta="roberta-base",
@@ -47,10 +46,8 @@ LM_ALIASES = dict(
     distilroberta="distilroberta-base"
 )
 
-
 def artefacts_signature(artefacts, y_filter):
     return [1 if k in artefacts else 0 for k in utils.Y_KEYS_LOCAL - {y_filter}]
-
 
 def x_manipulator_all(x, y, x_filter, y_filter):
     output = []
@@ -65,6 +62,7 @@ def x_manipulator_all(x, y, x_filter, y_filter):
         ))
     return output
 
+# TODO: this part is only duplicate of the main code so that it can be called form train_lm_classifier which is otherwise broken
 def hack(data, labels, lm):
     print("Predicting all subsets of artefacts")
     data_x_all = [
@@ -81,7 +79,7 @@ def hack(data, labels, lm):
         for z in artefacts
     ]
     
-    preds_all = lm.predict2([x[0] for x, y in data_x_all])
+    preds_all = lm.predict2([x[0] for x, y in data_x_all], top_cls_only=False)
 
     # flatten results
     preds_all = [
@@ -99,12 +97,11 @@ def hack(data, labels, lm):
             hits_full.append(y_pred == y_true)
         hits.append(y_pred == y_true)
         data_out.append(((rep, y_pred_posterior, signature), y_pred == y_true))
-        print(signature, y_pred, y_true)
 
     print("Acc (4 artefacts):", format(np.average(hits_full), ".2%"))
     print("Acc (any):", format(np.average(hits), ".2%"))
 
-    with open("data/misc/meta_month.pkl", "wb") as f:
+    with open("data/misc/tracing_month.pkl", "wb") as f:
         pickle.dump(data_out, f)
 
 if __name__ == "__main__":
@@ -146,7 +143,7 @@ if __name__ == "__main__":
         for z in artefacts
     ]
 
-    preds_all = lm.predict2([x[0] for x, y in data_x_all])
+    preds_all = lm.predict2([x[0] for x, y in data_x_all], top_cls_only=False)
 
     # flatten results
     preds_all = [

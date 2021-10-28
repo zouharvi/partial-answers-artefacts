@@ -15,7 +15,7 @@ from model import ModelStandard, ModelJoint
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-i", "--input", default='data/misc/meta_month_big.pkl',
+        "-i", "--input", default='data/misc/meta_month.pkl',
         help="Path of the data file."
     )
     parser.add_argument(

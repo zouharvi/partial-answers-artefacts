@@ -43,6 +43,7 @@ def parse_args():
     return args
 
 
+# TODO: move LM_ALIASES inside of LMModel
 LM_ALIASES = dict(
     bert="bert-base-uncased",
     roberta="roberta-base",

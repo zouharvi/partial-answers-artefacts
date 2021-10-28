@@ -35,7 +35,7 @@ class LMModel(nn.Module):
 
         # Initialize tokenizer and model
         tokenizer = AutoTokenizer.from_pretrained(lm)
-        lm = AutoModel.from_pretrained(lm).to(device)
+        lm = AutoModel.from_pretrained(lm, output_hidden_states=True).to(device)
 
         # Build classification heads
         if head_thickness == "shallow":
@@ -127,17 +127,17 @@ class LMModel(nn.Module):
         attention_mask=None
     ):
         # Embedd text
-        x = self.lm(
+        model_output = self.lm(
             input_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids
-        )[0]
+        )
 
         # Reduce dimension using heuristic
         if self.embed_strategy == "cls":
-            x = x[:, 0, :]
+            x = model_output[0][:, 0, :]
         elif self.embed_strategy == "avg":
-            x = torch.mean(x, 1)
+            x = torch.mean(model_output[0], 1)
         elif self.embed_strategy != "all":
             raise Exception(
                 f"Embed strategy {self.embed_strategy} is not valid."
@@ -145,7 +145,8 @@ class LMModel(nn.Module):
 
         y = self.classification_heads[0](x)
 
-        return x, y
+        # take cls
+        return [t[:,0,:] for t in model_output.hidden_states], y
 
     # Utility functions
     def fit(self,
@@ -171,7 +172,7 @@ class LMModel(nn.Module):
                 x = np.concatenate(x)
         return x
 
-    def predict2(self, X):
+    def predict2(self, X, top_cls_only=True):
         dl = self._convert2batched(X)
         dl = tqdm.tqdm(dl)  # Add progress bar
 
@@ -182,10 +183,16 @@ class LMModel(nn.Module):
             # map is intentional here so that the data can be removed from the GPU device
             # once they are not needed
             x = map(lambda sample: self.forward2(*sample), dl)
-            x = [
-                (sample[0].cpu().numpy(), sample[1].cpu().numpy())
-                for sample in x
-            ]
+            if top_cls_only:
+                x = [
+                    (sample[0][0].cpu().numpy(), sample[1].cpu().numpy())
+                    for sample in x
+                ]
+            else:
+                x = [
+                    (sample[0].cpu().numpy(), sample[1].cpu().numpy())
+                    for sample in x
+                ]
         return x
 
     def save_to_file(self, filename):
