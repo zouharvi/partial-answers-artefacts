@@ -179,6 +179,8 @@ class LMModel(nn.Module):
 
         self.lm.eval()
         with torch.no_grad():
+            # map is intentional here so that the data can be removed from the GPU device
+            # once they are not needed
             x = map(lambda sample: self.forward2(*sample), dl)
             x = [
                 (sample[0].cpu().numpy(), sample[1].cpu().numpy())
