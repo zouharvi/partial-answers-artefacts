@@ -115,10 +115,37 @@ class LMModel(nn.Module):
 
         # For each head make classification
         if self.classification_heads:
-            y = map(op.methodcaller("__call__", x), self.classification_heads)
-            return list(y)
+            y = [head(x) for head in self.classification_heads]
+            return y
 
         return x
+
+    def forward2(
+        self,
+        input_ids,
+        token_type_ids=None,
+        attention_mask=None
+    ):
+        # Embedd text
+        x = self.lm(
+            input_ids,
+            attention_mask=attention_mask,
+            token_type_ids=token_type_ids
+        )[0]
+
+        # Reduce dimension using heuristic
+        if self.embed_strategy == "cls":
+            x = x[:, 0, :]
+        elif self.embed_strategy == "avg":
+            x = torch.mean(x, 1)
+        elif self.embed_strategy != "all":
+            raise Exception(
+                f"Embed strategy {self.embed_strategy} is not valid."
+            )
+
+        y = self.classification_heads[0](x)
+
+        return x, y
 
     # Utility functions
     def fit(self,
@@ -142,6 +169,21 @@ class LMModel(nn.Module):
 
             if not self.classification_heads:
                 x = np.concatenate(x)
+        return x
+
+    def predict2(self, X):
+        dl = self._convert2batched(X)
+        dl = tqdm.tqdm(dl)  # Add progress bar
+
+        assert len(self.classification_heads) == 1
+
+        self.lm.eval()
+        with torch.no_grad():
+            x = map(lambda sample: self.forward2(*sample), dl)
+            x = [
+                (sample[0].cpu().numpy(), sample[1].cpu().numpy())
+                for sample in x
+            ]
         return x
 
     def save_to_file(self, filename):

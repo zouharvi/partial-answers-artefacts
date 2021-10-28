@@ -80,20 +80,32 @@ def hack(data, labels, lm):
         for artefacts, true_y in data_x_all
         for z in artefacts
     ]
-    preds_all = lm.predict([x[0] for x, y in data_x_all])[0]
+    
+    preds_all = lm.predict2([x[0] for x, y in data_x_all])
+
+    # flatten results
+    preds_all = [
+        (r,x) 
+        for rs,rx in preds_all
+        for r,x in zip(rs, rx)
+    ]
 
     data_out = []
     hits_full = []
     hits = []
-    for y_pred, ((x, signature), y_true) in zip(preds_all, data_x_all):
-        y_pred = np.argmax(y_pred)
+    for (rep, y_pred_posterior), ((x, signature), y_true) in zip(preds_all, data_x_all):
+        y_pred = np.argmax(y_pred_posterior)
         if sum(signature) == 4:
             hits_full.append(y_pred == y_true)
         hits.append(y_pred == y_true)
+        data_out.append(((rep, y_pred_posterior, signature), y_pred == y_true))
         print(signature, y_pred, y_true)
 
     print("Acc (4 artefacts):", format(np.average(hits_full), ".2%"))
     print("Acc (any):", format(np.average(hits), ".2%"))
+
+    with open("data/misc/meta_month.pkl", "wb") as f:
+        pickle.dump(data_out, f)
 
 if __name__ == "__main__":
     args = parse_args()
@@ -133,20 +145,29 @@ if __name__ == "__main__":
         for artefacts, true_y in data_x_all
         for z in artefacts
     ]
-    preds_all = lm.predict([x[0] for x, y in data_x_all])[0]
+
+    preds_all = lm.predict2([x[0] for x, y in data_x_all])
+
+    # flatten results
+    preds_all = [
+        (r,x) 
+        for rs,rx in preds_all
+        for r,x in zip(rs, rx)
+    ]
 
     data_out = []
     hits_full = []
     hits = []
-    for y_pred, ((x, signature), y_true) in zip(preds_all, data_x_all):
-        y_pred = np.argmax(y_pred)
+    for (rep, y_pred_posterior), ((x, signature), y_true) in zip(preds_all, data_x_all):
+        y_pred = np.argmax(y_pred_posterior)
         if sum(signature) == 4:
             hits_full.append(y_pred == y_true)
         hits.append(y_pred == y_true)
+        data_out.append(((rep, y_pred_posterior, signature), y_pred == y_true))
         print(signature, y_pred, y_true)
 
     print("Acc (4 artefacts):", format(np.average(hits_full), ".2%"))
     print("Acc (any):", format(np.average(hits), ".2%"))
 
-    # with open(args.output.format(args.target_output[0]), "wb") as f:
-    #     pickle.dump(data_out, f)
+    with open(args.output.format(args.target_output[0]), "wb") as f:
+        pickle.dump(data_out, f)
