@@ -11,6 +11,7 @@ import os.path as path
 import json
 import argparse
 import collections as col
+from model_main.eval_lm_classifier_artefacts import hack
 
 
 def parse_args():
@@ -103,7 +104,8 @@ if __name__ == "__main__":
     )
 
     lm.fit(x_train, y_train, x_dev, y_dev)
-    lm.save_to_file(output_name)
+    # lm.save_to_file(output_name)
+    hack(data, labels, lm)
 
     # TODO put these in eval script
     # Evaluations
@@ -127,7 +129,5 @@ if __name__ == "__main__":
 
     print(evals)
 
-    save_path = "data/eval/{}_eval.json".format(
-        path.basename(output_name)[:-3])
-    with open(save_path, "w") as f:
+    with open(f"data/eval/{path.basename(output_name)[:-3]}_eval.json", "w") as f:
         json.dump(evals, f)

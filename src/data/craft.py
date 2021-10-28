@@ -33,11 +33,11 @@ def craft_rv1(data, x_filter, y_filter, dropout=0):
         # apply dropout to artefacts
         artefacts = [
             y[k] if random.random() >= dropout else "None"
-            for k in {"newspaper", "ncountry", "ncompas", "month", "year"} - set([y_filter])
+            for k in Y_KEYS_LOCAL - {y_filter}
         ]
         return {
             **x,
-            "craft": ' \n'.join(artefacts) + " \n" + x[x_filter]
+            "craft": '\n'.join(artefacts) + "\n" + x[x_filter]
         }
 
     return [
@@ -63,17 +63,17 @@ def craft_rv1_plus(data, x_filter, y_filter, dropout=0):
         # apply dropout to artefacts
         artefacts_base = [
             y[k] if random.random() >= dropout else "None"
-            for k in {"newspaper", "ncountry", "ncompas", "month", "year"} - set([y_filter])
+            for k in Y_KEYS_LOCAL - {y_filter}
         ]
         artefacts_plus = [
             plus_var_processor(y[k]) if random.random() >= dropout else "None"
-            for k in {"subject", "geographic"} - set([y_filter])
+            for k in {"subject", "geographic"} - {y_filter}
         ]
 
         artefacts = artefacts_base + artefacts_plus
         return {
             **x,
-            "craft": ' \n'.join(artefacts) + " \n" + x[x_filter]
+            "craft": '\n'.join(artefacts) + "\n" + x[x_filter]
         }
 
     return [
@@ -155,7 +155,7 @@ if __name__ == "__main__":
                 data_new
             )
 
-    # Rv1_00
+    # Rv1
     for dropout in [0, 50]:
         for y_filter in Y_KEYS:
             y_filter_code = Y_KEYS_TO_CODE[y_filter]

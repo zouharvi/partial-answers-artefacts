@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 
 import pickle
+import random
 import sys
+sys.path.append("src")
 
 import numpy as np
-sys.path.append("src")
 import utils
 import json
 import argparse
 from collections import Counter
 from lm_model import LMModel
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -37,6 +39,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+
 LM_ALIASES = dict(
     bert="bert-base-uncased",
     roberta="roberta-base",
@@ -44,8 +47,10 @@ LM_ALIASES = dict(
     distilroberta="distilroberta-base"
 )
 
+
 def artefacts_signature(artefacts, y_filter):
     return [1 if k in artefacts else 0 for k in utils.Y_KEYS_LOCAL - {y_filter}]
+
 
 def x_manipulator_all(x, y, x_filter, y_filter):
     output = []
@@ -54,11 +59,41 @@ def x_manipulator_all(x, y, x_filter, y_filter):
             y[k] if k in subset else "None"
             for k in utils.Y_KEYS_LOCAL - {y_filter}
         ]
-        artefacts_str = ' | '.join(artefacts) + " | " + x[x_filter]
+        artefacts_str = '\n'.join(artefacts) + "\n" + x[x_filter]
         output.append((
             artefacts_str, artefacts_signature(subset, y_filter)
         ))
     return output
+
+def hack(data, labels, lm):
+    print("Predicting all subsets of artefacts")
+    data_x_all = [
+        (
+            x_manipulator_all(x, y, "body", "month"),
+            y_true[0]
+        )
+        for (x, y), y_true in zip(data, labels)
+    ]
+    # flatten data
+    data_x_all = [
+        (z, true_y)
+        for artefacts, true_y in data_x_all
+        for z in artefacts
+    ]
+    preds_all = lm.predict([x[0] for x, y in data_x_all])[0]
+
+    data_out = []
+    hits_full = []
+    hits = []
+    for y_pred, ((x, signature), y_true) in zip(preds_all, data_x_all):
+        y_pred = np.argmax(y_pred)
+        if sum(signature) == 4:
+            hits_full.append(y_pred == y_true)
+        hits.append(y_pred == y_true)
+        print(signature, y_pred, y_true)
+
+    print("Acc (4 artefacts):", format(np.average(hits_full), ".2%"))
+    print("Acc (any):", format(np.average(hits), ".2%"))
 
 if __name__ == "__main__":
     args = parse_args()
@@ -90,7 +125,7 @@ if __name__ == "__main__":
             x_manipulator_all(x, y, args.target_input, args.target_output[0]),
             y_true[0]
         )
-        for (x, y), y_true in zip(data[:128], labels)
+        for (x, y), y_true in random.choices(list(zip(data, labels)), k=256)
     ]
     # flatten data
     data_x_all = [
@@ -99,8 +134,6 @@ if __name__ == "__main__":
         for z in artefacts
     ]
     preds_all = lm.predict([x[0] for x, y in data_x_all])[0]
-
-    # print("\n".join([x[:100].replace("\n", " ") for x, y in data_x_all]))
 
     data_out = []
     hits_full = []
@@ -112,12 +145,8 @@ if __name__ == "__main__":
         hits.append(y_pred == y_true)
         print(signature, y_pred, y_true)
 
-    print(labels.shape)
-    print(Counter(labels))
-    print(Counter([np.argmax(x) for x in preds_all]))
     print("Acc (4 artefacts):", format(np.average(hits_full), ".2%"))
     print("Acc (any):", format(np.average(hits), ".2%"))
-    exit()
 
     # with open(args.output.format(args.target_output[0]), "wb") as f:
     #     pickle.dump(data_out, f)
