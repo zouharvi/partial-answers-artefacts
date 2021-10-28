@@ -20,10 +20,11 @@ def parse_args():
     )
     return args.parse_args()
 
+
 KEY_ORDER = [
-        "newspaper", "ncountry", "ncompas",
-        "month", "year", "subject", "geographic"
-    ]
+    "newspaper", "ncountry", "ncompas",
+    "month", "year", "subject", "geographic"
+]
 
 if __name__ == "__main__":
     args = parse_args()
@@ -43,27 +44,29 @@ if __name__ == "__main__":
     ]
     Y_KEYS_INDEX = {k: i for i, k in enumerate(Y_KEYS)}
     Y_KEYS_INDEX_LOCAL = {k: i for i, k in enumerate(Y_KEYS)}
-    plotdata = np.zeros((len(Y_KEYS_LOCAL)+1, len(Y_KEYS)))
+    plotdata = np.zeros((len(Y_KEYS) + 1, len(Y_KEYS)))
 
-    for xk,yk in it.product(Y_KEYS, Y_KEYS_LOCAL):
+    for xk, yk in it.product(Y_KEYS, Y_KEYS_LOCAL):
         yk_idx = Y_KEYS_INDEX_LOCAL[yk]
         xk_idx = Y_KEYS_INDEX[xk]
 
-        plotdata[yk_idx+1, xk_idx] = scores[(yk,xk)]
+        plotdata[yk_idx + 1, xk_idx] = scores[(yk, xk)]
 
     for xk in Y_KEYS:
         xk_idx = Y_KEYS_INDEX[xk]
         plotdata[0, xk_idx] = scores_baseline[xk]
 
-    fig = plt.figure(figsize=(4.4,3.9))
+    fig = plt.figure(figsize=(4.4, 3.9))
     ax = plt.gca()
 
     im = ax.imshow(plotdata, cmap="RdYlGn", aspect="auto")
 
     ax.set_xticks(np.arange(len(Y_KEYS)))
-    ax.set_yticks(np.arange(len(Y_KEYS_LOCAL)+1))
+    ax.set_yticks(np.arange(len(Y_KEYS) + 1))
     ax.set_xticklabels([Y_KEYS_PRETTY[x] for x in Y_KEYS])
-    ax.set_yticklabels(["Bert-Single"] + [Y_KEYS_PRETTY[y] for y in Y_KEYS_LOCAL])
+    ax.set_yticklabels(
+        ["Bert-Single"] + [Y_KEYS_PRETTY[y] for y in Y_KEYS]
+    )
 
     # Rotate the tick labels and set their alignment.
     plt.setp(
@@ -72,12 +75,17 @@ if __name__ == "__main__":
     )
 
     # Loop over data dimensions and create text annotations.
-    for i in range(len(Y_KEYS_LOCAL)+1):
+    for i in range(len(Y_KEYS) + 1):
         for j in range(len(Y_KEYS)):
+            if plotdata[i, j] <= 0.8 and plotdata[i, j] > 0.3:
+                color = "black"
+            else:
+                color = "white"
+
             text = ax.text(
                 j, i, f"{plotdata[i, j]:.0%}",
                 ha="center", va="center",
-                color="black" if plotdata[i, j] <= 0.8 and plotdata[i, j] > 0.3 else "white",
+                color=color
             )
 
     # turn spines off
@@ -86,8 +94,6 @@ if __name__ == "__main__":
     # add separator between dummy
     ax.add_patch(Rectangle((-0.5, 0.4), len(Y_KEYS), 0.1, color="white"))
 
-
     # remove all whitespace
     plt.tight_layout(rect=(-0.025, -0.025, 1.025, 1.03))
     plt.show()
-    # plt.savefig("test.png")

@@ -3,12 +3,13 @@
 import sys
 sys.path.append("src")
 import utils
-import utils_data
+from utils_data import *
 
 import pickle
 import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -17,12 +18,11 @@ def parse_args():
                         help="Path to the news dataset.")
     parser.add_argument("-e", "--embeddings", required=True,
                         help="Path to the embeddings file to plot.")
-    parser.add_argument("-o", "--output", default='data/figures/scatter_{e}_label_{l}.png',
-                        help="Path where to store the figure.")
     parser.add_argument("-l", "--label-key", default="newspaper")
 
     args = parser.parse_args()
     return args
+
 
 if __name__ == "__main__":
     args = parse_args()
@@ -34,15 +34,14 @@ if __name__ == "__main__":
     with open(args.embeddings, "rb") as f:
         embeddings = pickle.load(f)
 
-    print(len(embeddings))
-    print(embeddings)
     df = pd.DataFrame(embeddings)
 
     df["newspaper"] = [x["newspaper"] for x in data]
-    df["ncompas"] = [utils_data.NEWSPAPER_TO_COMPAS[x["newspaper"]] for x in data]
-    df["ncountry"] = [utils_data.NEWSPAPER_TO_COUNTRY[x["newspaper"]] for x in data]
+    df["ncompas"] = [NEWSPAPER_TO_COMPAS[x["newspaper"]] for x in data]
+    df["ncountry"] = [COUNTRY_TO_PRETTY[NEWSPAPER_TO_COUNTRY[x["newspaper"]]]
+                      for x in data]
 
-    plt.figure(figsize=(5, 4))
+    plt.figure(figsize=(4.5, 4))
 
     for label in df[args.label_key].unique():
         t = df[df[args.label_key] == label]
@@ -54,8 +53,21 @@ if __name__ == "__main__":
             label=label
         )
 
-    lg = plt.legend(markerscale=4)
+    lg = plt.legend(
+        bbox_to_anchor=(0.1, 1, 0.8, 0),
+        frameon=False,
+        handlelength=1,
+        loc="lower center",
+        markerscale=4,
+        ncol=4,
+    )
     for h in lg.legendHandles:
         h.set_alpha(1)
 
+    # hide axes
+    ax = plt.gca()
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
+
+    plt.tight_layout(rect=(-0.06, 0, 1.06, 1))
     plt.show()

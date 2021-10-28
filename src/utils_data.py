@@ -21,3 +21,10 @@ NEWSPAPER_TO_COUNTRY = {
     'The New York Times': "us",
     'The Washington Post': "us",
 }
+
+COUNTRY_TO_PRETTY = {
+    "us": "US",
+    "india": "India",
+    "south_africa": "South Africa",
+    "australia": "Australia",
+}

@@ -33,7 +33,7 @@ def craft_rv1(data, x_filter, y_filter, dropout=0):
         # apply dropout to artefacts
         artefacts = [
             y[k] if random.random() >= dropout else "None"
-            for k in {"newspaper", "month", "year"} - set([y_filter])
+            for k in {"newspaper", "ncountry", "ncompas", "month", "year"} - set([y_filter])
         ]
         return {
             **x,
@@ -63,7 +63,7 @@ def craft_rv1_plus(data, x_filter, y_filter, dropout=0):
         # apply dropout to artefacts
         artefacts_base = [
             y[k] if random.random() >= dropout else "None"
-            for k in {"newspaper", "month", "year"} - set([y_filter])
+            for k in {"newspaper", "ncountry", "ncompas", "month", "year"} - set([y_filter])
         ]
         artefacts_plus = [
             plus_var_processor(y[k]) if random.random() >= dropout else "None"
