@@ -1,7 +1,8 @@
 """
-Hardcoded 
+Hardcoded values and mappings for the specific dataset and accompanying task.
 """
 
+# Newspaper name to newspaper alignment
 NEWSPAPER_TO_COMPAS = {
     'Mail & Guardian': "left",
     'Sydney Morning Herald (Australia)': "left",
@@ -14,6 +15,7 @@ NEWSPAPER_TO_COMPAS = {
     'The Washington Post': "left",
 }
 
+# Newspaper name to country code
 NEWSPAPER_TO_COUNTRY = {
     'Sydney Morning Herald (Australia)': "australia",
     'The Australian': "australia",
@@ -26,6 +28,7 @@ NEWSPAPER_TO_COUNTRY = {
     'The Washington Post': "us",
 }
 
+# Country codename to printable label
 COUNTRY_TO_PRETTY = {
     "us": "US",
     "india": "India",
@@ -33,17 +36,24 @@ COUNTRY_TO_PRETTY = {
     "australia": "Australia",
 }
 
-
-X_KEYS = {"headline", "body"}
+# Input variables
+X_KEYS = {
+    "headline", "body"
+}
+# Output variables
 Y_KEYS = {
     "newspaper", "ncountry", "ncompas",
-    "month", "year", "subject", "geographic"
+    "month", "year", "subject", "geographic",
 }
+# Output variables which are single-output
 Y_KEYS_LOCAL = Y_KEYS - {"subject", "geographic"}
 
+# This may be unnecessary because since Python 3.8, Python guarantees
+# stable ordering based on insertion order.
 Y_KEYS_FIXED = list(Y_KEYS)
 Y_KEYS_LOCAL_FIXED = list(Y_KEYS_LOCAL)
 
+# Single-character code for each output variable 
 Y_KEYS_TO_CODE = {
     "newspaper": "n",
     "ncountry": "c",
@@ -53,7 +63,10 @@ Y_KEYS_TO_CODE = {
     "subject": "s",
     "geographic": "g",
 }
+# Reverse code to variable codes
 CODE_TO_Y_KEYS = {v: k for k, v in Y_KEYS_TO_CODE.items()}
+
+# Variable code to printable label
 Y_KEYS_PRETTY = {
     "newspaper": "Newspaper",
     "ncountry": "News. country",

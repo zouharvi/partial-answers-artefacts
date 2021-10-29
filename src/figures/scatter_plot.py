@@ -3,7 +3,7 @@
 import sys
 sys.path.append("src")
 import utils
-import utils_data
+import utils.data
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     df["newspaper"] = list(map(op.itemgetter("newspaper"), data))
     df["newspaper_compas"] = list(
-        map(utils_data.NEWSPAPER_TO_COMPAS.__getitem__, df["newspaper"]))
+        map(utils.data.NEWSPAPER_TO_COMPAS.__getitem__, df["newspaper"]))
 
     plt.figure(figsize=args.figsize)
     for label in df[args.label_key].unique():

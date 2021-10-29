@@ -8,7 +8,7 @@ Authors: Vilém Zouhar, Edu Vallejo Arguinzoniz.
 ### Preparation
 
 - Install dependencies with `pip3 install -r requirements.txt`
-- Run `make data_all` to load the data into `data/final/clean.json` and prepare all other crafted data (may require up to 15GB of disk space)
+- Run `make data_all` to load the data into `data/final/clean.json` and prepare all other crafted data (may require up to 20GB of disk space)
 
 ### Models
 

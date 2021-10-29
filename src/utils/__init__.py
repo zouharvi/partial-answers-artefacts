@@ -2,13 +2,15 @@ import json
 import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
 import sklearn.model_selection
-from utils_data import *
-
-import operator as op
+import pickle
+from utils.data import *
 import itertools as it
-import functools as ft
 
 def get_compute_device():
+    """
+    Return PyTorch GPU device if available, else CPU.
+    GPU device is without an index (use CUDA_VISIBLE_DEVICES to specify a device).
+    """
     import torch
     if torch.cuda.is_available():
         DEVICE = torch.device("cuda")
@@ -19,10 +21,9 @@ def get_compute_device():
 
 def load_data_raw(path, check=False):
     """
-    Loads raw JSON file and parses it into a list of articles
+    Loads raw JSON file and parses it into a list of articles.
     """
-    with open(path, "r") as f:
-        data = json.load(f)
+    data = load_data(path, format="json")
 
     # add cop_edition and flatten all lists from the newspaper
     data = [
@@ -44,51 +45,74 @@ def load_data_raw(path, check=False):
     return data
 
 
-def load_data(path):
-    with open(path, "r") as f:
-        return json.load(f)
+def load_data(path, format="json"):
+    """
+    Saves any data in either JSON or pickle format.
+    Format is NOT inferred automatically from the path.
+    """
+    if format == "json":
+        with open(path, "r") as f:
+            return json.load(f)
+    elif format == "pickle":
+        with open(path, "rb") as f:
+            return pickle.load(f)
+    else:
+        raise Exception("Unknown load format specified")
 
+def save_data(path, data, format="json"):
+    """
+    Saves any data in either JSON or pickle format.
+    Format is NOT inferred automatically from the path.
+    """
+    if format == "json":
+        with open(path, "w") as f:
+            return json.dump(data, f)
+    elif format == "pickle":
+        with open(path, "wb") as f:
+            return pickle.dump(data, f)
+    else:
+        raise Exception("Unknown save format specified")
 
-def save_data(path, data):
-    with open(path, "w") as f:
-        return json.dump(data, f)
-
-def get_x(data, target):  # Make modifications for craft
+def get_x(data, target):
+    """
+    @TODO missing comment
+    """
     data_x, _ = zip(*data)
-    i_getter = op.itemgetter(target)
-    return list(map(i_getter, data_x))
-
+    return [x[target] for x in data_x]
 
 def get_y(data, targets):
+    """
+    @TODO missing comment
+    """
     _, data_y = zip(*data)
 
     # Get targets
-    local_t = list(filter(Y_KEYS_LOCAL.__contains__, targets))
-    global_t = list(filter({"subject", "geographic"}.__contains__, targets))
+    local_t = [x for x in targets if x in Y_KEYS_LOCAL]
+    global_t = [x for x in targets if x in {"subject", "geographic"}]
 
     labels = list()
 
     # Extract local targets
     label_names_local = list()
     if local_t:
-        y_local = (list(map(op.itemgetter(t), data_y)) for t in local_t)
+        y_local = ([y[t] for y in data_y] for t in local_t)
         y_local = ([[x] for x in t] for t in y_local)
         bin_local, y_local = zip(*map(binarize_data, y_local))
-        y_local = np.array(list(map(ft.partial(np.argmax, axis=1), y_local))).T
+        y_local = np.array([np.argmax(y, axis=1) for y in y_local]).T
 
         labels.append(y_local)
-        label_names_local = list(map(op.attrgetter("classes_"), bin_local))
+        label_names_local = [b.classes_ for b in bin_local]
 
     # Extract non-local targets
     global_t_post = list()
     label_names_global = list()
     if global_t:
-        y_global = (list(map(op.itemgetter(t), data_y)) for t in global_t)
+        y_global = ([y[t] for y in data_y] for t in global_t)
         bin_global, y_global = zip(*map(binarize_data, y_global))
         y_global = np.concatenate(list(y_global), axis=1)
 
         labels.append(y_global)
-        label_names_global = list(map(op.attrgetter("classes_"), bin_global))
+        label_names_global = [b.classes_ for b in bin_global]
 
         global_t_post = it.chain(
             *[[gt] * len(labels) for gt, labels in zip(global_t, label_names_global)])
@@ -110,6 +134,9 @@ def get_y(data, targets):
 
 
 def make_split(data_list, splits, random_state=0):
+    """
+    @TODO missing comment
+    """
     data_list = list(zip(*data_list))
     data_splits = []
     for split in splits:
@@ -199,31 +226,46 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper", binarize="o
 
 
 def binarize_data(data_y):
+    """
+    Binarizes labels and returns them together with the binarizer object
+    """
     binarizer = MultiLabelBinarizer()
     data_y = binarizer.fit_transform(data_y)
-
     return binarizer, data_y
 
 
 def argmax_n(arr, n):
+    """
+    Extracts indicies of top `n` values from an array-like object.
+    """
     n = min(len(arr), n)
     return np.argpartition(arr, -n)[-n:]
 
 
-def rprec_local(y, pred_y):
-    ones_1 = {i for i, t in enumerate(y) if t == 1}
+def rprec_local(gold_y, pred_y):
+    """
+    Computes a single instance of R-Precision (single sample).
+    """
+    ones_1 = {i for i, t in enumerate(gold_y) if t == 1}
     ones_2 = set(argmax_n(pred_y, len(ones_1)))
     return len(ones_1 & ones_2) / len(ones_1)
 
 
-def rprec(data_y, pred_y):
+def rprec(gold_y, pred_y):
+    """
+    Computes average R-Precsion score from gold labels and scorings.
+    The true labels must be binary-encoded.
+    """
     return np.average([
         rprec_local(y, pred_y)
-        for y, pred_y in zip(data_y, pred_y)
+        for y, pred_y in zip(gold_y, pred_y)
     ])
 
 
 def powerset(iterable, nonempty=False):
+    """
+    Generates all powersets of a list in order of increasing cardinality.
+    """
     s = list(iterable)
     return it.chain.from_iterable(
         it.combinations(s, r)

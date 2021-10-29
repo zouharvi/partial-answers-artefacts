@@ -4,9 +4,12 @@
 Script for preparing and cleaning the data
 """
 
+import sys
+sys.path.append("src")
+from utils import *
+
 import argparse
 from collections import Counter
-from utils import *
 
 def parse_args():
     args = argparse.ArgumentParser()

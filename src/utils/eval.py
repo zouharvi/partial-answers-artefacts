@@ -1,6 +1,6 @@
 import utils
 
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report
 import numpy as np
 
 import collections as col
@@ -8,6 +8,9 @@ import operator as op
 
 
 def complete_evaluation(evaluation_targets: list, y_true, y_logits, target_names=list()):
+    """
+    @TODO comment
+    """
     # Put label first
     y_true = y_true.T
 
@@ -36,6 +39,9 @@ def complete_evaluation(evaluation_targets: list, y_true, y_logits, target_names
 
 
 def eval_from_logits(y_true, logits, target_names=None):
+    """
+    @TODO comment
+    """
     y_pred = np.argmax(logits, axis=1)
     return classification_report(
         y_true=y_true,
@@ -50,6 +56,9 @@ def eval_from_logits(y_true, logits, target_names=None):
 
 
 def r_precission_from_logits(y_true, y_logits):
+    """
+    @TODO comment
+    """
     # Batch first
     y_true = y_true.T
     y_logits = np.array([list(map(op.itemgetter(1), yl)) for yl in y_logits]).T

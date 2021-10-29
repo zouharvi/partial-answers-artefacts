@@ -3,7 +3,7 @@
 import sys
 sys.path.append("src")
 import utils
-import utils_eval
+import utils.eval
 import json
 import argparse
 import os.path as path
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     lm.load_from_file(args.model_path)
     y_logits = lm.predict(x_test)
 
-    evaluation = utils_eval.complete_evaluation(
+    evaluation = utils.eval.complete_evaluation(
         y_true=y_test, y_logits=y_logits,
         evaluation_targets=target_outputs,
         target_names=label_names

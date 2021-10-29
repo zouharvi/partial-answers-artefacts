@@ -3,7 +3,7 @@
 import sys
 sys.path.append("src")
 import utils
-from utils_data import *
+from utils.data import *
 
 import pickle
 import matplotlib.pyplot as plt

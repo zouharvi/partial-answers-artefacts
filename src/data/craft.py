@@ -4,10 +4,10 @@
 Script for preparing and cleaning the data
 """
 
-import argparse
-import random
 import sys
 sys.path.append("src")
+import argparse
+import random
 from utils import *
 
 

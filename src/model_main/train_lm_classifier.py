@@ -4,7 +4,7 @@ from lm_model import LMModel
 import sys
 sys.path.append("src")
 import utils
-import utils_eval
+import utils.eval
 
 import numpy as np
 import os.path as path
@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
     # Development eval
     y_pred_dev = lm.predict(x_dev)
-    evals["dev"] = utils_eval.complete_evaluation(
+    evals["dev"] = utils.eval.complete_evaluation(
         target_outputs,
         y_dev, y_pred_dev,
         target_names=label_names
@@ -125,7 +125,7 @@ if __name__ == "__main__":
 
     # Test eval
     y_pred_test = lm.predict(x_test)
-    evals["test"] = utils_eval.complete_evaluation(
+    evals["test"] = utils.eval.complete_evaluation(
         target_outputs,
         y_test, y_pred_test,
         target_names=label_names
