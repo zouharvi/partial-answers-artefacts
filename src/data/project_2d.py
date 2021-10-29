@@ -2,7 +2,7 @@
 
 import numpy as np
 from sklearn.manifold import TSNE
-from sklearn.decomposition import IncrementalPCA, PCA
+from sklearn.decomposition import PCA
 import pickle
 
 import argparse

@@ -51,9 +51,6 @@ if __name__ == "__main__":
 
     if args.target_output in {"subject", "geographic"}:
         args.model = "multi_" + args.model
-        # data_x, data_y = zip(*data)
-        # _, data_y = binarize_data(data_y)
-        # data = list(zip(data_x, data_y))
 
     MODEL_CLASS = {
         "multi_svc_2": MultiOutputClassifier(SVC(probability=True)),
@@ -101,8 +98,6 @@ if __name__ == "__main__":
         # unravel
         data_y_train = [y[0] for y in data_y_train]
         data_y_test = [y[0] for y in data_y_test]
-
-    print(len(data_x_train))
 
     model.fit(data_x_train, data_y_train)
 

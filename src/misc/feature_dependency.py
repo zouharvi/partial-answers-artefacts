@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-import argparse
 import sys
 sys.path.append("src")
 from utils import *
+import argparse
 import numpy as np
 import sklearn.linear_model
 import sklearn.dummy
-import pickle
+
 
 def parse_args():
     args = argparse.ArgumentParser()
@@ -48,12 +48,13 @@ if __name__ == "__main__":
             acc = model.score(data_x, data_y)
 
             # TODO: print MCCC accuracy
-            model_dummy = sklearn.dummy.DummyClassifier(strategy="most_frequent")
+            model_dummy = sklearn.dummy.DummyClassifier(
+                strategy="most_frequent")
             model_dummy.fit(data_x, data_y)
             acc_dummy = model_dummy.score(data_x, data_y)
 
-            print(f"ACC: {acc:.2%} ({y_filter_1} -> {y_filter_2}), dummy: {acc_dummy:.2%}")
-
+            print(
+                f"ACC: {acc:.2%} ({y_filter_1} -> {y_filter_2}), dummy: {acc_dummy:.2%}")
 
             logdata.append({
                 "acc": acc,
@@ -94,7 +95,8 @@ if __name__ == "__main__":
             rprec_val = rprec(data_y, matches)
 
             # craft dummy scoring based on item frequency
-            dummy_y = np.repeat([np.array(data_y).sum(axis=0)], len(data_y), axis=0)
+            dummy_y = np.repeat(
+                [np.array(data_y).sum(axis=0)], len(data_y), axis=0)
             rprec_val_dummy = rprec(data_y, dummy_y)
 
             logdata.append({
@@ -103,8 +105,7 @@ if __name__ == "__main__":
                 "y_filter_2": y_filter_2,
                 "dummy": rprec_val_dummy,
             })
-            print(f"RPREC: {rprec_val:.2%} ({y_filter_1} -> {y_filter_2}), dummy: {rprec_val_dummy:.2%}")
+            print(
+                f"RPREC: {rprec_val:.2%} ({y_filter_1} -> {y_filter_2}), dummy: {rprec_val_dummy:.2%}")
 
-
-    with open(args.logfile, "wb") as f:
-        pickle.dump(logdata, f)
+    save_data(args.logfile, logdata, format="pickle")

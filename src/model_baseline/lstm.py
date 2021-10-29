@@ -12,6 +12,7 @@ import numpy as np
 
 DEVICE = get_compute_device()
 
+
 def parse_args():
     args = argparse.ArgumentParser()
     args.add_argument(
@@ -56,7 +57,6 @@ class Model(torch.nn.Module):
 
     def forward(self, x):
         words, tfidf = x
-        # print(words.shape)
         output, (hn, cn) = self.lstm(words)
         # take the output for the first word as the sequence representation
         output = output[:, 0, :]
@@ -64,9 +64,7 @@ class Model(torch.nn.Module):
         tfidf = self.tfidf_dropout(tfidf)
         # add tfidf
         output = torch.cat((output, tfidf), dim=1)
-        # print(output.shape)
         output = self.classification(output)
-        # print(output.shape)
         return output
 
     def preprocess(self, data, glove):

@@ -131,7 +131,9 @@ if __name__ == "__main__":
         target_names=label_names
     )
 
+    # print the results which are being saved
     print(evals)
 
+    # TODO: use utils.save_data()
     with open(f"data/eval/{path.basename(output_name)[:-3]}_eval.json", "w") as f:
         json.dump(evals, f)

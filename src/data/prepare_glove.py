@@ -18,6 +18,7 @@ if __name__ == "__main__":
             embd = [float(x) for x in line[1:]]
             glove[word] = embd
 
+    # random checks
     assert "the" in glove
     assert "The" not in glove
     assert "and" in glove

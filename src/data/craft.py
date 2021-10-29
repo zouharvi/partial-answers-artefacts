@@ -148,10 +148,11 @@ if __name__ == "__main__":
             print(f"Crafting Rv1p_{dropout:0>2}_", y_filter, sep="")
             data_new = craft_rv1_plus(
                 data, x_filter=X_FILTER,
-                y_filter=y_filter, dropout=dropout/100
+                y_filter=y_filter, dropout=dropout / 100
             )
             save_data(
-                args.data_out.replace("{LABEL}", f"Rv1p_{dropout:0>2}_" + y_filter_code),
+                args.data_out.replace(
+                    "{LABEL}", f"Rv1p_{dropout:0>2}_" + y_filter_code),
                 data_new
             )
 
@@ -162,10 +163,11 @@ if __name__ == "__main__":
             print(f"Crafting Rv1_{dropout:0>2}_", y_filter, sep="")
             data_new = craft_rv1(
                 data, x_filter=X_FILTER,
-                y_filter=y_filter, dropout=dropout/100
+                y_filter=y_filter, dropout=dropout / 100
             )
             save_data(
-                args.data_out.replace("{LABEL}", f"Rv1_{dropout:0>2}_" + y_filter_code),
+                args.data_out.replace(
+                    "{LABEL}", f"Rv1_{dropout:0>2}_" + y_filter_code),
                 data_new
             )
 
