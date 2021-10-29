@@ -13,7 +13,6 @@ import operator as op
 import itertools as it
 import tqdm
 
-
 class LMModel(nn.Module):
     def __init__(
         self,
@@ -28,7 +27,7 @@ class LMModel(nn.Module):
         batch_size=16,
         optimizer=torch.optim.Adam,
         optimizer_params=dict(lr=5e-5),
-        device=utils.DEVICE
+        device=utils.get_compute_device(),
     ):
 
         super(LMModel, self).__init__()

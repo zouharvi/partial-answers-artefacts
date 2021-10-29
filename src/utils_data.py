@@ -1,3 +1,7 @@
+"""
+Hardcoded 
+"""
+
 NEWSPAPER_TO_COMPAS = {
     'Mail & Guardian': "left",
     'Sydney Morning Herald (Australia)': "left",
@@ -27,4 +31,35 @@ COUNTRY_TO_PRETTY = {
     "india": "India",
     "south_africa": "South Africa",
     "australia": "Australia",
+}
+
+
+X_KEYS = {"headline", "body"}
+Y_KEYS = {
+    "newspaper", "ncountry", "ncompas",
+    "month", "year", "subject", "geographic"
+}
+Y_KEYS_LOCAL = Y_KEYS - {"subject", "geographic"}
+
+Y_KEYS_FIXED = list(Y_KEYS)
+Y_KEYS_LOCAL_FIXED = list(Y_KEYS_LOCAL)
+
+Y_KEYS_TO_CODE = {
+    "newspaper": "n",
+    "ncountry": "c",
+    "ncompas": "o",
+    "month": "m",
+    "year": "y",
+    "subject": "s",
+    "geographic": "g",
+}
+CODE_TO_Y_KEYS = {v: k for k, v in Y_KEYS_TO_CODE.items()}
+Y_KEYS_PRETTY = {
+    "newspaper": "Newspaper",
+    "ncountry": "News. country",
+    "ncompas": "News. align.",
+    "month": "Month",
+    "year": "Year",
+    "subject": "Subject",
+    "geographic": "Geographic",
 }

@@ -6,8 +6,9 @@ from torch.utils.data.dataset import TensorDataset
 import torch.nn.functional
 import numpy as np
 from sklearn.metrics import f1_score, precision_score
-from utils import DEVICE
+import utils
 
+DEVICE = utils.get_compute_device()
 
 class ModelStandard(torch.nn.Module):
     def __init__(self):

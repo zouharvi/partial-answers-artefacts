@@ -3,17 +3,18 @@ import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
 import sklearn.model_selection
 from utils_data import *
-import torch
 
 import operator as op
 import itertools as it
 import functools as ft
 
-if torch.cuda.is_available():
-    DEVICE = torch.device("cuda")
-else:
-    DEVICE = torch.device("cpu")
-DEVICE_CPU = torch.device("cpu")
+def get_compute_device():
+    import torch
+    if torch.cuda.is_available():
+        DEVICE = torch.device("cuda")
+    else:
+        DEVICE = torch.device("cpu")
+    return DEVICE
 
 
 def load_data_raw(path, check=False):
@@ -51,38 +52,6 @@ def load_data(path):
 def save_data(path, data):
     with open(path, "w") as f:
         return json.dump(data, f)
-
-
-X_KEYS = {"headline", "body"}
-Y_KEYS = {
-    "newspaper", "ncountry", "ncompas",
-    "month", "year", "subject", "geographic"
-}
-Y_KEYS_LOCAL = Y_KEYS - {"subject", "geographic"}
-
-Y_KEYS_FIXED = list(Y_KEYS)
-Y_KEYS_LOCAL_FIXED = list(Y_KEYS_LOCAL)
-
-Y_KEYS_TO_CODE = {
-    "newspaper": "n",
-    "ncountry": "c",
-    "ncompas": "o",
-    "month": "m",
-    "year": "y",
-    "subject": "s",
-    "geographic": "g",
-}
-CODE_TO_Y_KEYS = {v: k for k, v in Y_KEYS_TO_CODE.items()}
-Y_KEYS_PRETTY = {
-    "newspaper": "Newspaper",
-    "ncountry": "News. country",
-    "ncompas": "News. align.",
-    "month": "Month",
-    "year": "Year",
-    "subject": "Subject",
-    "geographic": "Geographic",
-}
-
 
 def get_x(data, target):  # Make modifications for craft
     data_x, _ = zip(*data)

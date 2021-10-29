@@ -10,6 +10,7 @@ import torch.nn
 import pickle
 import numpy as np
 
+DEVICE = get_compute_device()
 
 def parse_args():
     args = argparse.ArgumentParser()
