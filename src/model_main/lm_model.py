@@ -190,7 +190,7 @@ class LMModel(nn.Module):
                 ]
             else:
                 x = [
-                    (sample[0].cpu().numpy(), sample[1].cpu().numpy())
+                    ([t.cpu().numpy() for t in sample[0]], sample[1].cpu().numpy())
                     for sample in x
                 ]
         return x
