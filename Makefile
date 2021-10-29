@@ -6,8 +6,7 @@ assert_top:
 	@read _
 
 _data:
-	mkdir -p data/final/
-	mkdir -p data/models/
+	mkdir -p data/{final,models,embeddings,eval,misc}
 	wget --user finalproject --password Rik@LfD21 -P data/final/ https://teaching.stijneikelboom.nl/lfd2122/COP.filt3.sub.zip
 	unzip -j -d data/final/ data/final/COP.filt3.sub.zip
 
@@ -51,7 +50,7 @@ run_rv1:
 	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_g.json
 
 train_all_1v1:
-	@echo "TODO: this script may not work as expected"
+	@echo "TODO: this script may not work as expected because it is not adapted for Makefile"
 	@read _
 	files=(data/final/1v1_*) \
 	for (( index=5; index<${#files[@]}; index+=3 )); do \

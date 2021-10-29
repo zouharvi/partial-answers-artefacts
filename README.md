@@ -15,17 +15,10 @@ Authors: Vilém Zouhar, Edu Vallejo Arguinzoniz.
 - TODO
 
 ## TODO:
-- why 256 and not 512 max length?
-- `-mt mid` for joint model
-- redo individual models (better crafting)
+- document everything
+- move as many scripts to makefile
 
 ## Repository structure
 
 TODO:
 
-## Other Reports
-
-- [Assignment 1: Comparison of Baseline Models For Sentiment and Topic Classification](meta/other_projects/ass1.pdf)
-- [Assignment 3: Analysis and Parameter Search for Sentiment Classification with SVM](meta/other_projects/ass3.pdf)
-- [Assignment 4: Live Competition Report + Word Similarity](meta/other_projects/ass4.pdf)
-- [Assignment 5: RNNs and BERT-based Models for Review Classification](meta/other_projects/ass5.pdf)
