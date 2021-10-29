@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
 import sys
+
 sys.path.append("src")
 import argparse
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
+import torch.nn.functional
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -21,17 +23,24 @@ def parse_args():
 def l2_dist(a, b):
     return np.sqrt(np.sum(np.square(a - b)))
 
+def softmax(a):
+    return np.exp(a)/np.sum(np.exp(a))
 
 def dists(sampleA, sampleB):
     indexA = np.argmax(sampleA[1])
-    onehotA = np.array([float(i==indexA) for i,_ in enumerate(sampleA[1])])
+    onehotA = np.array([float(i == indexA) for i, _ in enumerate(sampleA[1])])
     indexB = np.argmax(sampleB[1])
-    onehotB = np.array([float(i==indexB) for i,_ in enumerate(sampleB[1])])
+    onehotB = np.array([float(i == indexB) for i, _ in enumerate(sampleB[1])])
     hard_dist = l2_dist(onehotA, onehotB)
-    softmax_dist = l2_dist(sampleA[1], sampleB[1])
+    last_layer_dist = l2_dist(sampleA[1], sampleB[1])
+    softmax_dist = l2_dist(
+        softmax(sampleA[1]),
+        softmax(sampleB[1])
+    )
     cls_dists = [l2_dist(a, b) for a, b in zip(sampleA[0], sampleB[0])]
     return [
         *cls_dists,
+        last_layer_dist,
         softmax_dist,
         hard_dist,
     ]
@@ -42,7 +51,7 @@ if __name__ == "__main__":
 
     with open(args.input, "rb") as f:
         data = pickle.load(f)
-    data=data[:8000]
+    data = data[:8000]
 
     # collate
     assert len(data) % 16 == 0
@@ -80,7 +89,6 @@ if __name__ == "__main__":
     dist_f_t = np.average(np.array(dist_f_t), axis=0)
     dist_f_f = np.average(np.array(dist_f_f), axis=0)
     dist_t_f = np.average(np.array(dist_t_f), axis=0)
-    print(dist_t_t.shape)
 
     fig = plt.figure(figsize=(5, 4))
     plt.plot(
@@ -88,33 +96,34 @@ if __name__ == "__main__":
         marker=".",
         linestyle="-",
         color="tab:green",
-        label=r"$\checkmark$ $\rightarrow$ $\checkmark$",
+        label=r"$\checkmark \rightarrow \checkmark$",
     )
     plt.plot(
         dist_f_t,
         marker=".",
         linestyle=":",
         color="tab:green",
-        label=r"$\times$ $\rightarrow$ $\checkmark$",
+        label=r"$\times \rightarrow \checkmark$",
     )
     plt.plot(
         dist_f_f,
         marker=".",
         linestyle="-",
         color="tab:red",
-        label=r"$\times$ $\rightarrow$ $\times$",
+        label=r"$\times \rightarrow \times$",
     )
     plt.plot(
         dist_t_f,
         marker=".",
         linestyle=":",
         color="tab:red",
-        label=r"$\checkmark$ $\rightarrow$ $\times$",
+        label=r"$\checkmark \rightarrow \times$",
     )
     plt.ylabel("$L^2$ distance", labelpad=-50)
     plt.xticks(
-        ticks=list(range(15)),
-        labels=["CLS$_{"+ str(i) + "}$" for i in range(12)] + ["Last layer", "Softmax", "Prediction"],
+        ticks=list(range(16)),
+        labels=["CLS$_{" + str(i) + "}$" for i in range(13)] +
+        ["Last layer", "Softmax", "Prediction"],
         rotation=45,
     )
     plt.legend(ncol=2)
