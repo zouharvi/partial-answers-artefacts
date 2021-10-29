@@ -7,7 +7,6 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -25,7 +24,7 @@ def l2_dist(a, b):
 
 def dists(sampleA, sampleB):
     softmax_dist = l2_dist(sampleA[1], sampleB[1])
-    cls_dists = [l2_dist(a, b) for a, b in zip(sampleA[0], sampleA[1])]
+    cls_dists = [l2_dist(a, b) for a, b in zip(sampleA[0], sampleB[0])]
     return [
         *cls_dists,
         softmax_dist,
@@ -37,6 +36,7 @@ if __name__ == "__main__":
 
     with open(args.input, "rb") as f:
         data = pickle.load(f)
+    data=data[:8000]
 
     # collate
     assert len(data) % 16 == 0
@@ -55,7 +55,6 @@ if __name__ == "__main__":
     dist_t_f = []
 
     for bucket_i, bucket in enumerate(data_new):
-        print([sum(x[0][2]) for x in bucket])
         # zeroth sample should be without artefacts
         sample_zero = bucket[0]
         assert sum(sample_zero[0][2]) == 0
@@ -92,20 +91,25 @@ if __name__ == "__main__":
         color="tab:green",
         label=r"$\times$ $\rightarrow$ $\checkmark$",
     )
-
-    plt.plot(
-        dist_t_f,
-        marker=".",
-        linestyle="-",
-        color="tab:red",
-        label=r"$\checkmark$ $\rightarrow$ $\times$",
-    )
     plt.plot(
         dist_f_f,
         marker=".",
+        linestyle="-",
+        color="tab:red",
+        label=r"$\times$ $\rightarrow$ $\times$",
+    )
+    plt.plot(
+        dist_t_f,
+        marker=".",
         linestyle=":",
         color="tab:red",
-        label=r"$\checkmark$ $\rightarrow$ $\checkmark$",
+        label=r"$\checkmark$ $\rightarrow$ $\times$",
+    )
+    plt.ylabel("$L^2$ distance")
+    plt.xticks(
+        ticks=list(range(14)),
+        labels=["CLS$_{"+ str(i) + "}$" for i in range(12)] + ["Last layer", "Softmax"],
+        rotation=45,
     )
     plt.legend()
     plt.tight_layout()

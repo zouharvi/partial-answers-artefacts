@@ -109,7 +109,7 @@ if __name__ == "__main__":
     # lm.save_to_file(output_name)
 
     # TODO: this is a manual hack because the eval script is broken!
-    hack(data[:1000], labels[:1000], lm)
+    hack(data, labels, lm)
 
     # TODO put these in eval script
     # Evaluations
