@@ -23,11 +23,17 @@ def l2_dist(a, b):
 
 
 def dists(sampleA, sampleB):
+    indexA = np.argmax(sampleA[1])
+    onehotA = np.array([float(i==indexA) for i,_ in enumerate(sampleA[1])])
+    indexB = np.argmax(sampleB[1])
+    onehotB = np.array([float(i==indexB) for i,_ in enumerate(sampleB[1])])
+    hard_dist = l2_dist(onehotA, onehotB)
     softmax_dist = l2_dist(sampleA[1], sampleB[1])
     cls_dists = [l2_dist(a, b) for a, b in zip(sampleA[0], sampleB[0])]
     return [
         *cls_dists,
         softmax_dist,
+        hard_dist,
     ]
 
 
@@ -105,12 +111,13 @@ if __name__ == "__main__":
         color="tab:red",
         label=r"$\checkmark$ $\rightarrow$ $\times$",
     )
-    plt.ylabel("$L^2$ distance")
+    plt.ylabel("$L^2$ distance", labelpad=-50)
     plt.xticks(
-        ticks=list(range(14)),
-        labels=["CLS$_{"+ str(i) + "}$" for i in range(12)] + ["Last layer", "Softmax"],
+        ticks=list(range(15)),
+        labels=["CLS$_{"+ str(i) + "}$" for i in range(12)] + ["Last layer", "Softmax", "Prediction"],
         rotation=45,
     )
-    plt.legend()
-    plt.tight_layout()
+    plt.legend(ncol=2)
+    plt.tight_layout(rect=(-0.02, -0.04, 1.04, 1.02))
+    plt.savefig("fusion_tracing.png")
     plt.show()
