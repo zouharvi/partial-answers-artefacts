@@ -193,6 +193,18 @@ class LMModel(nn.Module):
                     ([t.cpu().numpy() for t in sample[0]], sample[1].cpu().numpy())
                     for sample in x
                 ]
+                # resolve batched organization (transpose)
+                x = [
+                    (
+                        [[layer[i] for layer in sampleA] for i in range(self.batch_size)],
+                        sampleB
+                    )
+                    for sampleA, sampleB in x
+                ]
+                # print(len(x[0][0]))
+                # print(len(x[0][0][0]))
+
+                    
         return x
 
     def save_to_file(self, filename):

@@ -81,7 +81,7 @@ def hack(data, labels, lm):
     
     preds_all = lm.predict2([x[0] for x, y in data_x_all], top_cls_only=False)
 
-    # flatten results
+    # flatten results from batches
     preds_all = [
         (r,x) 
         for rs,rx in preds_all
