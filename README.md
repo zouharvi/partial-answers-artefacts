@@ -10,9 +10,33 @@ Authors: Vilém Zouhar, Edu Vallejo Arguinzoniz.
 - Install dependencies with `pip3 install -r requirements.txt`
 - Run `make data_all` to load the data into `data/final/clean.json` and prepare all other crafted data (may require up to 20GB of disk space)
 
+### Misc.
+
+#### T-SNE
+
+TODO
+
+#### Variable Distribution
+
+TODO
+
+#### Feature Dependency
+
+TODO
+
 ### Models
 
-- TODO
+#### Main Model
+
+TODO
+
+#### Baseline Models
+
+TODO
+
+#### Meta Model
+
+TODO
 
 ## TODO:
 - document everything
@@ -20,5 +44,6 @@ Authors: Vilém Zouhar, Edu Vallejo Arguinzoniz.
 
 ## Repository structure
 
-TODO:
-
+The source code is located in `src/`.
+Scripts that produce figures are located in `src/figures/`.
+Directory tree inside `data/` is automatically created when running `make data_all`.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Script for preparing and cleaning the data
+Preparation and crafting of new data enhanced by artefacts.
 """
 
 import sys

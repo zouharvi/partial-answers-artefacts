@@ -6,7 +6,7 @@ assert_top:
 	@read _
 
 _data:
-	mkdir -p data/{final,models,embeddings,eval,misc}
+	mkdir -p data/final/ data/models/ data/embeddings/ data/eval/ data/misc/
 	wget --user finalproject --password Rik@LfD21 -P data/final/ https://teaching.stijneikelboom.nl/lfd2122/COP.filt3.sub.zip
 	unzip -j -d data/final/ data/final/COP.filt3.sub.zip
 

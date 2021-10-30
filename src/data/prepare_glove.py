@@ -1,11 +1,25 @@
+"""
+Prepares downloaded GloVe file and creates a simple to use pickle dictionary.
+"""
+
 import argparse
 import pickle
 
+
 def parse_args():
     args = argparse.ArgumentParser()
-    args.add_argument("--data-in", help="Path to glove file", default="data/glove.6B.200d.txt")
-    args.add_argument("--data-out", help="Path to output glove dictionary", default="data/glove.pkl")
+    args.add_argument(
+        "--data-in",
+        default="data/glove.6B.200d.txt",
+        help="Path to glove file",
+    )
+    args.add_argument(
+        "--data-out",
+        default="data/glove.pkl",
+        help="Path to output glove dictionary",
+    )
     return args.parse_args()
+
 
 if __name__ == "__main__":
     args = parse_args()

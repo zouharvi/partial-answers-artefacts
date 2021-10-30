@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Script for preparing and cleaning the data
+Script for generating overviews for variables (generates LaTeX table contents).
 """
 
 import sys
@@ -21,17 +21,16 @@ def parse_args():
         "--data-out", default="data/final/{LABEL}.json",
         help="Location of creafted data JSON, the {LABEL} token (including curly brakets) is going to be replaced by the data label",
     )
-    args.add_argument(
-        "--seed", type=int, default=0,
-    )
     return args.parse_args()
 
 
 def rel_freq_key(data, key):
     data_counter = Counter([y[key] for x, y in data])
     total = len(data)
-    output = sorted(list(data_counter.items()),
-                    key=lambda x: x[1], reverse=True)
+    output = sorted(
+        list(data_counter.items()),
+        key=lambda x: x[1], reverse=True
+    )
     output = [(k, f"{x/total:.2%}") for k, x in output]
     output = [f"{k}: {x}" for k, x in output]
     return output

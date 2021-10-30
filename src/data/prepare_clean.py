@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Script for preparing and cleaning the data
+Preparation and cleaning of the data.
 """
 
 import sys
@@ -10,6 +10,7 @@ from utils import *
 
 import argparse
 from collections import Counter
+
 
 def parse_args():
     args = argparse.ArgumentParser()
