@@ -18,7 +18,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", default='data/final/clean.json', type=str,
                         help="Path of the data file.")
-    parser.add_argument("-o", "--output", default='data/models/{m}_{ml}_{ti}_{to}_{inp}.pt', type=str,
+    parser.add_argument("-o", "--output", default='data/models/{m}_{ht}_{ml}_{ti}_{to}_{inp}.pt', type=str,
                         help="Path where to store the model.")
     parser.add_argument("-ti", "--target-input", default='body', type=str,
                         help="Input of the model.")
@@ -60,7 +60,8 @@ if __name__ == "__main__":
         ti=args.target_input,
         to="_".join(args.target_output),
         ml=args.max_length,
-        inp=path.basename(args.input)[:-5]
+        inp=path.basename(args.input)[:-5],
+        ht=args.head_thickness
     )
 
     # Read data
