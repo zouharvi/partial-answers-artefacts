@@ -48,8 +48,8 @@ if __name__ == "__main__":
         i=path.basename(args.input[:-4]),
         h=args.embedding_method,
         p=args.projection_method,
-        d=args.dimension)
-
+        d=args.dimension
+    )
 
     # Read data
     embeddings = utils.load_data(args.input, format="pickle")
@@ -62,9 +62,15 @@ if __name__ == "__main__":
 
     if args.projection_method == "tsne":
         assert args.dimension in {1, 2, 3}
-        reducer = TSNE(args.dimension, n_jobs=-1)
+        reducer = TSNE(
+            args.dimension, n_jobs=-1,
+            random_state=0
+        )
     elif args.projection_method == "pca":
-        reducer = PCA(args.dimension)
+        reducer = PCA(
+            args.dimension,
+            random_state=0
+        )
 
     # transform the data
     projected_emb = reducer.fit_transform(embeddings)

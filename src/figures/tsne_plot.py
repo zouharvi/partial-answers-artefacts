@@ -37,9 +37,14 @@ if __name__ == "__main__":
     df = pd.DataFrame(embeddings)
 
     df["newspaper"] = [x["newspaper"] for x in data]
-    df["ncompas"] = [NEWSPAPER_TO_COMPAS[x["newspaper"]] for x in data]
-    df["ncountry"] = [COUNTRY_TO_PRETTY[NEWSPAPER_TO_COUNTRY[x["newspaper"]]]
-                      for x in data]
+    df["ncompas"] = [
+        NEWSPAPER_TO_COMPAS[x["newspaper"]]
+        for x in data
+    ]
+    df["ncountry"] = [
+        COUNTRY_TO_PRETTY[NEWSPAPER_TO_COUNTRY[x["newspaper"]]]
+        for x in data
+    ]
 
     plt.figure(figsize=(4.5, 4))
 

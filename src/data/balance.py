@@ -14,17 +14,16 @@ from collections import Counter
 def parse_args():
     args = argparse.ArgumentParser()
     args.add_argument(
-        "--data-in", default="data/final/clean.json",
+        "-i", "--data-in", default="data/final/clean.json",
         help="Location of joined data JSON",
-    )
-    args.add_argument(
-        "--data-out", default="data/final/{LABEL}.json",
-        help="Location of creafted data JSON, the {LABEL} token (including curly brakets) is going to be replaced by the data label",
     )
     return args.parse_args()
 
 
 def rel_freq_key(data, key):
+    """
+    Generate a LaTeX table for single-label variables.
+    """
     data_counter = Counter([y[key] for x, y in data])
     total = len(data)
     output = sorted(
@@ -32,15 +31,20 @@ def rel_freq_key(data, key):
         key=lambda x: x[1], reverse=True
     )
     output = [(k, f"{x/total:.2%}") for k, x in output]
-    output = [f"{k}: {x}" for k, x in output]
-    return output
+    output = [f"{k} & {x} \\\\" for k, x in output]
+    return "\n".join(output)
 
 
 def rel_freq_key_plus(data, key):
+    """
+    Generate a LaTeX table for multi-label variables.
+    """
     data_counter = Counter([item for x, y in data for item in y[key]])
     total = len(data)
-    output = sorted(list(data_counter.items()),
-                    key=lambda x: x[1], reverse=True)
+    output = sorted(
+        list(data_counter.items()),
+        key=lambda x: x[1], reverse=True
+    )
     output = [(
         k.replace("&", "\\&"),
         f"{x/total:.1%}".replace("%", "\\%")
@@ -57,12 +61,12 @@ if __name__ == "__main__":
     data = load_data(args.data_in)
 
     print(
-        "Average number of words:",
+        "Average number of words per article:",
         format(np.average([len(x["body"].split()) for x, y in data]), ".2f")
     )
 
-    print("\n", rel_freq_key(data, "month"))
-    print("\n", rel_freq_key(data, "year"))
-    print("\n", rel_freq_key(data, "newspaper"))
-    print("\n", rel_freq_key_plus(data, "subject"))
-    print("\n", rel_freq_key_plus(data, "geographic"))
+    print("\n", rel_freq_key(data, "month"), sep="")
+    print("\n", rel_freq_key(data, "year"), sep="")
+    print("\n", rel_freq_key(data, "newspaper"), sep="")
+    print("\n", rel_freq_key_plus(data, "subject"), sep="")
+    print("\n", rel_freq_key_plus(data, "geographic"), sep="")
