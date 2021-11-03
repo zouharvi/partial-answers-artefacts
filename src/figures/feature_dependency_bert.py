@@ -18,6 +18,9 @@ def parse_args():
     args.add_argument(
         "--logfile-0v1", default="data/eval/0v1_results.py",
     )
+    args.add_argument(
+        "-o","--output", default="data/figures/1v1_heatmap.png",
+    )
     return args.parse_args()
 
 
@@ -46,8 +49,8 @@ if __name__ == "__main__":
     Y_KEYS_INDEX_LOCAL = {k: i for i, k in enumerate(Y_KEYS)}
     plotdata = np.zeros((len(Y_KEYS) + 1, len(Y_KEYS)))
 
-    for xk, yk in it.product(Y_KEYS, Y_KEYS_LOCAL):
-        yk_idx = Y_KEYS_INDEX_LOCAL[yk]
+    for xk, yk in it.product(Y_KEYS, Y_KEYS):
+        yk_idx = Y_KEYS_INDEX[yk]
         xk_idx = Y_KEYS_INDEX[xk]
 
         plotdata[yk_idx + 1, xk_idx] = scores[(yk, xk)]
@@ -96,4 +99,4 @@ if __name__ == "__main__":
 
     # remove all whitespace
     plt.tight_layout(rect=(-0.025, -0.025, 1.025, 1.03))
-    plt.show()
+    plt.savefig(args.output)

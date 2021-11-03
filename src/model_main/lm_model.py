@@ -20,6 +20,7 @@ class LMModel(nn.Module):
         loss_weights=None,
         lm="bert-base-uncased",
         embed_strategy="cls",
+        loss_powermean_degree=1,
         head_thickness="shallow",
         freeze_lm=False,
         max_length=256,
@@ -84,6 +85,7 @@ class LMModel(nn.Module):
         self.weights_total = weights_total
 
         self.loss = loss
+        self.loss_powermean_degree = loss_powermean_degree
 
         # The optimizer has to be set last because self.parameters() scans class variables
         self.optimizer = optimizer(
@@ -331,8 +333,11 @@ class LMModel(nn.Module):
 
     def _reduce_losses(self, losses):
         losses = losses * self.loss_weights
-        return torch.sum(losses) / self.weights_total
-
+        losses = torch.pow(losses,self.loss_powermean_degree)
+        reduced_loss = torch.sum(losses) / self.weights_total
+        reduced_loss = torch.pow(reduced_loss,1/self.loss_powermean_degree)
+        return reduced_loss
+        
     def _compute_acc(self, y_pred, y):
 
         y_pred = [torch.argmax(yp, dim=1) for yp in y_pred]

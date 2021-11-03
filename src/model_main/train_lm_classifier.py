@@ -18,7 +18,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", default='data/final/clean.json', type=str,
                         help="Path of the data file.")
-    parser.add_argument("-o", "--output", default='data/models/{m}_{ht}_{ml}_{ti}_{to}_{inp}.pt', type=str,
+    parser.add_argument("-o", "--output", default='data/models/{m}_{es}_{pm}_{ep}_{ht}_{ml}_{ti}_{to}_{inp}.pt', type=str,
                         help="Path where to store the model.")
     parser.add_argument("-ti", "--target-input", default='body', type=str,
                         help="Input of the model.")
@@ -30,6 +30,10 @@ def parse_args():
                         help="Number of samples for the validation.")
     parser.add_argument("-ht", "--head-thickness", default='shallow',
                         help="Architecture of the classification head (shallow/mid)")
+    parser.add_argument("--embed-strategy", default='cls',
+                        help="Strategy to embed sentence with last layer hidden states.")
+    parser.add_argument("--loss-powermean-degree", default=1, type=int,
+                        help="Degree of powermean to take when reducing losses")
     parser.add_argument("-ep", "--epochs", default=2, type=int,
                         help="Override the default number of epochs.")
     parser.add_argument("-bs", "--batch-size", default=16, type=int,
@@ -61,7 +65,10 @@ if __name__ == "__main__":
         to="_".join(args.target_output),
         ml=args.max_length,
         inp=path.basename(args.input)[:-5],
-        ht=args.head_thickness
+        ht=args.head_thickness,
+        es=args.embed_strategy,
+        ep=args.epochs,
+        pm=args.loss_powermean_degree,
     )
 
     # Read data
@@ -93,12 +100,15 @@ if __name__ == "__main__":
 
     dimensions = list(map(len, label_names))
     count_targets = col.Counter(target_outputs)
-    weights = 1 / np.array([count_targets[x] for x in target_outputs])
-
+    #weights = 1 / np.array([count_targets[x] for x in target_outputs])
+    weights = None
+    
     lm = LMModel(
         cls_target_dimensions=dimensions,
         loss_weights=weights,
         lm=lm_name,
+        embed_strategy=args.embed_strategy,
+        loss_powermean_degree=args.loss_powermean_degree,
         head_thickness=args.head_thickness,
         epochs=args.epochs,
         batch_size=args.batch_size,
@@ -110,7 +120,7 @@ if __name__ == "__main__":
     # lm.save_to_file(output_name)
 
     # TODO: this is a manual hack because the eval script is broken!
-    hack(data, labels, lm)
+    #hack(data, labels, lm)
 
     # TODO put these in eval script
     # Evaluations
@@ -136,5 +146,5 @@ if __name__ == "__main__":
     print(evals)
 
     # TODO: use utils.save_data()
-    with open(f"data/eval/{path.basename(output_name)[:-3]}_eval.json", "w") as f:
+    with open(f"data/eval/{path.basename(output_name)[:-3]}_uniform_eval.json", "w") as f:
         json.dump(evals, f)
