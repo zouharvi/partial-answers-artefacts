@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+TODO description
+"""
+
 import pickle
 import random
 import sys
@@ -23,8 +27,6 @@ def parse_args():
                         help="Input of the model.")
     parser.add_argument("-to", "--target-output", default=['month'], type=str, nargs="+",
                         help="Target output of the model")
-    parser.add_argument("-ts", "--test-samples", default=1000, type=int,
-                        help="Amount of samples with which to test.")
     parser.add_argument("-ht", "--head-thickness", default='shallow',
                         help="Architecture of the classification head (shallow/mid)")
     parser.add_argument("-bs", "--batch-size", default=128, type=int,

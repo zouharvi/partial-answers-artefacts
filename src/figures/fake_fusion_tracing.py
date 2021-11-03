@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Mock results for fusion tracing (presentation purposes only)
+"""
+
 import argparse
 import sys
 sys.path.append("src")

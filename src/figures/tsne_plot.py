@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+"""
+Plotting of TSNE projection of article embeddings.
+Labels are highlighted with different colors.
+"""
+
 import sys
 sys.path.append("src")
 import utils

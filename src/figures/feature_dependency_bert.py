@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Tile-intensity graph for model performance with individual artefacts
+"""
+
 import argparse
 import sys
 sys.path.append("src")

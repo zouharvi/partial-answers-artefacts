@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+TODO description
+"""
+
 import sys
 sys.path.append("src")
 import argparse
@@ -103,7 +107,7 @@ if __name__ == "__main__":
 
     if args.target_output in {"subject", "geographic"}:
         # Use probabilities as scores
-        # For some reason the data needs to be transported for the dimension to match
+        # The data needs to be transported for the dimension to match
         pred_y = model.decision_function(data_x_test)
         rprec_val = rprec(data_y_test, pred_y)
         print(f"Dev RPrec: {rprec_val:.2%}")

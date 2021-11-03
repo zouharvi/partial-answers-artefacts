@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+TODO description
+"""
+
 from lm_model import LMModel
 import sys
 sys.path.append("src")
@@ -63,6 +67,7 @@ if __name__ == "__main__":
     # Read data
     data = utils.load_data(args.input)
 
+    # prepare target labels
     targets = args.target_output
     if len(targets) == 1:
         if targets[0] == "all":
@@ -71,9 +76,11 @@ if __name__ == "__main__":
             code = path.basename(args.input)[-6]
             targets = [utils.CODE_TO_Y_KEYS[code]]
 
+    # process data
     target_input = utils.get_x(data, args.target_input)
     target_outputs, label_names, labels = utils.get_y(data, targets)
 
+    # split data
     train_size = (len(data) + args.train_samples) % len(data)
     dev_size = args.dev_samples
     test_size = len(data) - train_size - dev_size
@@ -83,14 +90,15 @@ if __name__ == "__main__":
         random_state=0
     )
 
+    # show output labels
     print(label_names)
 
     dimensions = list(map(len, label_names))
     count_targets = col.Counter(target_outputs)
-    #weights = 1 / np.array([count_targets[x] for x in target_outputs])
+    # weights = 1 / np.array([count_targets[x] for x in target_outputs])
     weights = None
 
-    # Instantiate model
+    # instantiate model
     lm = LMModel(
         cls_target_dimensions=dimensions,
         loss_weights=weights,
@@ -103,15 +111,17 @@ if __name__ == "__main__":
         max_length=args.max_length,
     )
 
+    # train model
     lm.fit(x_train, y_train, x_dev, y_dev)
 
+    # save model
     lm.save_to_file(output_name)
 
     # TODO put these in eval script
     # Evaluations
     evals = dict()
 
-    # Development eval
+    # development eval
     y_pred_dev = lm.predict(x_dev)
     evals["dev"] = utils.eval.complete_evaluation(
         target_outputs,
@@ -119,7 +129,7 @@ if __name__ == "__main__":
         target_names=label_names
     )
 
-    # Test eval
+    # test eval
     y_pred_test = lm.predict(x_test)
     evals["test"] = utils.eval.complete_evaluation(
         target_outputs,
@@ -130,4 +140,6 @@ if __name__ == "__main__":
     # print the results which are being saved
     print(utils.pretty_json(evals))
     utils.save_data(
-        f"data/eval/{path.basename(output_name)[:-3]}_uniform_eval.json", evals)
+        f"data/eval/{path.basename(output_name)[:-3]}_uniform_eval.json",
+        evals
+    )

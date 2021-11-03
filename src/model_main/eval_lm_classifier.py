@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+TODO description
+"""
+
 import sys
 sys.path.append("src")
 import utils
@@ -39,21 +43,24 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
 
-    # Format output name
+    # format output name
     output_name = args.output.format(path.basename(args.model_path)[:-3])
 
-    # Read data
+    # read data
     data = utils.load_data(args.input)
 
+    # prepare data
     target_input = utils.get_x(data, args.target_input)
     target_outputs, label_names, labels = utils.get_y(data, args.target_output)
 
+    # split data
     (x_test, y_test), _ = utils.make_split(
         (target_input, labels),
         splits=(args.test_samples,),
         random_state=0
     )
-    # Instantiate model
+
+    # instantiate model
     lm = LMModel(
         cls_target_dimensions=list(map(len, label_names)),
         lm=args.language_model,
@@ -62,9 +69,13 @@ if __name__ == "__main__":
         max_length=args.max_length
     )
 
+    # load model
     lm.load_from_file(args.model_path)
+
+    # get predictions
     y_logits = lm.predict(x_test)
 
+    # evaluate
     evaluation = utils.eval.complete_evaluation(
         y_true=y_test, y_logits=y_logits,
         evaluation_targets=target_outputs,
@@ -72,5 +83,4 @@ if __name__ == "__main__":
     )
     print(utils.pretty_json(evaluation))
 
-    with open(output_name, "w") as f:
-        json.dump(evaluation, f)
+    utils.save_data(output_name, evaluation, format="json")
