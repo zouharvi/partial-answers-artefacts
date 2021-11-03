@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Compute p(-,xi|theta) dependency between variables.
+"""
+
 import sys
 sys.path.append("src")
 from utils import *
@@ -12,7 +16,7 @@ import sklearn.dummy
 def parse_args():
     args = argparse.ArgumentParser()
     args.add_argument(
-        "-d", "--data", default="data/final/clean.json",
+        "-i", "--data", default="data/final/clean.json",
         help="Location of joined data JSON",
     )
     args.add_argument(
@@ -28,8 +32,10 @@ if __name__ == "__main__":
 
     logdata = []
 
+    # iterate single-label variables
     for y_filter_1 in Y_KEYS:
         for y_filter_2 in Y_KEYS_LOCAL:
+            # prepare data
             _, data = streamline_data(
                 data_raw,
                 x_filter=y_filter_1,
@@ -37,6 +43,8 @@ if __name__ == "__main__":
                 binarize="input"
             )
             data_x, data_y = zip(*data)
+
+            # define model
             model = sklearn.linear_model.LogisticRegression(
                 multi_class="multinomial",
                 max_iter=500,
@@ -47,14 +55,12 @@ if __name__ == "__main__":
             model.fit(data_x, data_y)
             acc = model.score(data_x, data_y)
 
-            # TODO: print MCCC accuracy
+            # get MCCC accuracy
             model_dummy = sklearn.dummy.DummyClassifier(
-                strategy="most_frequent")
+                strategy="most_frequent"
+            )
             model_dummy.fit(data_x, data_y)
             acc_dummy = model_dummy.score(data_x, data_y)
-
-            print(
-                f"ACC: {acc:.2%} ({y_filter_1} -> {y_filter_2}), dummy: {acc_dummy:.2%}")
 
             logdata.append({
                 "acc": acc,
@@ -62,9 +68,14 @@ if __name__ == "__main__":
                 "y_filter_2": y_filter_2,
                 "dummy": acc_dummy,
             })
+            print(
+                f"ACC: {acc:.2%} ({y_filter_1} -> {y_filter_2}), dummy: {acc_dummy:.2%}"
+            )
 
+    # iterate multi-label variables
     for y_filter_1 in Y_KEYS:
         for y_filter_2 in Y_KEYS - Y_KEYS_LOCAL:
+            # prepare data
             _, data = streamline_data(
                 data_raw,
                 x_filter=y_filter_1,
@@ -96,7 +107,9 @@ if __name__ == "__main__":
 
             # craft dummy scoring based on item frequency
             dummy_y = np.repeat(
-                [np.array(data_y).sum(axis=0)], len(data_y), axis=0)
+                [np.array(data_y).sum(axis=0)],
+                len(data_y), axis=0
+            )
             rprec_val_dummy = rprec(data_y, dummy_y)
 
             logdata.append({
@@ -106,6 +119,7 @@ if __name__ == "__main__":
                 "dummy": rprec_val_dummy,
             })
             print(
-                f"RPREC: {rprec_val:.2%} ({y_filter_1} -> {y_filter_2}), dummy: {rprec_val_dummy:.2%}")
+                f"RPREC: {rprec_val:.2%} ({y_filter_1} -> {y_filter_2}), dummy: {rprec_val_dummy:.2%}"
+            )
 
     save_data(args.logfile, logdata, format="pickle")

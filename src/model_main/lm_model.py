@@ -13,6 +13,7 @@ import operator as op
 import itertools as it
 import tqdm
 
+
 class LMModel(nn.Module):
     def __init__(
         self,
@@ -35,7 +36,8 @@ class LMModel(nn.Module):
 
         # Initialize tokenizer and model
         tokenizer = AutoTokenizer.from_pretrained(lm)
-        lm = AutoModel.from_pretrained(lm, output_hidden_states=True).to(device)
+        lm = AutoModel.from_pretrained(
+            lm, output_hidden_states=True).to(device)
 
         # Build classification heads
         if head_thickness == "shallow":
@@ -147,7 +149,7 @@ class LMModel(nn.Module):
         y = self.classification_heads[0](x)
 
         # take cls
-        return [t[:,0,:] for t in model_output.hidden_states], y
+        return [t[:, 0, :] for t in model_output.hidden_states], y
 
     # Utility functions
     def fit(self,
@@ -191,29 +193,39 @@ class LMModel(nn.Module):
                 ]
             else:
                 x = [
-                    ([t.cpu().numpy() for t in sample[0]], sample[1].cpu().numpy())
+                    ([t.cpu().numpy()
+                     for t in sample[0]], sample[1].cpu().numpy())
                     for sample in x
                 ]
                 # resolve batched organization (transpose)
                 x = [
                     (
-                        [[layer[i] for layer in sampleA] for i in range(self.batch_size)],
+                        [[layer[i] for layer in sampleA]
+                            for i in range(self.batch_size)],
                         sampleB
                     )
                     for sampleA, sampleB in x
                 ]
-                # print(len(x[0][0]))
-                # print(len(x[0][0][0]))
 
-                    
         return x
 
     def save_to_file(self, filename):
-        torch.save(self.state_dict(), filename)
+        torch.save(
+            {
+                "lm": self.lm.state_dict(),
+                "heads": [head.state_dict() for head in self.classification_heads],
+            },
+            filename
+        )
 
     def load_from_file(self, filename):
         s_dict = torch.load(filename)
-        self.load_state_dict(s_dict)
+        self.lm.load_state_dict(s_dict["lm"])
+        [
+            head.load_state_dict(params)
+            for head, params
+            in zip(self.classification_heads, s_dict["heads"])
+        ]
 
     # Private functions
     def _convert2batched(self, X, y=None, shuffle=False):

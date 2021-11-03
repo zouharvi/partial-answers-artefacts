@@ -117,10 +117,12 @@ if __name__ == "__main__":
 
     lm.fit(x_train, y_train, x_dev, y_dev)
     # TODO: uncomment me
-    # lm.save_to_file(output_name)
+    lm.save_to_file(output_name)
 
     # TODO: this is a manual hack because the eval script is broken!
-    #hack(data, labels, lm)
+
+    # hack(data, labels, lm)
+
 
     # TODO put these in eval script
     # Evaluations

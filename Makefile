@@ -6,7 +6,7 @@ assert_top:
 	@read _
 
 _data:
-	mkdir -p data/final/ data/models/ data/embeddings/ data/eval/ data/misc/
+	mkdir -p computed data/final/ data/models/ data/embeddings/ data/eval/ data/misc/
 	wget --user finalproject --password Rik@LfD21 -P data/final/ https://teaching.stijneikelboom.nl/lfd2122/COP.filt3.sub.zip
 	unzip -j -d data/final/ data/final/COP.filt3.sub.zip
 
@@ -48,6 +48,25 @@ run_rv1:
 	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_y.json
 	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_s.json
 	python3 src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input data/final/Rv1_$(dr)_g.json
+
+tsne:
+	python3 src/model_main/embedd.py -i data/final/clean.json -o data/embeddings/embeddings_{m}_{t}_{ml}.pkl -t body --max-length 512 -st all
+	python3 src/data/project_dim.py -i data/embeddings/embeddings_bert_body_512.pkl --em avg
+	python3 src/figures/tsne_plot.py -i data/final/clean.json -e data/embeddings/embeddings_bert_body_512_reduced_avg_tsne_2.pkl -l ncountry
+
+balance:
+	python3 src/data/balance.py -i data/final/clean.json
+
+feature_dependency:
+	python3 src/misc/feature_dependency.py -i data/final/clean.json --logfile computed/feature_dependency.out
+	python3 src/figures/feature_dependency_lr.py --logfile computed/feature_dependency.out
+
+meta_model_source:
+	echo "TODO"
+
+meta_model:
+	echo "TODO"
+
 
 train_all_1v1:
 	@echo "TODO: this script may not work as expected because it is not adapted for Makefile"
