@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Plotting divergence (distances) of cases in which artefacts helped or worsened the predictions.
+"""
+
 import sys
 
 sys.path.append("src")
@@ -7,7 +11,6 @@ import argparse
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
-import torch.nn.functional
 
 def parse_args():
     parser = argparse.ArgumentParser()

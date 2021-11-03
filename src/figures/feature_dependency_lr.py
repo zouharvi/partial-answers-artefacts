@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+"""
+Tile-intensity graph for LR performance with individual artefacts
+Dependency between variables modelled as p(-,xi|theta).
+"""
+
 import argparse
 import sys
 sys.path.append("src")

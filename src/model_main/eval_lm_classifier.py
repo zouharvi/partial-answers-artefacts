@@ -40,21 +40,13 @@ def parse_args():
     return args
 
 
-# TODO: move LM_ALIASES inside of LMModel
-LM_ALIASES = dict(
-    bert="bert-base-uncased",
-    roberta="roberta-base",
-    albert="albert-base-v2",
-    distilroberta="distilroberta-base"
-)
-
 if __name__ == "__main__":
     args = parse_args()
 
-    # Format output name
+    # format output name
     output_name = args.output.format(path.basename(args.model_path)[:-3])
 
-    # Read data
+    # read data
     data = utils.load_data(args.input)
 
     targets = args.target_output
@@ -65,28 +57,34 @@ if __name__ == "__main__":
             code = path.basename(args.input)[-6]
             targets = [utils.CODE_TO_Y_KEYS[code]]
     
+    # prepare data
     target_input = utils.get_x(data, args.target_input)
     target_outputs, label_names, labels = utils.get_y(data, targets)
 
+    # split data
     (x_test, y_test), _ = utils.make_split(
         (target_input, labels),
         splits=(args.test_samples,),
         random_state=0
     )
-    # Instantiate transformer
-    lm_name = LM_ALIASES[args.language_model] if args.language_model in LM_ALIASES else args.language_model
+
+    # instantiate model
     lm = LMModel(
         cls_target_dimensions=list(map(len, label_names)),
-        lm=lm_name,
         embed_strategy=args.embed_strategy,
+        lm=args.language_model,
         head_thickness=args.head_thickness,
         batch_size=args.batch_size,
         max_length=args.max_length
     )
 
+    # load model
     lm.load_from_file(args.model_path)
+
+    # get predictions
     y_logits = lm.predict(x_test)
 
+    # evaluate
     evaluation = utils.eval.complete_evaluation(
         y_true=y_test, y_logits=y_logits,
         evaluation_targets=target_outputs,
@@ -94,5 +92,4 @@ if __name__ == "__main__":
     )
     print(utils.pretty_json(evaluation))
 
-    with open(output_name, "w") as f:
-        json.dump(evaluation, f)
+    utils.save_data(output_name, evaluation, format="json")

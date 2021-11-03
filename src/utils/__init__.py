@@ -19,18 +19,25 @@ def get_compute_device():
     return DEVICE
 
 
-def load_data_raw(path, check=False):
+def load_data_raw(path, check=False, singleton=False):
     """
     Loads raw JSON file and parses it into a list of articles.
     """
     data = load_data(path, format="json")
 
-    # add cop_edition and flatten all lists from the newspaper
-    data = [
-        {**article, "cop_edition": newspaper["cop_edition"]}
-        for newspaper in data
-        for article in newspaper["articles"]
-    ]
+    if singleton:
+        # in case the input is a single COP edition
+        data = [
+            {**article, "cop_edition": data["cop_edition"]}
+            for article in data["articles"]
+        ]
+    else:
+        # add cop_edition and flatten all lists from the newspaper
+        data = [
+            {**article, "cop_edition": newspaper["cop_edition"]}
+            for newspaper in data
+            for article in newspaper["articles"]
+        ]
 
     # check that the data is what we expect
     if check:
@@ -133,7 +140,7 @@ def get_y(data, targets):
     return targets_post, label_names, labels
 
 
-def make_split(data_list, splits, random_state=0):
+def make_split(data_list, splits, random_state=0, simple=False):
     """
     @TODO missing comment
     """
@@ -151,10 +158,13 @@ def make_split(data_list, splits, random_state=0):
 
     r = tuple(it.starmap(zip, data_splits))
 
-    r_x, r_y = zip(*r)
-    r_y = tuple(map(np.array, r_y))
+    if not simple:
+        r_x, r_y = zip(*r)
+        r_y = tuple(map(np.array, r_y))
 
-    return tuple(zip(r_x, r_y))
+        return tuple(zip(r_x, r_y))
+    else:
+        return tuple([next(x) for x in r])
 
 
 def streamline_data(data, x_filter="headline", y_filter="newspaper", binarize="output"):

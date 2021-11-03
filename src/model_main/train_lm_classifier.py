@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 
+"""
+TODO description
+"""
+
 from lm_model import LMModel
 import sys
 sys.path.append("src")
 import utils
 import utils.eval
 
-import numpy as np
 import os.path as path
-import json
 import argparse
 import collections as col
-from model_main.eval_lm_classifier_artefacts import hack
 
 
 def parse_args():
@@ -49,14 +50,6 @@ def parse_args():
     return args
 
 
-# TODO: move LM_ALIASES inside of LMModel
-LM_ALIASES = dict(
-    bert="bert-base-uncased",
-    roberta="roberta-base",
-    albert="albert-base-v2",
-    distilroberta="distilroberta-base"
-)
-
 if __name__ == "__main__":
     args = parse_args()
 
@@ -77,6 +70,7 @@ if __name__ == "__main__":
     # Read data
     data = utils.load_data(args.input)
 
+    # prepare target labels
     targets = args.target_output
     if len(targets) == 1:
         if targets[0] == "all":
@@ -85,9 +79,11 @@ if __name__ == "__main__":
             code = path.basename(args.input)[-6]
             targets = [utils.CODE_TO_Y_KEYS[code]]
 
+    # process data
     target_input = utils.get_x(data, args.target_input)
     target_outputs, label_names, labels = utils.get_y(data, targets)
 
+    # split data
     train_size = (len(data) + args.train_samples) % len(data)
     dev_size = args.dev_samples
     test_size = len(data) - train_size - dev_size
@@ -114,7 +110,7 @@ if __name__ == "__main__":
     lm = LMModel(
         cls_target_dimensions=dimensions,
         loss_weights=weights,
-        lm=lm_name,
+        lm=args.language_model,
         embed_strategy=args.embed_strategy,
         loss_powermean_degree=args.loss_powermean_degree,
         head_thickness=args.head_thickness,
@@ -123,34 +119,14 @@ if __name__ == "__main__":
         max_length=args.max_length,
     )
 
+    # train model
     lm.fit(x_train, y_train, x_dev, y_dev)
     lm.save_to_file(output_name)
 
     # TODO: this is a manual hack because the eval script is broken!
     # hack(data, labels, lm)
 
-    # TODO put these in eval script
-    # Evaluations
-    """
-    evals = dict()
-
-    # Development eval
-    y_pred_dev = lm.predict(x_dev)
-    evals["dev"] = utils.eval.complete_evaluation(
-        target_outputs,
-        y_dev, y_pred_dev,
-        target_names=label_names
+    utils.save_data(
+        f"data/eval/{path.basename(output_name)[:-3]}_uniform_eval.json",
+        evals
     )
-
-    # Test eval
-    y_pred_test = lm.predict(x_test)
-    evals["test"] = utils.eval.complete_evaluation(
-        target_outputs,
-        y_test, y_pred_test,
-        target_names=label_names
-    )
-
-    # print the results which are being saved
-    print(utils.pretty_json(evals))
-    utils.save_data(f"data/eval/{path.basename(output_name)[:-3]}_uniform_eval.json", evals)
-    """

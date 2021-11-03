@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 Prepares downloaded GloVe file and creates a simple to use pickle dictionary.
 """

@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 
+"""
+Baseline LSTM model with pre-trained word embeddings (GloVe).
+"""
+
 import sys
 sys.path.append("src")
+import utils
 import argparse
-from utils import *
 from sklearn.feature_extraction.text import TfidfVectorizer
-import sklearn.model_selection
+from sklearn.metrics import classification_report
 import torch.nn
-import pickle
 import numpy as np
 
-DEVICE = get_compute_device()
+DEVICE = utils.get_compute_device()
 
 
 def parse_args():
@@ -20,13 +23,16 @@ def parse_args():
         help="Location of joined data JSON",
     )
     args.add_argument(
-        "--target-output", "--to", default="newspaper", help="Target variable",
+        "-to", "--target-output", default="newspaper",
+        help="Target variable",
     )
     args.add_argument(
-        "--target-input", "--ti", default="both", help="Input variable",
+        "-ti", "--target-input", default="both",
+        help="Input variable",
     )
     args.add_argument(
-        "--glove", default="data/glove.pkl", help="Path to GloVe dictionary",
+        "--glove", default="data/glove.pkl",
+        help="Path to GloVe dictionary",
     )
     return args.parse_args()
 
@@ -138,9 +144,20 @@ class Model(torch.nn.Module):
         for x, y in data:
             with torch.no_grad():
                 output = self(x)
-                hits.append(y[0].item() == torch.argmax(
-                    output[0], dim=0).item())
+                hits.append(
+                    y[0].item() == torch.argmax(output[0], dim=0).item()
+                )
         return np.average(hits)
+
+    def eval_data_full(self, data):
+        pred_y = []
+        true_y = []
+        for x, y in data:
+            with torch.no_grad():
+                output = self(x)
+                true_y.append(y[0].item())
+                pred_y.append(torch.argmax(output[0], dim=0).item())
+        return classification_report(true_y, pred_y, zero_division=0)
 
     def eval_data_rprec(self, data):
         scores = []
@@ -149,19 +166,18 @@ class Model(torch.nn.Module):
                 output = self(x)
                 # print(output[0].shape)
                 scores.append(output[0].tolist())
-        return rprec([x[1][0].tolist() for x in data], scores)
+        return utils.rprec([x[1][0].tolist() for x in data], scores)
 
 
 if __name__ == "__main__":
     args = parse_args()
-    data = load_data(args.data)
-    _, data = streamline_data(
+    data = utils.load_data(args.data)
+    _, data = utils.streamline_data(
         data,
         x_filter=lambda x, y: x,
         y_filter=args.target_output, binarize="output"
     )
-    with open(args.glove, "rb") as f:
-        glove = pickle.load(f)
+    glove = utils.load_data(args.glove, format="pickle")
 
     if args.target_output in {"subject", "geographic"}:
         single_classs = False
@@ -170,16 +186,26 @@ if __name__ == "__main__":
 
     model = Model(output_dim=len(data[0][1]), single_class=single_classs)
     data = model.preprocess(data, glove)
+
     print("Total data:", len(data))
     print("Glove len:", len(data[0][0][0]))
     print("Glove dim:", len(data[0][0][0][0]))
     print("TFIDF dim:", data[0][0][1].shape)
     print("Output dim:", len(data[0][1]))
     print("Output:", data[0][1])
-    data_train, data_test = sklearn.model_selection.train_test_split(
-        data,
-        test_size=1000,
+
+    data_dev, data_test, data_train = utils.make_split(
+        (data,),
+        (1000,1000,),
         random_state=0,
+        simple=True,
     )
+
     model.to(DEVICE)
     model.train_epochs(data_train, data_test, 60)
+
+    # test evaluation
+    if single_classs:
+        print(model.eval_data_full(data_test))
+    else:
+        print(f"Test RPrec: {model.eval_data_full(data_test):.2%}")

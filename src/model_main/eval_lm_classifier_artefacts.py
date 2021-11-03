@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+TODO description
+"""
+
 import pickle
 import random
 import sys
@@ -23,8 +27,6 @@ def parse_args():
                         help="Input of the model.")
     parser.add_argument("-to", "--target-output", default=['month'], type=str, nargs="+",
                         help="Target output of the model")
-    parser.add_argument("-ts", "--test-samples", default=1000, type=int,
-                        help="Amount of samples with which to test.")
     parser.add_argument("-ht", "--head-thickness", default='shallow',
                         help="Architecture of the classification head (shallow/mid)")
     parser.add_argument("-bs", "--batch-size", default=128, type=int,
@@ -38,13 +40,6 @@ def parse_args():
     return args
 
 
-# TODO: move LM_ALIASES inside of LMModel
-LM_ALIASES = dict(
-    bert="bert-base-uncased",
-    roberta="roberta-base",
-    albert="albert-base-v2",
-    distilroberta="distilroberta-base"
-)
 
 def artefacts_signature(artefacts, y_filter):
     return [1 if k in artefacts else 0 for k in utils.Y_KEYS_LOCAL - {y_filter}]
@@ -62,48 +57,6 @@ def x_manipulator_all(x, y, x_filter, y_filter):
         ))
     return output
 
-# TODO: this part is only duplicate of the main code so that it can be called form train_lm_classifier which is otherwise broken
-def hack(data, labels, lm):
-    print("Predicting all subsets of artefacts")
-    data_x_all = [
-        (
-            x_manipulator_all(x, y, "body", "month"),
-            y_true[0]
-        )
-        for (x, y), y_true in zip(data, labels)
-    ]
-    # flatten data
-    data_x_all = [
-        (z, true_y)
-        for artefacts, true_y in data_x_all
-        for z in artefacts
-    ]
-    
-    preds_all = lm.predict2([x[0] for x, y in data_x_all], top_cls_only=False)
-
-    # flatten results from batches
-    preds_all = [
-        (r,x) 
-        for rs,rx in preds_all
-        for r,x in zip(rs, rx)
-    ]
-
-    data_out = []
-    hits_full = []
-    hits = []
-    for (rep, y_pred_posterior), ((x, signature), y_true) in zip(preds_all, data_x_all):
-        y_pred = np.argmax(y_pred_posterior)
-        if sum(signature) == 4:
-            hits_full.append(y_pred == y_true)
-        hits.append(y_pred == y_true)
-        data_out.append(((rep, y_pred_posterior, signature), y_pred == y_true))
-
-    print("Acc (4 artefacts):", format(np.average(hits_full), ".2%"))
-    print("Acc (any):", format(np.average(hits), ".2%"))
-
-    with open("data/misc/tracing_month.pkl", "wb") as f:
-        pickle.dump(data_out, f)
-
 if __name__ == "__main__":
     args = parse_args()
 
@@ -116,11 +69,10 @@ if __name__ == "__main__":
     # label_names and labels but it asserts consistency across scripts
     _, label_names, labels = utils.get_y(data, args.target_output)
 
-    # Instantiate transformer
-    lm_name = LM_ALIASES[args.language_model] if args.language_model in LM_ALIASES else args.language_model
+    # Instantiate model
     lm = LMModel(
         cls_target_dimensions=[len(x) for x in label_names],
-        lm=lm_name,
+        lm=args.language_model,
         head_thickness=args.head_thickness,
         batch_size=args.batch_size,
         max_length=args.max_length
