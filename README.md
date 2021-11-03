@@ -44,6 +44,8 @@ Otherwise the model will train on CPU/RAM.
 You may enforce the script to use CPU/RAM (e.g. because of memory limitations) by prefixing the launching command with `CUDA_VISIBLE_DEVICES=;`.
 This can also be used select which device you would like to utilize (if there are multiple), e.g. `CUDA_VISIBLE_DEVICES=2;` will use the thirds GPU device.
 
+All the scripts use a fixed split into train/dev/test (-1/1000/1000) that is randomly sampled in-time.
+
 #### Main Model
 
 To train the main model (Bert-based)
@@ -51,7 +53,27 @@ TODO
 
 #### Baseline Models
 
-TODO
+We provide four kinds of baseline models: Naive Bayes, Logistic Regression, SVM-based and LSTM-based.
+The first three are invoked via the following scripts.
+The input can be either `headline`, `body` or `both`.
+The output is one of the variables (single).
+If the output variable is multi-class then the models are automatically adapted to support scoring based on probabilities.
+The vectorizer can be either `bow` for the absolute baseline or `tfidf` for a better adapted version.
+The following models are supported `nb` (naive bayes, no multioutput), `lr` (logistic regression), `svc` (support vector machine with rfb kernel), `linear_svc` (support vector machine with linear kernel).
+No that `svc` may take up to an hour to run and also the same applies for models for predicting _subject_ or _geographic_ because internally many more models need to be trained.
+
+```
+python3 ./src/model_baseline/svm.py --model linear_svc -ti both --vectorizer tfidf
+```
+
+The LSTM based model utilizes word embeddings of the words in the headline joined with first 20 words of the body.
+This is processed by a layer of bidirectional LSTM and joined with a heavily filtered (dropout 75%) Tf-Idf vector of the article body.
+To run, you must need to have a prepared GloVe embedding.
+This can be done automatically via `make get_glove` (we are using 200 dimensional ones).
+
+```
+python3 ./src/model_baseline/lstm.py -to ncompas
+```
 
 #### Meta Model
 

@@ -140,7 +140,7 @@ def get_y(data, targets):
     return targets_post, label_names, labels
 
 
-def make_split(data_list, splits, random_state=0):
+def make_split(data_list, splits, random_state=0, simple=False):
     """
     @TODO missing comment
     """
@@ -158,10 +158,13 @@ def make_split(data_list, splits, random_state=0):
 
     r = tuple(it.starmap(zip, data_splits))
 
-    r_x, r_y = zip(*r)
-    r_y = tuple(map(np.array, r_y))
+    if not simple:
+        r_x, r_y = zip(*r)
+        r_y = tuple(map(np.array, r_y))
 
-    return tuple(zip(r_x, r_y))
+        return tuple(zip(r_x, r_y))
+    else:
+        return tuple([next(x) for x in r])
 
 
 def streamline_data(data, x_filter="headline", y_filter="newspaper", binarize="output"):
