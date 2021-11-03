@@ -33,7 +33,7 @@ def parse_args():
                         help="Evaluation batch size.")
     parser.add_argument("-lm", "--language-model", default="bert", type=str,
                         help="Name of pretrained language model.")
-    parser.add_argument("--max-length", default=256, type=int,
+    parser.add_argument("--max-length", default=512, type=int,
                         help="Maximum length of language model input.")
 
     args = parser.parse_args()

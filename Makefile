@@ -1,3 +1,6 @@
+target_outputs=newspaper ncompas ncountry month year subject geographic all
+bert_models=$(patsubst %,data/models/bert_cls_1_uniform_2_shallow_512_body_%_clean.pt,$target_outputs)
+
 clean:
 	rm -rf data/final
 
@@ -67,6 +70,19 @@ meta_model_source:
 meta_model:
 	echo "TODO"
 
+_t0v1_%:
+	python3 src/model_main/train_lm_classifier.py -to $(patsubst _t0v1_%,%,$@)
+
+train_all_0v1: $(patsubst %,_t0v1_%,$(target_outputs))
+
+data/models/bert_cls_1_uniform_2_shallow_512_body_%_clean.pt: _t0v1_%
+
+_e0v1_%: 
+	python3 src/model_main/eval_lm_classifier.py --model-path $(patsubst _e0v1_%,bert_cls_1_uniform_2_shallow_512_body_%_clean.pt,$@)  -to $(patsubst _e0v1_%,%,$@)
+
+eval_all_0v1: $(bert_models) $(patsubst %,_e0v1_%,$(target_outputs))
+
+train_and_eval_0v1: train_all_0v1 eval_all_0v1
 
 train_all_1v1:
 	@echo "TODO: this script may not work as expected because it is not adapted for Makefile"
@@ -77,3 +93,4 @@ train_all_1v1:
 		echo $$f \
 		python3 ./src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input $$f \
 	done \
+    

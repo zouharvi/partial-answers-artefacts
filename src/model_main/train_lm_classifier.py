@@ -38,11 +38,11 @@ def parse_args():
                         help="Type of scaling to use for loss averaging. Possibilities are \"uniform\" and \"scaled\".")
     parser.add_argument("-ep", "--epochs", default=2, type=int,
                         help="Override the default number of epochs.")
-    parser.add_argument("-bs", "--batch-size", default=16, type=int,
+    parser.add_argument("-bs", "--batch-size", default=8, type=int,
                         help="Override the default batch size.")
     parser.add_argument("-lm", "--language-model", default="bert", type=str,
                         help="Name of pretrained language model.")
-    parser.add_argument("--max-length", default=256, type=int,
+    parser.add_argument("--max-length", default=512, type=int,
                         help="Maximum length of language model input.")
 
     args = parser.parse_args()
