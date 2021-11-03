@@ -6,12 +6,9 @@ sys.path.append("src")
 import utils
 import utils.eval
 
-import numpy as np
 import os.path as path
-import json
 import argparse
 import collections as col
-from model_main.eval_lm_classifier_artefacts import hack
 
 
 def parse_args():
@@ -46,14 +43,6 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-
-# TODO: move LM_ALIASES inside of LMModel
-LM_ALIASES = dict(
-    bert="bert-base-uncased",
-    roberta="roberta-base",
-    albert="albert-base-v2",
-    distilroberta="distilroberta-base"
-)
 
 if __name__ == "__main__":
     args = parse_args()
@@ -95,18 +84,17 @@ if __name__ == "__main__":
     )
 
     print(label_names)
-    # Instantiate transformer
-    lm_name = LM_ALIASES[args.language_model] if args.language_model in LM_ALIASES else args.language_model
 
     dimensions = list(map(len, label_names))
     count_targets = col.Counter(target_outputs)
     #weights = 1 / np.array([count_targets[x] for x in target_outputs])
     weights = None
-    
+
+    # Instantiate model
     lm = LMModel(
         cls_target_dimensions=dimensions,
         loss_weights=weights,
-        lm=lm_name,
+        lm=args.language_model,
         embed_strategy=args.embed_strategy,
         loss_powermean_degree=args.loss_powermean_degree,
         head_thickness=args.head_thickness,
@@ -116,13 +104,8 @@ if __name__ == "__main__":
     )
 
     lm.fit(x_train, y_train, x_dev, y_dev)
-    # TODO: uncomment me
+
     lm.save_to_file(output_name)
-
-    # TODO: this is a manual hack because the eval script is broken!
-
-    # hack(data, labels, lm)
-
 
     # TODO put these in eval script
     # Evaluations
@@ -146,4 +129,5 @@ if __name__ == "__main__":
 
     # print the results which are being saved
     print(utils.pretty_json(evals))
-    utils.save_data(f"data/eval/{path.basename(output_name)[:-3]}_uniform_eval.json", evals)
+    utils.save_data(
+        f"data/eval/{path.basename(output_name)[:-3]}_uniform_eval.json", evals)

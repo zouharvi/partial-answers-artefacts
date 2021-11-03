@@ -27,14 +27,6 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-# TODO: move LM_ALIASES inside of LMModel
-LM_ALIASES = dict(
-    bert="bert-base-uncased",
-    roberta="roberta-base",
-    albert="albert-base-v2",
-    distilroberta="distilroberta-base"
-)
-
 if __name__ == "__main__":
     args = parse_args()
 
@@ -52,10 +44,9 @@ if __name__ == "__main__":
     target = [x[args.target] for x, y in data]
 
     # Instantiate model
-    lm_name = LM_ALIASES[args.language_model] if args.language_model in LM_ALIASES else args.language_model
     lm = LMModel(
         embed_strategy=args.embed_strategy,
-        lm=lm_name,
+        lm=args.language_model,
         batch_size=args.batch_size,
         max_length=args.max_length
     )

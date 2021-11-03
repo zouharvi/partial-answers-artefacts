@@ -36,14 +36,6 @@ def parse_args():
     return args
 
 
-# TODO: move LM_ALIASES inside of LMModel
-LM_ALIASES = dict(
-    bert="bert-base-uncased",
-    roberta="roberta-base",
-    albert="albert-base-v2",
-    distilroberta="distilroberta-base"
-)
-
 if __name__ == "__main__":
     args = parse_args()
 
@@ -61,11 +53,10 @@ if __name__ == "__main__":
         splits=(args.test_samples,),
         random_state=0
     )
-    # Instantiate transformer
-    lm_name = LM_ALIASES[args.language_model] if args.language_model in LM_ALIASES else args.language_model
+    # Instantiate model
     lm = LMModel(
         cls_target_dimensions=list(map(len, label_names)),
-        lm=lm_name,
+        lm=args.language_model,
         head_thickness=args.head_thickness,
         batch_size=args.batch_size,
         max_length=args.max_length

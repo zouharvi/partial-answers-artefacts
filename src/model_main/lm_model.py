@@ -14,6 +14,13 @@ import itertools as it
 import tqdm
 
 
+LM_ALIASES = dict(
+    bert="bert-base-uncased",
+    roberta="roberta-base",
+    albert="albert-base-v2",
+    distilroberta="distilroberta-base"
+)
+
 class LMModel(nn.Module):
     def __init__(
         self,
@@ -33,6 +40,9 @@ class LMModel(nn.Module):
     ):
 
         super(LMModel, self).__init__()
+    
+        # check aliases
+        lm = LM_ALIASES[lm] if lm in LM_ALIASES else lm
 
         # Initialize tokenizer and model
         tokenizer = AutoTokenizer.from_pretrained(lm)
