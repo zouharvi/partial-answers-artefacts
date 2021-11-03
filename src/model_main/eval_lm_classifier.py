@@ -19,7 +19,7 @@ def parse_args():
                         help="Path where to load the model from.")
     parser.add_argument("-ti", "--target-input", default='body', type=str,
                         help="Input of the model.")
-    parser.add_argument("-to", "--target-output", default=['month'], type=str, nargs="+",
+    parser.add_argument("-to", "--target-output", default=['newspaper'], type=str, nargs="+",
                         help="Target output of the model")
     parser.add_argument("-ts", "--test-samples", default=1000, type=int,
                         help="Amount of samples with which to test.")
@@ -68,7 +68,8 @@ if __name__ == "__main__":
         lm=lm_name,
         head_thickness=args.head_thickness,
         batch_size=args.batch_size,
-        max_length=args.max_length)
+        max_length=args.max_length
+    )
 
     lm.load_from_file(args.model_path)
     y_logits = lm.predict(x_test)
