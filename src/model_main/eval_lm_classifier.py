@@ -79,7 +79,7 @@ if __name__ == "__main__":
         evaluation_targets=target_outputs,
         target_names=label_names
     )
-    print(evaluation)
+    print(utils.pretty_json(evaluation))
 
     with open(output_name, "w") as f:
         json.dump(evaluation, f)

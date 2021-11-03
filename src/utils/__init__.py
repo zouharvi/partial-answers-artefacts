@@ -271,3 +271,10 @@ def powerset(iterable, nonempty=False):
         it.combinations(s, r)
         for r in range(1 if nonempty else 0, len(s) + 1)
     )
+
+
+def pretty_json(data):
+    """
+    Returns prettified json of the given object.
+    """
+    return json.dumps(data, indent=4)

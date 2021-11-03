@@ -1,6 +1,6 @@
 import utils
 
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, accuracy_score
 import numpy as np
 
 import collections as col
@@ -43,17 +43,19 @@ def eval_from_logits(y_true, logits, target_names=None):
     @TODO comment
     """
     y_pred = np.argmax(logits, axis=1)
-    return classification_report(
+    classification_dict = classification_report(
         y_true=y_true,
         y_pred=y_pred,
         output_dict=True,
         zero_division=0,
-        # TODO: if we try to use labels then the accuracy is not reported
-        # labels=list(range(len(target_names))),
-        # TODO: if we try to use target_names then the this fails for `month` variable
-        # target_names=target_names,
+        labels=list(range(len(target_names))),
+        target_names=target_names,
     )
 
+    # in some corner cases classification report does not return accuracy
+    # this way we can force it
+    classification_dict["accuracy"] = accuracy_score(y_true, y_pred)
+    return classification_dict
 
 def r_precission_from_logits(y_true, y_logits):
     """

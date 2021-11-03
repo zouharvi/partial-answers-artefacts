@@ -145,8 +145,5 @@ if __name__ == "__main__":
     )
 
     # print the results which are being saved
-    print(evals)
-
-    # TODO: use utils.save_data()
-    with open(f"data/eval/{path.basename(output_name)[:-3]}_uniform_eval.json", "w") as f:
-        json.dump(evals, f)
+    print(utils.pretty_json(evals))
+    utils.save_data(f"data/eval/{path.basename(output_name)[:-3]}_uniform_eval.json", evals)
