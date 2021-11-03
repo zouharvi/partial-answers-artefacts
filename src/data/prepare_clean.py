@@ -22,10 +22,17 @@ def parse_args():
         "--data-out", default="data/final/clean.json",
         help="Location of cleaned data JSON",
     )
+    args.add_argument(
+        "--extract", default=None,
+        help="""
+        If not None and pointing to a json file, it will be procesed in the same way as
+        the rest but will be the sole output. The other data are needed to provide consistent results for filtering.
+        """
+    )
     return args.parse_args()
 
 
-def filter_data(data, cutoff=False):
+def filter_data(data, cutoff=False, allowed_sub=None, allowed_geo=None):
     data_x = [
         {
             "headline": article["headline"],
@@ -56,13 +63,16 @@ def filter_data(data, cutoff=False):
         for article in data
     ]
 
-    counter_sub = Counter()
-    counter_geo = Counter()
-    for article_y in data_y:
-        counter_sub.update(article_y["subject"])
-        counter_geo.update(article_y["geographic"])
-    allowed_sub = {x[0] for x in counter_sub.most_common() if x[1] >= 1000}
-    allowed_geo = {x[0] for x in counter_geo.most_common() if x[1] >= 250}
+    # check that the input arguments make sense
+    assert (allowed_sub is None) == (allowed_geo is None)
+    if allowed_sub is None or allowed_geo is None:
+        counter_sub = Counter()
+        counter_geo = Counter()
+        for article_y in data_y:
+            counter_sub.update(article_y["subject"])
+            counter_geo.update(article_y["geographic"])
+        allowed_sub = {x[0] for x in counter_sub.most_common() if x[1] >= 1000}
+        allowed_geo = {x[0] for x in counter_geo.most_common() if x[1] >= 250}
 
     data_y = [
         {
@@ -79,15 +89,30 @@ def filter_data(data, cutoff=False):
         if (not cutoff) or (len(y["subject"]) != 0 and len(y["geographic"]) != 0)
     ]
 
-    return data
+    return data, (allowed_sub, allowed_geo)
 
 
 if __name__ == "__main__":
     args = parse_args()
     data = load_data_raw(args.data_in)
     print(len(data), "samples loaded")
-    data = filter_data(data, cutoff=True)
+    data, (allowed_sub, allowed_geo) = filter_data(data, cutoff=True)
     print(len(data), "samples after cleaning")
-    print("Fields X:", data[0][0].keys())
-    print("Fields Y:", data[0][1].keys())
-    save_data(args.data_out, data)
+    
+    if args.extract:
+        print("Switching to extra data")
+        data_extra = load_data_raw(args.extract, check=False, singleton=True)
+        data_extra, _ = filter_data(
+            data_extra,
+            cutoff=True,
+            allowed_sub=allowed_sub,
+            allowed_geo=allowed_geo
+        )
+
+        print("Fields X:", data_extra[0][0].keys())
+        print("Fields Y:", data_extra[0][1].keys())
+        save_data(args.data_out, data_extra)
+    else:
+        print("Fields X:", data[0][0].keys())
+        print("Fields Y:", data[0][1].keys())
+        save_data(args.data_out, data)

@@ -9,6 +9,8 @@ Authors: Vilém Zouhar, Edu Vallejo Arguinzoniz.
 
 - With Python `>=3.9`, install dependencies as `pip3 install -r requirements.txt`
 - Run `make data_all` to load the data into `data/final/clean.json` and prepare all other crafted data (may require up to 20GB of disk space)
+- Run the following command to create a new test data `clean_COP25.json` based on `~/Downloads/COP25.filt3.sub.json`. It is necessary to have access to all the data in order to provide consistent filtering.
+`./src/data/prepare_clean.py --data-in data/final/all.json --data-out data/final/clean_COP25.json --extra ~/Downloads/COP25.filt3.sub.json `
 
 ### Misc.
 
@@ -41,6 +43,7 @@ This can also be used select which device you would like to utilize (if there ar
 
 #### Main Model
 
+To train the main model (Bert-based)
 TODO
 
 #### Baseline Models
@@ -59,4 +62,5 @@ TODO
 
 The source code is located in `src/`.
 Scripts that produce figures are located in `src/figures/`.
+All publicly exposed source files contain help messages which can be invoked with `-h` or `--help`.
 Directory tree inside `data/` is automatically created when running `make data_all`.
