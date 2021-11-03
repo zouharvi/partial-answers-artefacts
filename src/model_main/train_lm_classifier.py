@@ -18,7 +18,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", default='data/final/clean.json', type=str,
                         help="Path of the data file.")
-    parser.add_argument("-o", "--output", default='data/models/{m}_{es}_{pm}_{ep}_{ht}_{ml}_{ti}_{to}_{inp}.pt', type=str,
+    parser.add_argument("-o", "--output", default='data/models/{m}_{es}_{pm}_{ls}_{ep}_{ht}_{ml}_{ti}_{to}_{inp}.pt', type=str,
                         help="Path where to store the model.")
     parser.add_argument("-ti", "--target-input", default='body', type=str,
                         help="Input of the model.")
@@ -34,6 +34,8 @@ def parse_args():
                         help="Strategy to embed sentence with last layer hidden states.")
     parser.add_argument("--loss-powermean-degree", default=1, type=int,
                         help="Degree of powermean to take when reducing losses")
+    parser.add_argument("--loss-scaling",default="uniform",type=str,
+                        help="Type of scaling to use for loss averaging. Possibilities are \"uniform\" and \"scaled\".")
     parser.add_argument("-ep", "--epochs", default=2, type=int,
                         help="Override the default number of epochs.")
     parser.add_argument("-bs", "--batch-size", default=16, type=int,
@@ -69,6 +71,7 @@ if __name__ == "__main__":
         es=args.embed_strategy,
         ep=args.epochs,
         pm=args.loss_powermean_degree,
+        ls=args.loss_scaling
     )
 
     # Read data
@@ -77,7 +80,7 @@ if __name__ == "__main__":
     targets = args.target_output
     if len(targets) == 1:
         if targets[0] == "all":
-            targets = list(utils.Y_KEYS)
+            targets = utils.Y_KEYS_LIST
         elif targets[0] == "craft":
             code = path.basename(args.input)[-6]
             targets = [utils.CODE_TO_Y_KEYS[code]]
@@ -94,14 +97,19 @@ if __name__ == "__main__":
         random_state=0
     )
 
-    print(label_names)
     # Instantiate transformer
     lm_name = LM_ALIASES[args.language_model] if args.language_model in LM_ALIASES else args.language_model
 
     dimensions = list(map(len, label_names))
-    count_targets = col.Counter(target_outputs)
-    #weights = 1 / np.array([count_targets[x] for x in target_outputs])
-    weights = None
+    
+    
+    if args.loss_scaling == "uniform":
+        weights = None
+    elif args.loss_scaling == "scaled":
+        count_targets = col.Counter(target_outputs)
+        weights = 1 / np.array([count_targets[x] for x in target_outputs])
+    else:
+        raise ValueError("Could not find value ")
     
     lm = LMModel(
         cls_target_dimensions=dimensions,
@@ -116,16 +124,14 @@ if __name__ == "__main__":
     )
 
     lm.fit(x_train, y_train, x_dev, y_dev)
-    # TODO: uncomment me
     lm.save_to_file(output_name)
 
     # TODO: this is a manual hack because the eval script is broken!
-
     # hack(data, labels, lm)
-
 
     # TODO put these in eval script
     # Evaluations
+    """
     evals = dict()
 
     # Development eval
@@ -147,3 +153,4 @@ if __name__ == "__main__":
     # print the results which are being saved
     print(utils.pretty_json(evals))
     utils.save_data(f"data/eval/{path.basename(output_name)[:-3]}_uniform_eval.json", evals)
+    """

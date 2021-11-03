@@ -37,14 +37,16 @@ COUNTRY_TO_PRETTY = {
 }
 
 # Input variables
-X_KEYS = {
-    "headline", "body"
-}
+X_KEYS_LIST = ["headline", "body"]
+X_KEYS = set(X_KEYS_LIST)
+
 # Output variables
-Y_KEYS = {
+Y_KEYS_LIST = [
     "newspaper", "ncountry", "ncompas",
     "month", "year", "subject", "geographic",
-}
+]
+Y_KEYS = set(Y_KEYS_LIST)
+
 # Output variables which are single-output
 Y_KEYS_LOCAL = Y_KEYS - {"subject", "geographic"}
 

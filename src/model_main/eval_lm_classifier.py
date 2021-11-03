@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""Reads a model from a checkpoint and evaluates it against a test split of a given size."""
+
 import sys
 sys.path.append("src")
 import utils
@@ -15,7 +17,7 @@ def parse_args():
                         help="Path of the data file.")
     parser.add_argument("-o", "--output", default='data/eval/{}_eval.json', type=str,
                         help="Path of the data file.")
-    parser.add_argument("-mp", "--model_path", required=True, type=str,
+    parser.add_argument("-mp", "--model-path", required=True, type=str,
                         help="Path where to load the model from.")
     parser.add_argument("-ti", "--target-input", default='body', type=str,
                         help="Input of the model.")
@@ -23,6 +25,8 @@ def parse_args():
                         help="Target output of the model")
     parser.add_argument("-ts", "--test-samples", default=1000, type=int,
                         help="Amount of samples with which to test.")
+    parser.add_argument("--embed-strategy", default='cls',
+                        help="Strategy to embed sentence with last layer hidden states.")
     parser.add_argument("-ht", "--head-thickness", default='shallow',
                         help="Architecture of the classification head (shallow/mid)")
     parser.add_argument("-bs", "--batch-size", default=128, type=int,
@@ -53,8 +57,16 @@ if __name__ == "__main__":
     # Read data
     data = utils.load_data(args.input)
 
+    targets = args.target_output
+    if len(targets) == 1:
+        if targets[0] == "all":
+            targets = utils.Y_KEYS_LIST
+        elif targets[0] == "craft":
+            code = path.basename(args.input)[-6]
+            targets = [utils.CODE_TO_Y_KEYS[code]]
+    
     target_input = utils.get_x(data, args.target_input)
-    target_outputs, label_names, labels = utils.get_y(data, args.target_output)
+    target_outputs, label_names, labels = utils.get_y(data, targets)
 
     (x_test, y_test), _ = utils.make_split(
         (target_input, labels),
@@ -66,6 +78,7 @@ if __name__ == "__main__":
     lm = LMModel(
         cls_target_dimensions=list(map(len, label_names)),
         lm=lm_name,
+        embed_strategy=args.embed_strategy,
         head_thickness=args.head_thickness,
         batch_size=args.batch_size,
         max_length=args.max_length

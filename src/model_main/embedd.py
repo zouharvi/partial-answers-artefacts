@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+"""
+Script for embedding text from the news dataset using language models.
+"""
+
+
 import sys
 sys.path.append("src")
 import utils
@@ -15,7 +20,7 @@ def parse_args():
     parser.add_argument("-o", "--output", default='data/embeddings/embeddings_{m}_{t}_{ml}.pkl',
                         help="Path where to store the embeddings.")
     parser.add_argument("-t", "--target", default='headline',
-                        help="Target field of the new to use for embedding.")
+                        help="Target field of the news to use for embedding.")
     parser.add_argument("-bs", "--batch-size", default=128, type=int,
                         help="Override the default batch size.")
     parser.add_argument("-lm", "--language-model", default="bert",

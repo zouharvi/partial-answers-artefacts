@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""Script to plot a 2D scatter plot of news embeddings with a variety of controls over the plot."""
+
 import sys
 sys.path.append("src")
 import utils
@@ -18,7 +20,7 @@ def add_plot_options(parser: argparse.ArgumentParser):
     # Plot options
     p_group = parser.add_argument_group(
         "Plot", "Arguments to control the details of the plot.")
-    p_group.add_argument("-fs", "--figsize", nargs=2, default=[16, 9], type=float, metavar=("WIDTH", "HEIGHT"),
+    p_group.add_argument("-fs", "--figsize", nargs=2, type=float, default=[16, 9], metavar=("WIDTH", "HEIGHT"),
                          help="Dimensions of output figure.")
     p_group.add_argument("-t", "--title", type=str,
                          help="Title of the figure.")
@@ -73,11 +75,11 @@ if __name__ == "__main__":
     embeddings = np.load(args.embeddings)["data"]
 
     df = pd.DataFrame(embeddings)
-
     df["newspaper"] = list(map(op.itemgetter("newspaper"), data))
     df["newspaper_compas"] = list(
         map(utils.data.NEWSPAPER_TO_COMPAS.__getitem__, df["newspaper"]))
 
+    # Plot the embeddings for each class
     plt.figure(figsize=args.figsize)
     for label in df[args.label_key].unique():
         t = df[df[args.label_key] == label]
@@ -87,6 +89,7 @@ if __name__ == "__main__":
                          s=args.scatter_s,
                          label=label)
 
+    # Make final modifications
     lg = plt.legend(markerscale=args.legend_markerscale)
     for h in lg.legendHandles:
         h.set_alpha(1)
