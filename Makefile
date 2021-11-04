@@ -70,17 +70,17 @@ meta_model_source:
 meta_model:
 	echo "TODO"
 
-_t0v1_%:
-	python3 src/model_main/train_lm_classifier.py -to $(patsubst _t0v1_%,%,$@)
+train_%_0v1:
+	python3 src/model_main/train_lm_classifier.py -to $(patsubst train_%_0v1,%,$@)
 
-train_all_0v1: $(patsubst %,_t0v1_%,$(target_outputs))
+train_all_0v1: $(patsubst %,train_%_0v1,$(target_outputs))
 
-data/models/bert_cls_1_uniform_2_shallow_512_body_%_clean.pt: _t0v1_%
+data/models/bert_cls_1_uniform_2_shallow_512_body_%_clean.pt: train_%_0v1
 
-_e0v1_%: 
-	python3 src/model_main/eval_lm_classifier.py --model-path $(patsubst _e0v1_%,bert_cls_1_uniform_2_shallow_512_body_%_clean.pt,$@)  -to $(patsubst _e0v1_%,%,$@)
+eval_%_0v1: 
+	python3 src/model_main/eval_lm_classifier.py --model-path $(patsubst eval_%_0v1,data/models/bert_cls_1_uniform_2_shallow_512_body_%_clean.pt,$@)  -to $(patsubst eval_%_0v1,%,$@)
 
-eval_all_0v1: $(bert_models) $(patsubst %,_e0v1_%,$(target_outputs))
+eval_all_0v1: $(bert_models) $(patsubst %,eval_%_0v1,$(target_outputs))
 
 train_and_eval_0v1: train_all_0v1 eval_all_0v1
 

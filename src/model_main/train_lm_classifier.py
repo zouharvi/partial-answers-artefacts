@@ -94,10 +94,7 @@ if __name__ == "__main__":
     )
 
     # Instantiate transformer
-    lm_name = LM_ALIASES[args.language_model] if args.language_model in LM_ALIASES else args.language_model
-
     dimensions = list(map(len, label_names))
-    
     
     if args.loss_scaling == "uniform":
         weights = None
@@ -126,7 +123,3 @@ if __name__ == "__main__":
     # TODO: this is a manual hack because the eval script is broken!
     # hack(data, labels, lm)
 
-    utils.save_data(
-        f"data/eval/{path.basename(output_name)[:-3]}_uniform_eval.json",
-        evals
-    )
