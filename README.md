@@ -48,7 +48,15 @@ All the scripts use a fixed split into train/dev/test (-1/1000/1000) that is ran
 
 #### Main Model
 
+TODO: description of various models and what they can do and the variables etc etc
+
 To train the main model (Bert-based)
+
+It is not the goal of this paper to produce the best model.
+If one wishes to evaluate the model on new data, it first needs to be obtained by running one of the following:
+- `make train_all_0v1` for training
+- `make get_all_0v1` to download a trained model
+
 TODO
 
 #### Baseline Models
