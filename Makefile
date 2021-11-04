@@ -70,6 +70,9 @@ meta_model_source:
 meta_model:
 	echo "TODO"
 
+get_all_0v1:
+	wget -P data/models/ "vilda.net/t/bert_cls_1_uniform_2_shallow_512_body_all_clean.pt"
+
 train_%_0v1:
 	python3 src/model_main/train_lm_classifier.py -to $(patsubst train_%_0v1,%,$@)
 

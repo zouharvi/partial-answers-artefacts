@@ -52,9 +52,10 @@ TODO: description of various models and what they can do and the variables etc e
 
 To train the main model (Bert-based)
 
-To obtain the joint model, run one of the following:
+It is not the goal of this paper to produce the best model.
+If one wishes to evaluate the model on new data, it first needs to be obtained by running one of the following:
 - `make train_all_0v1` for training
-- `make get_all_0v1` to download a trained model from FTP
+- `make get_all_0v1` to download a trained model
 
 TODO
 
