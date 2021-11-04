@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""
-TODO:
-"""
 
-"""Script to plot a 2D scatter plot of news embeddings with a variety of controls over the plot."""
+"""
+Script to plot a 2D scatter plot of news embeddings with a variety of controls over the plot.
+This exists in parallel to src/figures/tsne_plot.py which is less versatile but easier to use.
+"""
 
 import sys
 sys.path.append("src")

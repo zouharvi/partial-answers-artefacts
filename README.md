@@ -57,7 +57,17 @@ If one wishes to evaluate the model on new data, it first needs to be obtained b
 - `make train_all_0v1` for training
 - `make get_all_0v1` to download a trained model
 
-TODO
+Then run the following script for evaluation of the downloaded model and prepared test data:
+
+```
+python3 src/model_main/eval_lm_classifier.py \
+    --input data/final/clean_COP25.json \
+    -mp data/models/bert_cls_1_uniform_2_shallow_512_body_all_clean.pt \
+    -to all \
+    -ts all
+```
+
+Remember that the new data need to be adequatly pre-processed (see [Preparation](#preparation)).
 
 #### Baseline Models
 

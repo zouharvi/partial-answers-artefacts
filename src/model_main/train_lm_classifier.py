@@ -13,6 +13,7 @@ import utils.eval
 import os.path as path
 import argparse
 import collections as col
+import numpy as np
 
 
 def parse_args():
@@ -119,7 +120,3 @@ if __name__ == "__main__":
     # train model
     lm.fit(x_train, y_train, x_dev, y_dev)
     lm.save_to_file(output_name)
-
-    # TODO: this is a manual hack because the eval script is broken!
-    # hack(data, labels, lm)
-

@@ -80,7 +80,7 @@ class Model(torch.nn.Module):
 
         data_new = []
         for line, body_tfidf in zip(data, data_tfidf):
-            # TODO: better tokenization?
+            # tokenizer on whitespace
             words_head = line[0]["headline"].lower().split()
             words_body = line[0]["body"].lower().split()[:20]
             words_glove = [
