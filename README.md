@@ -48,7 +48,14 @@ All the scripts use a fixed split into train/dev/test (-1/1000/1000) that is ran
 
 #### Main Model
 
+TODO: description of various models and what they can do and the variables etc etc
+
 To train the main model (Bert-based)
+
+To obtain the joint model, run one of the following:
+- `make train_all_0v1` for training
+- `make get_all_0v1` to download a trained model from FTP
+
 TODO
 
 #### Baseline Models
