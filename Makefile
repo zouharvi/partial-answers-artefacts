@@ -73,16 +73,16 @@ meta_model:
 train_%_0v1:
 	python3 src/model_main/train_lm_classifier.py -to $(patsubst train_%_0v1,%,$@)
 
-train_all_0v1: $(patsubst %,train_%_0v1,$(target_outputs))
+train_0v1: $(patsubst %,train_%_0v1,$(target_outputs))
 
 data/models/bert_cls_1_uniform_2_shallow_512_body_%_clean.pt: train_%_0v1
 
 eval_%_0v1: 
 	python3 src/model_main/eval_lm_classifier.py --model-path $(patsubst eval_%_0v1,data/models/bert_cls_1_uniform_2_shallow_512_body_%_clean.pt,$@)  -to $(patsubst eval_%_0v1,%,$@)
 
-eval_all_0v1: $(bert_models) $(patsubst %,eval_%_0v1,$(target_outputs))
+eval_0v1: $(bert_models) $(patsubst %,eval_%_0v1,$(target_outputs))
 
-train_and_eval_0v1: train_all_0v1 eval_all_0v1
+traineval_0v1: train_0v1 eval_0v1
 
 train_all_1v1:
 	@echo "TODO: this script may not work as expected because it is not adapted for Makefile"
