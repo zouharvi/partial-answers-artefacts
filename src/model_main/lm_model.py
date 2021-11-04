@@ -1,5 +1,7 @@
 """
-TODO description
+Module that contains the definition of the LMModel class. Instances of this class
+are language-model based classifiers. The class allows for fine-grained control over
+the properties of the model.
 """
 
 import sys
@@ -26,6 +28,11 @@ LM_ALIASES = dict(
 )
 
 class LMModel(nn.Module):
+    """
+    Class that represents language-model based classifiers. This class encapsulates and abstracts
+    many of the complexities involved in leveraging these models, while allowing fine-grained control
+    over the important properties of the model.
+    """
     def __init__(
         self,
         cls_target_dimensions=list(),
@@ -72,7 +79,8 @@ class LMModel(nn.Module):
 
         # Create loss and optimizer
         loss = nn.CrossEntropyLoss()
-
+        
+        # Loss scaling
         if loss_weights is None:
             loss_weights = torch.ones(
                 len(cls_target_dimensions), device=device)
@@ -113,6 +121,10 @@ class LMModel(nn.Module):
         token_type_ids=None,
         attention_mask=None
     ):
+        """
+        Forward pass function of the model. Takes inputs of language model and returns a list
+        of predictions, one per classification head.
+        """
         # Embedd text
         x = self.lm(
             input_ids,
@@ -169,9 +181,12 @@ class LMModel(nn.Module):
     def fit(self,
             X_train, y_train,
             X_dev, y_dev):  # Only works with classification heads
+        """Train model on X_train, y_train. Evaluate after each epoch using
+        X_dev, y_dev."""
         self._train(X_train, y_train, X_dev, y_dev)
 
     def predict(self, X):
+        """Make predictions (as many as classification heads) for inputs X."""
         dl = self._convert2batched(X)
         dl = tqdm.tqdm(dl)  # Add progress bar
 
@@ -224,6 +239,7 @@ class LMModel(nn.Module):
         return x
 
     def save_to_file(self, filename):
+        """Save model state (weights mostly) to a pytorch checkpoint."""
         torch.save(
             {
                 "lm": self.lm.state_dict(),
@@ -233,6 +249,7 @@ class LMModel(nn.Module):
         )
 
     def load_from_file(self, filename):
+        """Load model state from a pytorch checkpoint."""
         s_dict = torch.load(filename)
         self.lm.load_state_dict(s_dict["lm"])
         [

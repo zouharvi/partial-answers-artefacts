@@ -7,8 +7,6 @@ from utils.data import *
 import itertools as it
 
 
-
-
 def get_compute_device():
     """
     Return PyTorch GPU device if available, else CPU.

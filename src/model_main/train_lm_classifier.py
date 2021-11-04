@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 """
-TODO description
+Train a language model based classifier to predict output-targets given certain input-target.
+This script allows control over many aspects of the model / training. The output is a 
+model checkpoint.
 """
 
 from lm_model import LMModel

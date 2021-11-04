@@ -9,7 +9,9 @@ import operator as op
 
 def complete_evaluation(evaluation_targets: list, y_true, y_logits, target_names=list()):
     """
-    @TODO comment
+    Given classification logits (y_logits), evaluate them against groundtruth (y_true).
+    target_names allows labeling the evaluation targets in the output and identifying
+    multi-output targets.
     """
     # Put label first
     y_true = y_true.T
@@ -40,7 +42,8 @@ def complete_evaluation(evaluation_targets: list, y_true, y_logits, target_names
 
 def eval_from_logits(y_true, logits, target_names=None):
     """
-    @TODO comment
+    Given a single-class target with labels "target_names", the groundtruth labels (y_true)
+    and the prediction logits (logits), evaluate the classification using f-metrics and accuracy.
     """
     y_pred = np.argmax(logits, axis=1)
     classification_dict = classification_report(
@@ -59,7 +62,8 @@ def eval_from_logits(y_true, logits, target_names=None):
 
 def r_precission_from_logits(y_true, y_logits):
     """
-    @TODO comment
+    Given a multi-class target, the groundtruth labels (y_true)
+    and the prediction logits (logits), evaluate the classification using r-precission.
     """
     # Batch first
     y_true = y_true.T

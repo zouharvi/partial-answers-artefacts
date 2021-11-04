@@ -80,7 +80,7 @@ Y_KEYS_PRETTY = {
 }
 
 
-# Labels
+# Labels (we define order here)
 LABEL_NAMES = {
     "newspaper": ['Mail & Guardian', 'Sydney Morning Herald (Australia)',
  'The Age (Melbourne, Australia)', 'The Australian', 'The Hindu',
@@ -148,6 +148,7 @@ LABEL_NAMES = {
  'VIRGINIA, USA', 'WESTERN AUSTRALIA, AUSTRALIA'],
 }
 
+# Binarizers for labels
 from sklearn.preprocessing import MultiLabelBinarizer
 LABEL_BINARIZERS = {k: MultiLabelBinarizer().fit([[vv] for vv in v])
                     for k,v in LABEL_NAMES.items()}
