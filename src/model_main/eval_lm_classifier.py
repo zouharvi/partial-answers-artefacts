@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Reads a model from a checkpoint and evaluates it against a test split of a given size."""
+"""Reads a model from a checkpoint and evaluates it against a test dataset/test split of a given size."""
 
 import sys
 sys.path.append("src")
@@ -23,8 +23,9 @@ def parse_args():
                         help="Input of the model.")
     parser.add_argument("-to", "--target-output", default=['newspaper'], type=str, nargs="+",
                         help="Target output of the model")
-    parser.add_argument("-ts", "--test-samples", default=1000, type=int,
-                        help="Amount of samples with which to test.")
+    parser.add_argument("-ts", "--test-samples", default="1000", type=str,
+                        help="Amount of samples with which to test, if can be a number or \"all\"\n" +
+                        "the whole to use the whole dataset.")
     parser.add_argument("--embed-strategy", default='cls',
                         help="Strategy to embed sentence with last layer hidden states.")
     parser.add_argument("-ht", "--head-thickness", default='shallow',
@@ -61,11 +62,15 @@ if __name__ == "__main__":
     target_input = utils.get_x(data, args.target_input)
     target_outputs, label_names, labels = utils.get_y(data, targets)
 
-    # split data
-    (x_test, y_test), _ = utils.make_split(
-        (target_input, labels),
-        splits=(args.test_samples,),
-        random_state=0
+    x_test, y_test = target_input, labels
+    if args.test_samples != "all":
+        test_samples = int(args.test_samples)
+        
+        # split data
+        (x_test, y_test), _ = utils.make_split(
+            (target_input, labels),
+            splits=(test_samples,),
+            random_state=0
     )
 
     # instantiate model

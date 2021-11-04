@@ -6,6 +6,9 @@ import pickle
 from utils.data import *
 import itertools as it
 
+
+
+
 def get_compute_device():
     """
     Return PyTorch GPU device if available, else CPU.
@@ -82,14 +85,21 @@ def save_data(path, data, format="json"):
 
 def get_x(data, target):
     """
-    @TODO missing comment
+    Given the parsed "data" (returned by "load_data") returns the
+    specified input "target". Some options are "head" and "body", 
+    and sometimes "craft" (when crafted data is provided).
     """
     data_x, _ = zip(*data)
     return [x[target] for x in data_x]
 
 def get_y(data, targets):
     """
-    @TODO missing comment
+    Given the parsed "data" (returned by "load_data") retrieve the
+    specified output "targets" (list of targets). The function returns a 
+    triple that contains
+        1. List of names of the extracted targets
+        2. List of list of labels for each target
+        3. Vectorized labels as a numpy tensor with dimensions (sample, target) 
     """
     _, data_y = zip(*data)
 
@@ -104,37 +114,34 @@ def get_y(data, targets):
     if local_t:
         y_local = ([y[t] for y in data_y] for t in local_t)
         y_local = ([[x] for x in t] for t in y_local)
-        bin_local, y_local = zip(*map(binarize_data, y_local))
+        y_local = (LABEL_BINARIZERS[t].transform(y) for y,t in zip(y_local,local_t)) #zip(*map(binarize_data, y_local))
         y_local = np.array([np.argmax(y, axis=1) for y in y_local]).T
 
         labels.append(y_local)
-        label_names_local = [b.classes_ for b in bin_local]
+        label_names_local = [LABEL_NAMES[t] for t in local_t]
 
     # Extract non-local targets
     global_t_post = list()
     label_names_global = list()
     if global_t:
         y_global = ([y[t] for y in data_y] for t in global_t)
-        bin_global, y_global = zip(*map(binarize_data, y_global))
+        y_global = (LABEL_BINARIZERS[t].transform(y) for y,t in zip(y_global,global_t)) #zip(*map(binarize_data, y_global))
         y_global = np.concatenate(list(y_global), axis=1)
 
         labels.append(y_global)
-        label_names_global = [b.classes_ for b in bin_global]
+        label_names_global = [LABEL_NAMES[t] for t in global_t]
 
-        global_t_post = it.chain(
-            *[[gt] * len(labels) for gt, labels in zip(global_t, label_names_global)])
+        global_t_post = it.chain(*[[gt] * len(labels) for gt, labels in zip(global_t, label_names_global)])
         global_t_post = list(global_t_post)
 
-        # TODO: [l+"_F", l+"_T"] please
-        label_names_global = [
-            "{l}_F¡{l}_T".format(l=l).split("¡")
-            for l in it.chain(*label_names_global)
-        ]
+        label_names_global = [[l+"_F", l+"_T"] for l in it.chain(*label_names_global)]
 
     # Put everything together
     targets_post = local_t + global_t_post
+    
     label_names = label_names_local + label_names_global
     label_names = list(map(list, label_names))
+    
     labels = np.concatenate(labels, axis=1)
 
     return targets_post, label_names, labels
@@ -142,7 +149,9 @@ def get_y(data, targets):
 
 def make_split(data_list, splits, random_state=0, simple=False):
     """
-    @TODO missing comment
+    Given a list "data_list" of aligned lists to split (while keeping alinged)
+    make splits given of sizes "splits" (list of numbers). Returns a tuple containing
+    each split and the remaining data (should there still be remaining data).
     """
     data_list = list(zip(*data_list))
     data_splits = []
