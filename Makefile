@@ -1,5 +1,5 @@
 target_outputs=newspaper ncompas ncountry month year subject geographic all
-bert_models=$(patsubst %,data/models/bert_cls_1_uniform_2_shallow_512_body_%_clean.pt,$target_outputs)
+bert_models=$(patsubst %,data/models/bert_cls_1_uniform_2_shallow_512_body_%_clean.pt,$(target_outputs))
 
 clean:
 	rm -rf data/final
