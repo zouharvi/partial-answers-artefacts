@@ -42,22 +42,37 @@ The final output should look like:
 If the system has a compatible CUDA device visible to PyTorch, it will be used.
 Otherwise the model will train on CPU/RAM.
 You may enforce the script to use CPU/RAM (e.g. because of memory limitations) by prefixing the launching command with `CUDA_VISIBLE_DEVICES=;`.
-This can also be used select which device you would like to utilize (if there are multiple), e.g. `CUDA_VISIBLE_DEVICES=2;` will use the thirds GPU device.
+This can also be used select which device you would like to utilize (if there are multiple), e.g. `CUDA_VISIBLE_DEVICES=2;` will use the third GPU device.
 
 All the scripts use a fixed split into train/dev/test (-1/1000/1000) that is randomly sampled in-time.
 
 #### Main Model
 
-TODO: description of various models and what they can do and the variables etc etc
+The main model is the central piece of our exploration, note that it is not the goal of this paper to produce the best model. 
+The model consists of a pretrained language model (BERT by default) that we fine-tune in slight variations of news article classification tasks. 
+We explore along two dimensions: single target classification vs joint classification and the effect of partial answers in classification performance. 
 
-To train the main model (Bert-based)
+There are ready-to-use "make targets" to train and evaluate the model. To train a model in a given classification target
+one should run `make train_{target}_0v1` where `{target}` is the classification target which to train the model for\*.
+In the same way, to evaluate on a given target (after training) we provide "make targets" `make eval_{target}_0v1`.  We also
+provide "make targets" to train and eval on all classification targets, these are `make train_0v1` and `make eval_0v1` respectively.
+Finally there is `make traineval_0v1` which is a combination of the last two (it trains all models and evaluates them).
 
-It is not the goal of this paper to produce the best model.
-If one wishes to evaluate the model on new data, it first needs to be obtained by running one of the following:
-- `make train_all_0v1` for training
-- `make get_all_0v1` to download a trained model
+\* The available classification targets are: `newspaper`, `ncompas`, `ncountry`, `month`, `year`, `subject` and `geographic` for single
+target learning, and `all` for joint learning.
 
-Then run the following script for evaluation of the downloaded model and prepared test data:
+The "make targets" make use of two python scripts under the hood which may be used for fine-grain control:
+`src/model_main/train_lm_classifier.py` to train the model and `src/model_main/eval_lm_classifier.py` to evaluate it.
+Both scripts take a formated dataset (that `make data_all` generates) and the name of the classification target as input. The
+train script produces a checkpoint as output (in `data/models` by default) which is then used by the eval script. 
+The eval script produces a JSON file with the results (in `data/eval` by default). For added detail refer to the help 
+in those scripts (by running them with the `--help` attribute).
+
+##### Joint model
+Additionally we provide the possibility to download a checkpoint for the joint model (instead of training it with `make train_all_0v1`).
+To do that run `make get_all_0v1`
+
+After obtaining set model one may want to evaluate the model on new data to do that run the following script for evaluation of the joint model and prepared test data:
 
 ```
 python3 src/model_main/eval_lm_classifier.py \
