@@ -125,14 +125,14 @@ class LMModel(nn.Module):
         Forward pass function of the model. Takes inputs of language model and returns a list
         of predictions, one per classification head.
         """
-        # Embedd text
+        # embedd text
         x = self.lm(
             input_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids
         )[0]
 
-        # Reduce dimension using heuristic
+        # apply reduction
         if self.embed_strategy == "cls":
             x = x[:, 0, :]
         elif self.embed_strategy == "avg":
@@ -142,7 +142,7 @@ class LMModel(nn.Module):
                 f"Embed strategy {self.embed_strategy} is not valid."
             )
 
-        # For each head make classification
+        # for each head make classification
         if self.classification_heads:
             y = [head(x) for head in self.classification_heads]
             return y
@@ -155,14 +155,17 @@ class LMModel(nn.Module):
         token_type_ids=None,
         attention_mask=None
     ):
-        # Embedd text
+        """
+        This function is similar to self.forward but returns the whole model output. 
+        """
+        # embedd text
         model_output = self.lm(
             input_ids,
             attention_mask=attention_mask,
             token_type_ids=token_type_ids
         )
 
-        # Reduce dimension using heuristic
+        # apply reduction
         if self.embed_strategy == "cls":
             x = model_output[0][:, 0, :]
         elif self.embed_strategy == "avg":
@@ -174,19 +177,23 @@ class LMModel(nn.Module):
 
         y = self.classification_heads[0](x)
 
-        # take cls
+        # take CLS token
         return [t[:, 0, :] for t in model_output.hidden_states], y
 
     # Utility functions
     def fit(self,
             X_train, y_train,
             X_dev, y_dev):  # Only works with classification heads
-        """Train model on X_train, y_train. Evaluate after each epoch using
-        X_dev, y_dev."""
+        """
+        Train model on X_train, y_train. Evaluate after each epoch using
+        X_dev, y_dev.
+        """
         self._train(X_train, y_train, X_dev, y_dev)
 
     def predict(self, X):
-        """Make predictions (as many as classification heads) for inputs X."""
+        """
+        Make predictions (as many as classification heads) for inputs X.
+        """
         dl = self._convert2batched(X)
         dl = tqdm.tqdm(dl)  # Add progress bar
 
@@ -239,7 +246,9 @@ class LMModel(nn.Module):
         return x
 
     def save_to_file(self, filename):
-        """Save model state (weights mostly) to a pytorch checkpoint."""
+        """
+        Save model state (weights mostly) to a pytorch checkpoint.
+        """
         torch.save(
             {
                 "lm": self.lm.state_dict(),
@@ -249,7 +258,9 @@ class LMModel(nn.Module):
         )
 
     def load_from_file(self, filename):
-        """Load model state from a pytorch checkpoint."""
+        """
+        Load model state from a pytorch checkpoint.
+        """
         s_dict = torch.load(filename)
         self.lm.load_state_dict(s_dict["lm"])
         [
@@ -258,7 +269,7 @@ class LMModel(nn.Module):
             in zip(self.classification_heads, s_dict["heads"])
         ]
 
-    # Private functions
+    # private functions
     def _convert2batched(self, X, y=None, shuffle=False):
 
         def collate_fn(data):
@@ -271,7 +282,7 @@ class LMModel(nn.Module):
             else:
                 return data
 
-        # Convert to tensors
+        # convert to tensors
         X = list(X)
         X = self.tokenizer(
             X, padding=True, max_length=self.max_length,

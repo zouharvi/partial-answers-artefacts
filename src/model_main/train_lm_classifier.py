@@ -3,7 +3,7 @@
 """
 Train a language model based classifier to predict output-targets given certain input-target.
 This script allows control over many aspects of the model / training. The output is a 
-model checkpoint.
+model checkpoint stored in the filesystem.
 """
 
 from lm_model import LMModel
@@ -56,7 +56,7 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
 
-    # Format output name
+    # format output name
     output_name = args.output.format(
         m=args.language_model,
         ti=args.target_input,
@@ -70,7 +70,7 @@ if __name__ == "__main__":
         ls=args.loss_scaling
     )
 
-    # Read data
+    # read data
     data = utils.load_data(args.input)
 
     # prepare target labels
@@ -96,9 +96,10 @@ if __name__ == "__main__":
         random_state=0
     )
 
-    # Instantiate transformer
+    # compute label dimension
     dimensions = list(map(len, label_names))
     
+    # compute scaling weights
     if args.loss_scaling == "uniform":
         weights = None
     elif args.loss_scaling == "scaled":
@@ -107,6 +108,7 @@ if __name__ == "__main__":
     else:
         raise ValueError("Could not find value ")
     
+    # instantiate model
     lm = LMModel(
         cls_target_dimensions=dimensions,
         loss_weights=weights,
@@ -121,4 +123,6 @@ if __name__ == "__main__":
 
     # train model
     lm.fit(x_train, y_train, x_dev, y_dev)
+
+    # save model
     lm.save_to_file(output_name)

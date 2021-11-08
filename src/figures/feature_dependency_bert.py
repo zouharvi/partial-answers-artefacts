@@ -75,13 +75,13 @@ if __name__ == "__main__":
         ["Bert-Single"] + [Y_KEYS_PRETTY[y] for y in Y_KEYS]
     )
 
-    # Rotate the tick labels and set their alignment.
+    # rotate the tick labels and set their alignment.
     plt.setp(
         ax.get_xticklabels(), rotation=30, ha="right",
         rotation_mode="anchor"
     )
 
-    # Loop over data dimensions and create text annotations.
+    # loop over data dimensions and create text annotations.
     for i in range(len(Y_KEYS) + 1):
         for j in range(len(Y_KEYS)):
             if plotdata[i, j] <= 0.8 and plotdata[i, j] > 0.3:

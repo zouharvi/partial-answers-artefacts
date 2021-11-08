@@ -34,20 +34,20 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
 
-    # Format output name
+    # format output name
     output_name = args.output.format(
         m=args.language_model,
         t=args.target,
         ml=args.max_length
     )
 
-    # Read data
+    # read data
     data = utils.load_data(args.input)
 
     print("Number of articles: ", len(data))
     target = [x[args.target] for x, y in data]
 
-    # Instantiate model
+    # instantiate model
     lm = LMModel(
         embed_strategy=args.embed_strategy,
         lm=args.language_model,
@@ -55,8 +55,12 @@ if __name__ == "__main__":
         max_length=args.max_length
     )
 
+    # get model predictions
     embeddings = lm.predict(target)
 
+    # check output dimensionality
     print("Output dim:", embeddings[0].shape)
+
+    # save
     with open(output_name, "wb") as f:
         pickle.dump(embeddings, f)

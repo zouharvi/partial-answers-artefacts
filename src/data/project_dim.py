@@ -51,10 +51,10 @@ if __name__ == "__main__":
         d=args.dimension
     )
 
-    # Read data
+    # read data
     embeddings = utils.load_data(args.input, format="pickle")
 
-    # Use reduction heuristic
+    # apply reduction
     if args.embedding_method == "cls":
         embeddings = embeddings[:, 0]
     elif args.embedding_method == "avg":

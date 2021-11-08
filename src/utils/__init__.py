@@ -196,7 +196,7 @@ def streamline_data(data, x_filter="headline", y_filter="newspaper", binarize="o
 
     assert binarize in {"all", "input", "output", None, "none"}
 
-    # TODO: this may potentially cause an issue in the future if "craft" is stored on y
+    # WARNING: this may potentially cause an issue in the future if "craft" is stored on y
     if x_filter in X_KEYS | {"craft"}:
         x_filter_name = str(x_filter)
         def x_filter(x, y): return [x[x_filter_name]]

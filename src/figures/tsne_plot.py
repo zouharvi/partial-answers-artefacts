@@ -32,7 +32,7 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
 
-    # Read data
+    # read data
     data = utils.load_data(args.input)
     _, data = zip(*data)
 

@@ -62,7 +62,7 @@ if __name__ == "__main__":
     target_input = utils.get_x(data, args.target_input)
     target_outputs, label_names, labels = utils.get_y(data, targets)
 
-    # Make split if needed
+    # make split if needed
     x_test, y_test = target_input, labels
     if args.test_samples != "all":
         test_samples = int(args.test_samples)
@@ -74,7 +74,7 @@ if __name__ == "__main__":
             random_state=0
     )
 
-    # Instantiate model
+    # instantiate model
     lm = LMModel(
         cls_target_dimensions=list(map(len, label_names)),
         embed_strategy=args.embed_strategy,
@@ -97,6 +97,8 @@ if __name__ == "__main__":
         target_names=label_names
     )
     
+    # show results report
     print(utils.pretty_json(evaluation))
 
+    # save
     utils.save_data(output_name, evaluation, format="json")

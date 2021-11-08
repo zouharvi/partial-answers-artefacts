@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 """
-TODO description
+This scripts synthetizes data for the meta-model based on a base model (success of predictions
+based on artefact input).
 """
 
 import pickle
@@ -39,12 +40,16 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-
-
 def artefacts_signature(artefacts, y_filter):
+    """
+    Compute artefact signature (binary vector)
+    """
     return [1 if k in artefacts else 0 for k in utils.Y_KEYS_LOCAL - {y_filter}]
 
 def x_manipulator_all(x, y, x_filter, y_filter):
+    """
+    Generate all possible inputs given the set of artefacts utils.Y_KEYS_LOVAL - {y_filter}.
+    """
     output = []
     for subset in utils.powerset(utils.Y_KEYS_LOCAL - {y_filter}, nonempty=False):
         artefacts = [

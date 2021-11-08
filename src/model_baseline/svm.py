@@ -55,14 +55,15 @@ if __name__ == "__main__":
         y_filter=args.target_output, binarize=None
     )
 
+    # select vectorizer
     VECTORIZER_CLASS = {
         "tfidf": TfidfVectorizer(max_features=90000, ngram_range=(1, 2)),
         "bow": CountVectorizer(),
     }[args.vectorizer]
 
+    # select and instantiate model
     if args.target_output in {"subject", "geographic"}:
         args.model = "multi_" + args.model
-
     MODEL_CLASS = {
         "multi_svc_2": MultiOutputClassifier(SVC(probability=True)),
         "multi_linear_svc_2": MultiOutputClassifier(SVC(probability=True, kernel="linear")),
@@ -79,6 +80,7 @@ if __name__ == "__main__":
         ("model", MODEL_CLASS)
     ])
     
+    # split data
     data_dev, data_test, data_train = utils.make_split(
         (data,),
         (1000,1000,),

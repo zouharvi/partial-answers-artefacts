@@ -88,6 +88,7 @@ if __name__ == "__main__":
             elif sample_zero[1] and not sample[1]:
                 dist_t_f.append(dist)
 
+    # compute average distances in various configurations
     dist_t_t = np.average(np.array(dist_t_t), axis=0)
     dist_f_t = np.average(np.array(dist_f_t), axis=0)
     dist_f_f = np.average(np.array(dist_f_f), axis=0)

@@ -20,7 +20,7 @@ import os.path as path
 
 
 def add_plot_options(parser: argparse.ArgumentParser):
-    # Plot options
+    # plot options
     p_group = parser.add_argument_group(
         "Plot", "Arguments to control the details of the plot.")
     p_group.add_argument("-fs", "--figsize", nargs=2, type=float, default=[16, 9], metavar=("WIDTH", "HEIGHT"),
@@ -32,13 +32,13 @@ def add_plot_options(parser: argparse.ArgumentParser):
     p_group.add_argument("-yl", "--ylabel", type=str,
                          help="Y-axis label of the figure.")
 
-    # Legend options
+    # legend options
     l_group = parser.add_argument_group(
         "Legend", "Arguments to control the details of the legend.")
     l_group.add_argument("--legend-markerscale", default=4, type=float,
                          help="Size of marker in legend.")
 
-    # Scatter options
+    # scatter options
     s_group = parser.add_argument_group(
         "Scatter", "Arguments to control the details of the scatter plot.")
     s_group.add_argument("--scatter-alpha", default=0.6, type=float,
