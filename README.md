@@ -32,7 +32,7 @@ Run `make balance` to generate overview of class distributions (in LaTeX table f
 
 #### Feature Dependency
 
-Run `make feature_dependency` to model the relationship between variables using logistic regression: $\hat{z} = p(-,\xi;\, \theta),\,\, \xi \in y$.
+Run `make feature_dependency` to model the relationship between variables using logistic regression: `z = p(-,\xi; \theta), \xi \in y`.
 The final output should look like:
 
 ![Variable dependency Logistic Regression](data/figures/feature_dependency_lr.png)

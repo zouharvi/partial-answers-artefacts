@@ -1,12 +1,10 @@
 # added by edu
 data/embeddings/
-data/figures/
 data/models/
 
 # added by zouharvi
 ass1/reviews.txt
 *.pkl
-*.png
 data/glove_filtered.json
 data/glove_reviews.json
 pertrubed_data/
