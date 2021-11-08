@@ -1,1 +1,120 @@
-{"dev": {"month": {"April": {"precision": 0.5666666666666667, "recall": 1.0, "f1-score": 0.7234042553191489, "support": 17}, "August": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 2}, "December": {"precision": 0.7728085867620751, "recall": 0.9840546697038725, "f1-score": 0.8657314629258516, "support": 439}, "July": {"precision": 0.967741935483871, "recall": 0.5769230769230769, "f1-score": 0.7228915662650601, "support": 52}, "March": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 13}, "November": {"precision": 0.8023598820058997, "recall": 0.655421686746988, "f1-score": 0.7214854111405835, "support": 415}, "October": {"precision": 0.6097560975609756, "recall": 0.4032258064516129, "f1-score": 0.4854368932038835, "support": 62}, "accuracy": 0.776, "macro avg": {"precision": 0.531333309782784, "recall": 0.5170893199750786, "f1-score": 0.5027070841220753, "support": 1000}, "weighted avg": {"precision": 0.7700031126482744, "recall": 0.776, "f1-score": 0.7594578790126405, "support": 1000}}}, "test": {"month": {"April": {"precision": 0.5833333333333334, "recall": 1.0, "f1-score": 0.7368421052631579, "support": 14}, "August": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 1}, "December": {"precision": 0.7807971014492754, "recall": 0.9976851851851852, "f1-score": 0.8760162601626018, "support": 432}, "July": {"precision": 1.0, "recall": 0.625, "f1-score": 0.7692307692307693, "support": 48}, "March": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 10}, "November": {"precision": 0.8431372549019608, "recall": 0.6919540229885057, "f1-score": 0.7601010101010099, "support": 435}, "October": {"precision": 0.6486486486486487, "recall": 0.4, "f1-score": 0.49484536082474234, "support": 60}, "accuracy": 0.8, "macro avg": {"precision": 0.5508451911904598, "recall": 0.530662744024813, "f1-score": 0.5195765007974688, "support": 1000}, "weighted avg": {"precision": 0.7991546392940256, "recall": 0.8, "f1-score": 0.786012551830429, "support": 1000}}}}
+{
+    "dev": {
+        "month": {
+            "April": {
+                "precision": 0.5666666666666667,
+                "recall": 1.0,
+                "f1-score": 0.7234042553191489,
+                "support": 17
+            },
+            "August": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 2
+            },
+            "December": {
+                "precision": 0.7728085867620751,
+                "recall": 0.9840546697038725,
+                "f1-score": 0.8657314629258516,
+                "support": 439
+            },
+            "July": {
+                "precision": 0.967741935483871,
+                "recall": 0.5769230769230769,
+                "f1-score": 0.7228915662650601,
+                "support": 52
+            },
+            "March": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 13
+            },
+            "November": {
+                "precision": 0.8023598820058997,
+                "recall": 0.655421686746988,
+                "f1-score": 0.7214854111405835,
+                "support": 415
+            },
+            "October": {
+                "precision": 0.6097560975609756,
+                "recall": 0.4032258064516129,
+                "f1-score": 0.4854368932038835,
+                "support": 62
+            },
+            "accuracy": 0.776,
+            "macro avg": {
+                "precision": 0.531333309782784,
+                "recall": 0.5170893199750786,
+                "f1-score": 0.5027070841220753,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.7700031126482744,
+                "recall": 0.776,
+                "f1-score": 0.7594578790126405,
+                "support": 1000
+            }
+        }
+    },
+    "test": {
+        "month": {
+            "April": {
+                "precision": 0.5833333333333334,
+                "recall": 1.0,
+                "f1-score": 0.7368421052631579,
+                "support": 14
+            },
+            "August": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 1
+            },
+            "December": {
+                "precision": 0.7807971014492754,
+                "recall": 0.9976851851851852,
+                "f1-score": 0.8760162601626018,
+                "support": 432
+            },
+            "July": {
+                "precision": 1.0,
+                "recall": 0.625,
+                "f1-score": 0.7692307692307693,
+                "support": 48
+            },
+            "March": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 10
+            },
+            "November": {
+                "precision": 0.8431372549019608,
+                "recall": 0.6919540229885057,
+                "f1-score": 0.7601010101010099,
+                "support": 435
+            },
+            "October": {
+                "precision": 0.6486486486486487,
+                "recall": 0.4,
+                "f1-score": 0.49484536082474234,
+                "support": 60
+            },
+            "accuracy": 0.8,
+            "macro avg": {
+                "precision": 0.5508451911904598,
+                "recall": 0.530662744024813,
+                "f1-score": 0.5195765007974688,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.7991546392940256,
+                "recall": 0.8,
+                "f1-score": 0.786012551830429,
+                "support": 1000
+            }
+        }
+    }
+}

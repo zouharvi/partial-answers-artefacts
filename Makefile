@@ -88,12 +88,18 @@ eval_0v1: $(bert_models) $(patsubst %,eval_%_0v1,$(target_outputs))
 traineval_0v1: train_0v1 eval_0v1
 
 train_1v1:
-	@echo "TODO: this script may not work as expected because it is not adapted for Makefile"
+	@echo "This script will generate a large workload. [Ctrl-C to exit, ENTER to continue]"
 	@read _
 	files=(data/final/1v1_*) \
 	for (( index=0; index<${#files[@]}; index+=1 )); do \
-		f=${files[index]} \
-		echo $$f \
-		python3 ./src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input $$f \
+		f=${files[index]}; \
+		echo $$f; \
+		python3 ./src/train_lm_classifier.py -to craft -ti craft -ep 2 --max-length 512 -bs 8 --input $$f; \
 	done \
     
+prettify_eval:
+	for f in data/eval/*.json; do \
+		echo $$f; \
+		cat $$f | python3 -m json.tool > tmp.json; \
+		mv tmp.json $$f; \
+	done

@@ -1,1 +1,708 @@
-{"dev": {"month": {"April": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 17}, "August": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 2}, "December": {"precision": 0.7887788778877888, "recall": 0.5444191343963554, "f1-score": 0.6442048517520216, "support": 439}, "July": {"precision": 0.2966101694915254, "recall": 0.6730769230769231, "f1-score": 0.4117647058823529, "support": 52}, "March": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 13}, "November": {"precision": 0.572992700729927, "recall": 0.7566265060240964, "f1-score": 0.6521287642782971, "support": 415}, "October": {"precision": 0.3103448275862069, "recall": 0.14516129032258066, "f1-score": 0.1978021978021978, "support": 62}, "accuracy": 0.597, "macro avg": {"precision": 0.2812466536707783, "recall": 0.3027548362599936, "f1-score": 0.2722715028164099, "support": 1000}, "weighted avg": {"precision": 0.6187310063195632, "recall": 0.597, "f1-score": 0.5871148680642495, "support": 1000}}, "ncompas": {"left": {"precision": 0.9474452554744526, "recall": 0.9744744744744744, "f1-score": 0.9607698001480385, "support": 666}, "right": {"precision": 0.946031746031746, "recall": 0.8922155688622755, "f1-score": 0.9183359013867488, "support": 334}, "accuracy": 0.947, "macro avg": {"precision": 0.9467385007530993, "recall": 0.933345021668375, "f1-score": 0.9395528507673936, "support": 1000}, "weighted avg": {"precision": 0.9469731433205887, "recall": 0.947, "f1-score": 0.9465968779617677, "support": 1000}}, "year": {"1995": {"precision": 0.4, "recall": 0.26666666666666666, "f1-score": 0.32, "support": 30}, "1996": {"precision": 0.27631578947368424, "recall": 0.7, "f1-score": 0.39622641509433965, "support": 30}, "1997": {"precision": 0.40425531914893614, "recall": 0.6129032258064516, "f1-score": 0.48717948717948717, "support": 31}, "1998": {"precision": 0.22727272727272727, "recall": 0.14705882352941177, "f1-score": 0.17857142857142858, "support": 34}, "1999": {"precision": 0.19047619047619047, "recall": 0.17391304347826086, "f1-score": 0.1818181818181818, "support": 23}, "2000": {"precision": 0.6666666666666666, "recall": 0.1111111111111111, "f1-score": 0.1904761904761905, "support": 18}, "2001": {"precision": 0.20408163265306123, "recall": 0.6382978723404256, "f1-score": 0.30927835051546393, "support": 47}, "2002": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 22}, "2003": {"precision": 0.125, "recall": 0.045454545454545456, "f1-score": 0.06666666666666667, "support": 22}, "2004": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 18}, "2005": {"precision": 0.29411764705882354, "recall": 0.1724137931034483, "f1-score": 0.2173913043478261, "support": 29}, "2006": {"precision": 0.5, "recall": 0.3939393939393939, "f1-score": 0.4406779661016949, "support": 33}, "2007": {"precision": 0.36231884057971014, "recall": 0.5319148936170213, "f1-score": 0.43103448275862066, "support": 47}, "2008": {"precision": 0.5217391304347826, "recall": 0.21818181818181817, "f1-score": 0.3076923076923077, "support": 55}, "2009": {"precision": 0.8235294117647058, "recall": 0.5185185185185185, "f1-score": 0.6363636363636364, "support": 54}, "2010": {"precision": 0.2702702702702703, "recall": 0.22727272727272727, "f1-score": 0.24691358024691357, "support": 44}, "2011": {"precision": 0.2857142857142857, "recall": 0.30434782608695654, "f1-score": 0.29473684210526313, "support": 46}, "2012": {"precision": 0.2608695652173913, "recall": 0.2727272727272727, "f1-score": 0.2666666666666666, "support": 44}, "2013": {"precision": 0.4090909090909091, "recall": 0.4090909090909091, "f1-score": 0.4090909090909091, "support": 44}, "2014": {"precision": 0.4838709677419355, "recall": 0.3191489361702128, "f1-score": 0.38461538461538464, "support": 47}, "2015": {"precision": 0.6428571428571429, "recall": 0.6081081081081081, "f1-score": 0.625, "support": 74}, "2016": {"precision": 0.5, "recall": 0.7547169811320755, "f1-score": 0.6015037593984962, "support": 53}, "2017": {"precision": 0.5238095238095238, "recall": 0.44594594594594594, "f1-score": 0.48175182481751827, "support": 74}, "2018": {"precision": 0.5901639344262295, "recall": 0.4444444444444444, "f1-score": 0.5070422535211268, "support": 81}, "accuracy": 0.396, "macro avg": {"precision": 0.373434164777374, "recall": 0.34650736903023854, "f1-score": 0.33252906825200507, "support": 1000}, "weighted avg": {"precision": 0.4223876455119492, "recall": 0.396, "f1-score": 0.3857480840597079, "support": 1000}}, "ncountry": {"australia": {"precision": 0.9691358024691358, "recall": 0.9936708860759493, "f1-score": 0.9812500000000001, "support": 474}, "india": {"precision": 0.9764705882352941, "recall": 0.9764705882352941, "f1-score": 0.9764705882352941, "support": 85}, "south_africa": {"precision": 0.9090909090909091, "recall": 0.5555555555555556, "f1-score": 0.6896551724137931, "support": 18}, "us": {"precision": 0.9904306220095693, "recall": 0.9787234042553191, "f1-score": 0.9845422116527942, "support": 423}, "accuracy": 0.978, "macro avg": {"precision": 0.9612819804512271, "recall": 0.8761051085305295, "f1-score": 0.9079794930754703, "support": 1000}, "weighted avg": {"precision": 0.9776861598440546, "recall": 0.978, "f1-score": 0.9769876486325803, "support": 1000}}, "newspaper": {"Mail & Guardian": {"precision": 0.6666666666666666, "recall": 0.2857142857142857, "f1-score": 0.4, "support": 14}, "Sydney Morning Herald (Australia)": {"precision": 0.6296296296296297, "recall": 0.6126126126126126, "f1-score": 0.6210045662100455, "support": 111}, "The Age (Melbourne, Australia)": {"precision": 0.6165413533834586, "recall": 0.7454545454545455, "f1-score": 0.6748971193415638, "support": 110}, "The Australian": {"precision": 0.9183673469387755, "recall": 0.8893280632411067, "f1-score": 0.9036144578313253, "support": 253}, "The Hindu": {"precision": 0.8, "recall": 1.0, "f1-score": 0.888888888888889, "support": 8}, "The New York Times": {"precision": 0.9137254901960784, "recall": 0.9549180327868853, "f1-score": 0.9338677354709418, "support": 244}, "The Times (South Africa)": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 4}, "The Times of India (TOI)": {"precision": 0.974025974025974, "recall": 0.974025974025974, "f1-score": 0.974025974025974, "support": 77}, "The Washington Post": {"precision": 0.9325153374233128, "recall": 0.8491620111731844, "f1-score": 0.888888888888889, "support": 179}, "accuracy": 0.847, "macro avg": {"precision": 0.7168301998070995, "recall": 0.7012461694453993, "f1-score": 0.698354181184181, "support": 1000}, "weighted avg": {"precision": 0.850657974876529, "recall": 0.847, "f1-score": 0.8464705974853444, "support": 1000}}}, "test": {"month": {"April": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 14}, "August": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 1}, "December": {"precision": 0.7427536231884058, "recall": 0.47453703703703703, "f1-score": 0.57909604519774, "support": 432}, "July": {"precision": 0.34615384615384615, "recall": 0.75, "f1-score": 0.4736842105263157, "support": 48}, "March": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 10}, "November": {"precision": 0.5459183673469388, "recall": 0.7379310344827587, "f1-score": 0.627565982404692, "support": 435}, "October": {"precision": 0.21875, "recall": 0.11666666666666667, "f1-score": 0.15217391304347824, "support": 60}, "accuracy": 0.569, "macro avg": {"precision": 0.2647965480984558, "recall": 0.29701924831235177, "f1-score": 0.2617885930246037, "support": 1000}, "weighted avg": {"precision": 0.5880844396286943, "recall": 0.569, "f1-score": 0.5550279707593365, "support": 1000}}, "ncompas": {"left": {"precision": 0.9384164222873901, "recall": 0.975609756097561, "f1-score": 0.9566517189835575, "support": 656}, "right": {"precision": 0.949685534591195, "recall": 0.877906976744186, "f1-score": 0.9123867069486405, "support": 344}, "accuracy": 0.942, "macro avg": {"precision": 0.9440509784392925, "recall": 0.9267583664208735, "f1-score": 0.9345192129660991, "support": 1000}, "weighted avg": {"precision": 0.942292996919899, "recall": 0.942, "f1-score": 0.941424554843546, "support": 1000}}, "year": {"1995": {"precision": 0.4166666666666667, "recall": 0.20833333333333334, "f1-score": 0.2777777777777778, "support": 24}, "1996": {"precision": 0.27941176470588236, "recall": 0.7307692307692307, "f1-score": 0.4042553191489362, "support": 26}, "1997": {"precision": 0.35, "recall": 0.4375, "f1-score": 0.38888888888888884, "support": 32}, "1998": {"precision": 0.34615384615384615, "recall": 0.3333333333333333, "f1-score": 0.33962264150943394, "support": 27}, "1999": {"precision": 0.2222222222222222, "recall": 0.16, "f1-score": 0.18604651162790697, "support": 25}, "2000": {"precision": 0.16666666666666666, "recall": 0.05263157894736842, "f1-score": 0.08, "support": 19}, "2001": {"precision": 0.24691358024691357, "recall": 0.8, "f1-score": 0.3773584905660377, "support": 50}, "2002": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 22}, "2003": {"precision": 0.09090909090909091, "recall": 0.041666666666666664, "f1-score": 0.05714285714285715, "support": 24}, "2004": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 26}, "2005": {"precision": 0.2857142857142857, "recall": 0.12903225806451613, "f1-score": 0.17777777777777778, "support": 31}, "2006": {"precision": 0.4634146341463415, "recall": 0.5135135135135135, "f1-score": 0.48717948717948717, "support": 37}, "2007": {"precision": 0.4230769230769231, "recall": 0.6226415094339622, "f1-score": 0.5038167938931297, "support": 53}, "2008": {"precision": 0.43478260869565216, "recall": 0.23809523809523808, "f1-score": 0.30769230769230765, "support": 42}, "2009": {"precision": 0.8571428571428571, "recall": 0.4838709677419355, "f1-score": 0.6185567010309277, "support": 62}, "2010": {"precision": 0.1875, "recall": 0.17142857142857143, "f1-score": 0.1791044776119403, "support": 35}, "2011": {"precision": 0.35, "recall": 0.32558139534883723, "f1-score": 0.3373493975903615, "support": 43}, "2012": {"precision": 0.40476190476190477, "recall": 0.3469387755102041, "f1-score": 0.3736263736263736, "support": 49}, "2013": {"precision": 0.47058823529411764, "recall": 0.2807017543859649, "f1-score": 0.3516483516483516, "support": 57}, "2014": {"precision": 0.2894736842105263, "recall": 0.28205128205128205, "f1-score": 0.28571428571428575, "support": 39}, "2015": {"precision": 0.56, "recall": 0.4444444444444444, "f1-score": 0.4955752212389381, "support": 63}, "2016": {"precision": 0.44565217391304346, "recall": 0.6212121212121212, "f1-score": 0.518987341772152, "support": 66}, "2017": {"precision": 0.43548387096774194, "recall": 0.4153846153846154, "f1-score": 0.4251968503937008, "support": 65}, "2018": {"precision": 0.5540540540540541, "recall": 0.4939759036144578, "f1-score": 0.5222929936305732, "support": 83}, "accuracy": 0.39, "macro avg": {"precision": 0.34502454456453063, "recall": 0.3388794372199832, "f1-score": 0.3206504519775894, "support": 1000}, "weighted avg": {"precision": 0.399435685103561, "recall": 0.39, "f1-score": 0.37344641476950097, "support": 1000}}, "ncountry": {"australia": {"precision": 0.979253112033195, "recall": 0.9957805907172996, "f1-score": 0.9874476987447699, "support": 474}, "india": {"precision": 1.0, "recall": 0.958904109589041, "f1-score": 0.9790209790209791, "support": 73}, "south_africa": {"precision": 0.7142857142857143, "recall": 0.6666666666666666, "f1-score": 0.689655172413793, "support": 15}, "us": {"precision": 1.0, "recall": 0.9908675799086758, "f1-score": 0.9954128440366972, "support": 438}, "accuracy": 0.986, "macro avg": {"precision": 0.9233847065797274, "recall": 0.9030547367204208, "f1-score": 0.9128841735540598, "support": 1000}, "weighted avg": {"precision": 0.98588026081802, "recall": 0.986, "f1-score": 0.9858543939478327, "support": 1000}}, "newspaper": {"Mail & Guardian": {"precision": 0.7272727272727273, "recall": 0.7272727272727273, "f1-score": 0.7272727272727273, "support": 11}, "Sydney Morning Herald (Australia)": {"precision": 0.6237623762376238, "recall": 0.5943396226415094, "f1-score": 0.6086956521739131, "support": 106}, "The Age (Melbourne, Australia)": {"precision": 0.5537190082644629, "recall": 0.7052631578947368, "f1-score": 0.6203703703703703, "support": 95}, "The Australian": {"precision": 0.926923076923077, "recall": 0.8827838827838828, "f1-score": 0.9043151969981238, "support": 273}, "The Hindu": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 6}, "The New York Times": {"precision": 0.9568627450980393, "recall": 0.9721115537848606, "f1-score": 0.9644268774703557, "support": 251}, "The Times (South Africa)": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 4}, "The Times of India (TOI)": {"precision": 1.0, "recall": 0.9552238805970149, "f1-score": 0.9770992366412213, "support": 67}, "The Washington Post": {"precision": 0.9666666666666667, "recall": 0.93048128342246, "f1-score": 0.9482288828337875, "support": 187}, "accuracy": 0.867, "macro avg": {"precision": 0.7505785111625107, "recall": 0.7519417898219102, "f1-score": 0.7500454381956111, "support": 1000}, "weighted avg": {"precision": 0.8737113333525865, "recall": 0.867, "f1-score": 0.8691905692860471, "support": 1000}}}}
+{
+    "dev": {
+        "month": {
+            "April": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 17
+            },
+            "August": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 2
+            },
+            "December": {
+                "precision": 0.7887788778877888,
+                "recall": 0.5444191343963554,
+                "f1-score": 0.6442048517520216,
+                "support": 439
+            },
+            "July": {
+                "precision": 0.2966101694915254,
+                "recall": 0.6730769230769231,
+                "f1-score": 0.4117647058823529,
+                "support": 52
+            },
+            "March": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 13
+            },
+            "November": {
+                "precision": 0.572992700729927,
+                "recall": 0.7566265060240964,
+                "f1-score": 0.6521287642782971,
+                "support": 415
+            },
+            "October": {
+                "precision": 0.3103448275862069,
+                "recall": 0.14516129032258066,
+                "f1-score": 0.1978021978021978,
+                "support": 62
+            },
+            "accuracy": 0.597,
+            "macro avg": {
+                "precision": 0.2812466536707783,
+                "recall": 0.3027548362599936,
+                "f1-score": 0.2722715028164099,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.6187310063195632,
+                "recall": 0.597,
+                "f1-score": 0.5871148680642495,
+                "support": 1000
+            }
+        },
+        "ncompas": {
+            "left": {
+                "precision": 0.9474452554744526,
+                "recall": 0.9744744744744744,
+                "f1-score": 0.9607698001480385,
+                "support": 666
+            },
+            "right": {
+                "precision": 0.946031746031746,
+                "recall": 0.8922155688622755,
+                "f1-score": 0.9183359013867488,
+                "support": 334
+            },
+            "accuracy": 0.947,
+            "macro avg": {
+                "precision": 0.9467385007530993,
+                "recall": 0.933345021668375,
+                "f1-score": 0.9395528507673936,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.9469731433205887,
+                "recall": 0.947,
+                "f1-score": 0.9465968779617677,
+                "support": 1000
+            }
+        },
+        "year": {
+            "1995": {
+                "precision": 0.4,
+                "recall": 0.26666666666666666,
+                "f1-score": 0.32,
+                "support": 30
+            },
+            "1996": {
+                "precision": 0.27631578947368424,
+                "recall": 0.7,
+                "f1-score": 0.39622641509433965,
+                "support": 30
+            },
+            "1997": {
+                "precision": 0.40425531914893614,
+                "recall": 0.6129032258064516,
+                "f1-score": 0.48717948717948717,
+                "support": 31
+            },
+            "1998": {
+                "precision": 0.22727272727272727,
+                "recall": 0.14705882352941177,
+                "f1-score": 0.17857142857142858,
+                "support": 34
+            },
+            "1999": {
+                "precision": 0.19047619047619047,
+                "recall": 0.17391304347826086,
+                "f1-score": 0.1818181818181818,
+                "support": 23
+            },
+            "2000": {
+                "precision": 0.6666666666666666,
+                "recall": 0.1111111111111111,
+                "f1-score": 0.1904761904761905,
+                "support": 18
+            },
+            "2001": {
+                "precision": 0.20408163265306123,
+                "recall": 0.6382978723404256,
+                "f1-score": 0.30927835051546393,
+                "support": 47
+            },
+            "2002": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 22
+            },
+            "2003": {
+                "precision": 0.125,
+                "recall": 0.045454545454545456,
+                "f1-score": 0.06666666666666667,
+                "support": 22
+            },
+            "2004": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 18
+            },
+            "2005": {
+                "precision": 0.29411764705882354,
+                "recall": 0.1724137931034483,
+                "f1-score": 0.2173913043478261,
+                "support": 29
+            },
+            "2006": {
+                "precision": 0.5,
+                "recall": 0.3939393939393939,
+                "f1-score": 0.4406779661016949,
+                "support": 33
+            },
+            "2007": {
+                "precision": 0.36231884057971014,
+                "recall": 0.5319148936170213,
+                "f1-score": 0.43103448275862066,
+                "support": 47
+            },
+            "2008": {
+                "precision": 0.5217391304347826,
+                "recall": 0.21818181818181817,
+                "f1-score": 0.3076923076923077,
+                "support": 55
+            },
+            "2009": {
+                "precision": 0.8235294117647058,
+                "recall": 0.5185185185185185,
+                "f1-score": 0.6363636363636364,
+                "support": 54
+            },
+            "2010": {
+                "precision": 0.2702702702702703,
+                "recall": 0.22727272727272727,
+                "f1-score": 0.24691358024691357,
+                "support": 44
+            },
+            "2011": {
+                "precision": 0.2857142857142857,
+                "recall": 0.30434782608695654,
+                "f1-score": 0.29473684210526313,
+                "support": 46
+            },
+            "2012": {
+                "precision": 0.2608695652173913,
+                "recall": 0.2727272727272727,
+                "f1-score": 0.2666666666666666,
+                "support": 44
+            },
+            "2013": {
+                "precision": 0.4090909090909091,
+                "recall": 0.4090909090909091,
+                "f1-score": 0.4090909090909091,
+                "support": 44
+            },
+            "2014": {
+                "precision": 0.4838709677419355,
+                "recall": 0.3191489361702128,
+                "f1-score": 0.38461538461538464,
+                "support": 47
+            },
+            "2015": {
+                "precision": 0.6428571428571429,
+                "recall": 0.6081081081081081,
+                "f1-score": 0.625,
+                "support": 74
+            },
+            "2016": {
+                "precision": 0.5,
+                "recall": 0.7547169811320755,
+                "f1-score": 0.6015037593984962,
+                "support": 53
+            },
+            "2017": {
+                "precision": 0.5238095238095238,
+                "recall": 0.44594594594594594,
+                "f1-score": 0.48175182481751827,
+                "support": 74
+            },
+            "2018": {
+                "precision": 0.5901639344262295,
+                "recall": 0.4444444444444444,
+                "f1-score": 0.5070422535211268,
+                "support": 81
+            },
+            "accuracy": 0.396,
+            "macro avg": {
+                "precision": 0.373434164777374,
+                "recall": 0.34650736903023854,
+                "f1-score": 0.33252906825200507,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.4223876455119492,
+                "recall": 0.396,
+                "f1-score": 0.3857480840597079,
+                "support": 1000
+            }
+        },
+        "ncountry": {
+            "australia": {
+                "precision": 0.9691358024691358,
+                "recall": 0.9936708860759493,
+                "f1-score": 0.9812500000000001,
+                "support": 474
+            },
+            "india": {
+                "precision": 0.9764705882352941,
+                "recall": 0.9764705882352941,
+                "f1-score": 0.9764705882352941,
+                "support": 85
+            },
+            "south_africa": {
+                "precision": 0.9090909090909091,
+                "recall": 0.5555555555555556,
+                "f1-score": 0.6896551724137931,
+                "support": 18
+            },
+            "us": {
+                "precision": 0.9904306220095693,
+                "recall": 0.9787234042553191,
+                "f1-score": 0.9845422116527942,
+                "support": 423
+            },
+            "accuracy": 0.978,
+            "macro avg": {
+                "precision": 0.9612819804512271,
+                "recall": 0.8761051085305295,
+                "f1-score": 0.9079794930754703,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.9776861598440546,
+                "recall": 0.978,
+                "f1-score": 0.9769876486325803,
+                "support": 1000
+            }
+        },
+        "newspaper": {
+            "Mail & Guardian": {
+                "precision": 0.6666666666666666,
+                "recall": 0.2857142857142857,
+                "f1-score": 0.4,
+                "support": 14
+            },
+            "Sydney Morning Herald (Australia)": {
+                "precision": 0.6296296296296297,
+                "recall": 0.6126126126126126,
+                "f1-score": 0.6210045662100455,
+                "support": 111
+            },
+            "The Age (Melbourne, Australia)": {
+                "precision": 0.6165413533834586,
+                "recall": 0.7454545454545455,
+                "f1-score": 0.6748971193415638,
+                "support": 110
+            },
+            "The Australian": {
+                "precision": 0.9183673469387755,
+                "recall": 0.8893280632411067,
+                "f1-score": 0.9036144578313253,
+                "support": 253
+            },
+            "The Hindu": {
+                "precision": 0.8,
+                "recall": 1.0,
+                "f1-score": 0.888888888888889,
+                "support": 8
+            },
+            "The New York Times": {
+                "precision": 0.9137254901960784,
+                "recall": 0.9549180327868853,
+                "f1-score": 0.9338677354709418,
+                "support": 244
+            },
+            "The Times (South Africa)": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 4
+            },
+            "The Times of India (TOI)": {
+                "precision": 0.974025974025974,
+                "recall": 0.974025974025974,
+                "f1-score": 0.974025974025974,
+                "support": 77
+            },
+            "The Washington Post": {
+                "precision": 0.9325153374233128,
+                "recall": 0.8491620111731844,
+                "f1-score": 0.888888888888889,
+                "support": 179
+            },
+            "accuracy": 0.847,
+            "macro avg": {
+                "precision": 0.7168301998070995,
+                "recall": 0.7012461694453993,
+                "f1-score": 0.698354181184181,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.850657974876529,
+                "recall": 0.847,
+                "f1-score": 0.8464705974853444,
+                "support": 1000
+            }
+        }
+    },
+    "test": {
+        "month": {
+            "April": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 14
+            },
+            "August": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 1
+            },
+            "December": {
+                "precision": 0.7427536231884058,
+                "recall": 0.47453703703703703,
+                "f1-score": 0.57909604519774,
+                "support": 432
+            },
+            "July": {
+                "precision": 0.34615384615384615,
+                "recall": 0.75,
+                "f1-score": 0.4736842105263157,
+                "support": 48
+            },
+            "March": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 10
+            },
+            "November": {
+                "precision": 0.5459183673469388,
+                "recall": 0.7379310344827587,
+                "f1-score": 0.627565982404692,
+                "support": 435
+            },
+            "October": {
+                "precision": 0.21875,
+                "recall": 0.11666666666666667,
+                "f1-score": 0.15217391304347824,
+                "support": 60
+            },
+            "accuracy": 0.569,
+            "macro avg": {
+                "precision": 0.2647965480984558,
+                "recall": 0.29701924831235177,
+                "f1-score": 0.2617885930246037,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.5880844396286943,
+                "recall": 0.569,
+                "f1-score": 0.5550279707593365,
+                "support": 1000
+            }
+        },
+        "ncompas": {
+            "left": {
+                "precision": 0.9384164222873901,
+                "recall": 0.975609756097561,
+                "f1-score": 0.9566517189835575,
+                "support": 656
+            },
+            "right": {
+                "precision": 0.949685534591195,
+                "recall": 0.877906976744186,
+                "f1-score": 0.9123867069486405,
+                "support": 344
+            },
+            "accuracy": 0.942,
+            "macro avg": {
+                "precision": 0.9440509784392925,
+                "recall": 0.9267583664208735,
+                "f1-score": 0.9345192129660991,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.942292996919899,
+                "recall": 0.942,
+                "f1-score": 0.941424554843546,
+                "support": 1000
+            }
+        },
+        "year": {
+            "1995": {
+                "precision": 0.4166666666666667,
+                "recall": 0.20833333333333334,
+                "f1-score": 0.2777777777777778,
+                "support": 24
+            },
+            "1996": {
+                "precision": 0.27941176470588236,
+                "recall": 0.7307692307692307,
+                "f1-score": 0.4042553191489362,
+                "support": 26
+            },
+            "1997": {
+                "precision": 0.35,
+                "recall": 0.4375,
+                "f1-score": 0.38888888888888884,
+                "support": 32
+            },
+            "1998": {
+                "precision": 0.34615384615384615,
+                "recall": 0.3333333333333333,
+                "f1-score": 0.33962264150943394,
+                "support": 27
+            },
+            "1999": {
+                "precision": 0.2222222222222222,
+                "recall": 0.16,
+                "f1-score": 0.18604651162790697,
+                "support": 25
+            },
+            "2000": {
+                "precision": 0.16666666666666666,
+                "recall": 0.05263157894736842,
+                "f1-score": 0.08,
+                "support": 19
+            },
+            "2001": {
+                "precision": 0.24691358024691357,
+                "recall": 0.8,
+                "f1-score": 0.3773584905660377,
+                "support": 50
+            },
+            "2002": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 22
+            },
+            "2003": {
+                "precision": 0.09090909090909091,
+                "recall": 0.041666666666666664,
+                "f1-score": 0.05714285714285715,
+                "support": 24
+            },
+            "2004": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 26
+            },
+            "2005": {
+                "precision": 0.2857142857142857,
+                "recall": 0.12903225806451613,
+                "f1-score": 0.17777777777777778,
+                "support": 31
+            },
+            "2006": {
+                "precision": 0.4634146341463415,
+                "recall": 0.5135135135135135,
+                "f1-score": 0.48717948717948717,
+                "support": 37
+            },
+            "2007": {
+                "precision": 0.4230769230769231,
+                "recall": 0.6226415094339622,
+                "f1-score": 0.5038167938931297,
+                "support": 53
+            },
+            "2008": {
+                "precision": 0.43478260869565216,
+                "recall": 0.23809523809523808,
+                "f1-score": 0.30769230769230765,
+                "support": 42
+            },
+            "2009": {
+                "precision": 0.8571428571428571,
+                "recall": 0.4838709677419355,
+                "f1-score": 0.6185567010309277,
+                "support": 62
+            },
+            "2010": {
+                "precision": 0.1875,
+                "recall": 0.17142857142857143,
+                "f1-score": 0.1791044776119403,
+                "support": 35
+            },
+            "2011": {
+                "precision": 0.35,
+                "recall": 0.32558139534883723,
+                "f1-score": 0.3373493975903615,
+                "support": 43
+            },
+            "2012": {
+                "precision": 0.40476190476190477,
+                "recall": 0.3469387755102041,
+                "f1-score": 0.3736263736263736,
+                "support": 49
+            },
+            "2013": {
+                "precision": 0.47058823529411764,
+                "recall": 0.2807017543859649,
+                "f1-score": 0.3516483516483516,
+                "support": 57
+            },
+            "2014": {
+                "precision": 0.2894736842105263,
+                "recall": 0.28205128205128205,
+                "f1-score": 0.28571428571428575,
+                "support": 39
+            },
+            "2015": {
+                "precision": 0.56,
+                "recall": 0.4444444444444444,
+                "f1-score": 0.4955752212389381,
+                "support": 63
+            },
+            "2016": {
+                "precision": 0.44565217391304346,
+                "recall": 0.6212121212121212,
+                "f1-score": 0.518987341772152,
+                "support": 66
+            },
+            "2017": {
+                "precision": 0.43548387096774194,
+                "recall": 0.4153846153846154,
+                "f1-score": 0.4251968503937008,
+                "support": 65
+            },
+            "2018": {
+                "precision": 0.5540540540540541,
+                "recall": 0.4939759036144578,
+                "f1-score": 0.5222929936305732,
+                "support": 83
+            },
+            "accuracy": 0.39,
+            "macro avg": {
+                "precision": 0.34502454456453063,
+                "recall": 0.3388794372199832,
+                "f1-score": 0.3206504519775894,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.399435685103561,
+                "recall": 0.39,
+                "f1-score": 0.37344641476950097,
+                "support": 1000
+            }
+        },
+        "ncountry": {
+            "australia": {
+                "precision": 0.979253112033195,
+                "recall": 0.9957805907172996,
+                "f1-score": 0.9874476987447699,
+                "support": 474
+            },
+            "india": {
+                "precision": 1.0,
+                "recall": 0.958904109589041,
+                "f1-score": 0.9790209790209791,
+                "support": 73
+            },
+            "south_africa": {
+                "precision": 0.7142857142857143,
+                "recall": 0.6666666666666666,
+                "f1-score": 0.689655172413793,
+                "support": 15
+            },
+            "us": {
+                "precision": 1.0,
+                "recall": 0.9908675799086758,
+                "f1-score": 0.9954128440366972,
+                "support": 438
+            },
+            "accuracy": 0.986,
+            "macro avg": {
+                "precision": 0.9233847065797274,
+                "recall": 0.9030547367204208,
+                "f1-score": 0.9128841735540598,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.98588026081802,
+                "recall": 0.986,
+                "f1-score": 0.9858543939478327,
+                "support": 1000
+            }
+        },
+        "newspaper": {
+            "Mail & Guardian": {
+                "precision": 0.7272727272727273,
+                "recall": 0.7272727272727273,
+                "f1-score": 0.7272727272727273,
+                "support": 11
+            },
+            "Sydney Morning Herald (Australia)": {
+                "precision": 0.6237623762376238,
+                "recall": 0.5943396226415094,
+                "f1-score": 0.6086956521739131,
+                "support": 106
+            },
+            "The Age (Melbourne, Australia)": {
+                "precision": 0.5537190082644629,
+                "recall": 0.7052631578947368,
+                "f1-score": 0.6203703703703703,
+                "support": 95
+            },
+            "The Australian": {
+                "precision": 0.926923076923077,
+                "recall": 0.8827838827838828,
+                "f1-score": 0.9043151969981238,
+                "support": 273
+            },
+            "The Hindu": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 6
+            },
+            "The New York Times": {
+                "precision": 0.9568627450980393,
+                "recall": 0.9721115537848606,
+                "f1-score": 0.9644268774703557,
+                "support": 251
+            },
+            "The Times (South Africa)": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 4
+            },
+            "The Times of India (TOI)": {
+                "precision": 1.0,
+                "recall": 0.9552238805970149,
+                "f1-score": 0.9770992366412213,
+                "support": 67
+            },
+            "The Washington Post": {
+                "precision": 0.9666666666666667,
+                "recall": 0.93048128342246,
+                "f1-score": 0.9482288828337875,
+                "support": 187
+            },
+            "accuracy": 0.867,
+            "macro avg": {
+                "precision": 0.7505785111625107,
+                "recall": 0.7519417898219102,
+                "f1-score": 0.7500454381956111,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.8737113333525865,
+                "recall": 0.867,
+                "f1-score": 0.8691905692860471,
+                "support": 1000
+            }
+        }
+    }
+}

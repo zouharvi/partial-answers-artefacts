@@ -1,1 +1,712 @@
-{"dev": {"year": {"1995": {"precision": 0.031446540880503145, "recall": 0.5, "f1-score": 0.0591715976331361, "support": 30}, "1996": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 30}, "1997": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 31}, "1998": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 34}, "1999": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 23}, "2000": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 18}, "2001": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 47}, "2002": {"precision": 0.2, "recall": 0.045454545454545456, "f1-score": 0.07407407407407407, "support": 22}, "2003": {"precision": 0.022670025188916875, "recall": 0.4090909090909091, "f1-score": 0.04295942720763723, "support": 22}, "2004": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 18}, "2005": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 29}, "2006": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 33}, "2007": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 47}, "2008": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 55}, "2009": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 54}, "2010": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 44}, "2011": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 46}, "2012": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 44}, "2013": {"precision": 0.043478260869565216, "recall": 0.022727272727272728, "f1-score": 0.029850746268656712, "support": 44}, "2014": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 47}, "2015": {"precision": 0.1388888888888889, "recall": 0.06756756756756757, "f1-score": 0.09090909090909091, "support": 74}, "2016": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 53}, "2017": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 74}, "2018": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 81}, "accuracy": 0.031, "macro avg": {"precision": 0.01818682149282809, "recall": 0.04353501228501228, "f1-score": 0.012373539003858125, "support": 1000}, "weighted avg": {"precision": 0.01803295803660991, "recall": 0.031, "f1-score": 0.012390590520285355, "support": 1000}}, "ncountry": {"australia": {"precision": 0.34709193245778613, "recall": 0.39029535864978904, "f1-score": 0.36742800397219466, "support": 474}, "india": {"precision": 0.10984848484848485, "recall": 0.3411764705882353, "f1-score": 0.16618911174785098, "support": 85}, "south_africa": {"precision": 0.022727272727272728, "recall": 0.16666666666666666, "f1-score": 0.04, "support": 18}, "us": {"precision": 0.28169014084507044, "recall": 0.04728132387706856, "f1-score": 0.08097165991902834, "support": 423}, "accuracy": 0.237, "macro avg": {"precision": 0.19033945771965355, "recall": 0.23635495494543987, "f1-score": 0.1636471939097685, "support": 1000}, "weighted avg": {"precision": 0.29342271768366757, "recall": 0.237, "f1-score": 0.22325796052713662, "support": 1000}}, "newspaper": {"Mail & Guardian": {"precision": 0.01875, "recall": 0.21428571428571427, "f1-score": 0.034482758620689655, "support": 14}, "Sydney Morning Herald (Australia)": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 111}, "The Age (Melbourne, Australia)": {"precision": 0.014705882352941176, "recall": 0.00909090909090909, "f1-score": 0.011235955056179777, "support": 110}, "The Australian": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 253}, "The Hindu": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 8}, "The New York Times": {"precision": 0.25, "recall": 0.00819672131147541, "f1-score": 0.015873015873015872, "support": 244}, "The Times (South Africa)": {"precision": 0.00909090909090909, "recall": 0.25, "f1-score": 0.017543859649122806, "support": 4}, "The Times of India (TOI)": {"precision": 0.12030075187969924, "recall": 0.2077922077922078, "f1-score": 0.1523809523809524, "support": 77}, "The Washington Post": {"precision": 0.18461538461538463, "recall": 0.5363128491620112, "f1-score": 0.27467811158798283, "support": 179}, "accuracy": 0.119, "macro avg": {"precision": 0.06638476977099267, "recall": 0.13618648907136865, "f1-score": 0.0562438503519937, "support": 1000}, "weighted avg": {"precision": 0.10522582243607786, "recall": 0.119, "f1-score": 0.06656262029606405, "support": 1000}}, "month": {"April": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 17}, "August": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 2}, "December": {"precision": 0.4583333333333333, "recall": 0.025056947608200455, "f1-score": 0.04751619870410367, "support": 439}, "July": {"precision": 0.076158940397351, "recall": 0.4423076923076923, "f1-score": 0.12994350282485875, "support": 52}, "March": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 13}, "November": {"precision": 0.44339622641509435, "recall": 0.6795180722891566, "f1-score": 0.5366317792578498, "support": 415}, "October": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 62}, "accuracy": 0.316, "macro avg": {"precision": 0.13969835716368267, "recall": 0.1638403874578642, "f1-score": 0.10201306868383031, "support": 1000}, "weighted avg": {"precision": 0.38917803219625974, "recall": 0.316, "f1-score": 0.25031886177000184, "support": 1000}}, "ncompas": {"left": {"precision": 0.6673346693386774, "recall": 1.0, "f1-score": 0.8004807692307693, "support": 666}, "right": {"precision": 1.0, "recall": 0.005988023952095809, "f1-score": 0.011904761904761906, "support": 334}, "accuracy": 0.668, "macro avg": {"precision": 0.8336673346693386, "recall": 0.5029940119760479, "f1-score": 0.40619276556776557, "support": 1000}, "weighted avg": {"precision": 0.7784448897795592, "recall": 0.668, "f1-score": 0.5370963827838828, "support": 1000}}, "geographic": 0.0712188172938173, "subject": 0.07547248718437302}, "test": {"year": {"1995": {"precision": 0.01818181818181818, "recall": 0.375, "f1-score": 0.03468208092485549, "support": 24}, "1996": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 26}, "1997": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 32}, "1998": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 27}, "1999": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 25}, "2000": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 19}, "2001": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 50}, "2002": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 22}, "2003": {"precision": 0.028277634961439587, "recall": 0.4583333333333333, "f1-score": 0.053268765133171914, "support": 24}, "2004": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 26}, "2005": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 31}, "2006": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 37}, "2007": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 53}, "2008": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 42}, "2009": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 62}, "2010": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 35}, "2011": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 43}, "2012": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 49}, "2013": {"precision": 0.08, "recall": 0.03508771929824561, "f1-score": 0.048780487804878044, "support": 57}, "2014": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 39}, "2015": {"precision": 0.10714285714285714, "recall": 0.047619047619047616, "f1-score": 0.06593406593406592, "support": 63}, "2016": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 66}, "2017": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 65}, "2018": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 83}, "accuracy": 0.025, "macro avg": {"precision": 0.009733429595254786, "recall": 0.03816833751044277, "f1-score": 0.00844439165820714, "support": 1000}, "weighted avg": {"precision": 0.012425026875438186, "recall": 0.025, "f1-score": 0.00904515426411686, "support": 1000}}, "ncountry": {"australia": {"precision": 0.3592233009708738, "recall": 0.39029535864978904, "f1-score": 0.37411526794742167, "support": 474}, "india": {"precision": 0.0931174089068826, "recall": 0.3150684931506849, "f1-score": 0.14375000000000002, "support": 73}, "south_africa": {"precision": 0.014492753623188406, "recall": 0.13333333333333333, "f1-score": 0.0261437908496732, "support": 15}, "us": {"precision": 0.3, "recall": 0.0684931506849315, "f1-score": 0.11152416356877323, "support": 438}, "accuracy": 0.24, "macro avg": {"precision": 0.1917083658752362, "recall": 0.2267975839546847, "f1-score": 0.16388330559146705, "support": 1000}, "weighted avg": {"precision": 0.30868680681474436, "recall": 0.24, "f1-score": 0.23706412751294567, "support": 1000}}, "newspaper": {"Mail & Guardian": {"precision": 0.027777777777777776, "recall": 0.45454545454545453, "f1-score": 0.05235602094240837, "support": 11}, "Sydney Morning Herald (Australia)": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 106}, "The Age (Melbourne, Australia)": {"precision": 0.07407407407407407, "recall": 0.06315789473684211, "f1-score": 0.06818181818181819, "support": 95}, "The Australian": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 273}, "The Hindu": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 6}, "The New York Times": {"precision": 0.2222222222222222, "recall": 0.00796812749003984, "f1-score": 0.015384615384615384, "support": 251}, "The Times (South Africa)": {"precision": 0.010101010101010102, "recall": 0.25, "f1-score": 0.01941747572815534, "support": 4}, "The Times of India (TOI)": {"precision": 0.0873015873015873, "recall": 0.16417910447761194, "f1-score": 0.11398963730569948, "support": 67}, "The Washington Post": {"precision": 0.23061630218687873, "recall": 0.6203208556149733, "f1-score": 0.33623188405797105, "support": 187}, "accuracy": 0.141, "macro avg": {"precision": 0.07245477485150557, "recall": 0.1733523818738802, "f1-score": 0.06728460573340753, "support": 1000}, "weighted avg": {"precision": 0.11213522926892708, "recall": 0.141, "f1-score": 0.08150506534041276, "support": 1000}}, "month": {"April": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 14}, "August": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 1}, "December": {"precision": 0.3783783783783784, "recall": 0.032407407407407406, "f1-score": 0.05970149253731343, "support": 432}, "July": {"precision": 0.041379310344827586, "recall": 0.25, "f1-score": 0.07100591715976332, "support": 48}, "March": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 10}, "November": {"precision": 0.43759873617693523, "recall": 0.6367816091954023, "f1-score": 0.5187265917602996, "support": 435}, "October": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 60}, "accuracy": 0.303, "macro avg": {"precision": 0.12247948927144874, "recall": 0.13131271665754424, "f1-score": 0.09277628592248233, "support": 1000}, "weighted avg": {"precision": 0.35580111659297803, "recall": 0.303, "f1-score": 0.2548453962155183, "support": 1000}}, "ncompas": {"left": {"precision": 0.6549648946840522, "recall": 0.9954268292682927, "f1-score": 0.7900786448880823, "support": 656}, "right": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 344}, "accuracy": 0.653, "macro avg": {"precision": 0.3274824473420261, "recall": 0.49771341463414637, "f1-score": 0.39503932244404116, "support": 1000}, "weighted avg": {"precision": 0.42965697091273825, "recall": 0.653, "f1-score": 0.518291591046582, "support": 1000}}, "geographic": 0.07195538350538351, "subject": 0.08200037046137632}}
+{
+    "dev": {
+        "year": {
+            "1995": {
+                "precision": 0.031446540880503145,
+                "recall": 0.5,
+                "f1-score": 0.0591715976331361,
+                "support": 30
+            },
+            "1996": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 30
+            },
+            "1997": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 31
+            },
+            "1998": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 34
+            },
+            "1999": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 23
+            },
+            "2000": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 18
+            },
+            "2001": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 47
+            },
+            "2002": {
+                "precision": 0.2,
+                "recall": 0.045454545454545456,
+                "f1-score": 0.07407407407407407,
+                "support": 22
+            },
+            "2003": {
+                "precision": 0.022670025188916875,
+                "recall": 0.4090909090909091,
+                "f1-score": 0.04295942720763723,
+                "support": 22
+            },
+            "2004": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 18
+            },
+            "2005": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 29
+            },
+            "2006": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 33
+            },
+            "2007": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 47
+            },
+            "2008": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 55
+            },
+            "2009": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 54
+            },
+            "2010": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 44
+            },
+            "2011": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 46
+            },
+            "2012": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 44
+            },
+            "2013": {
+                "precision": 0.043478260869565216,
+                "recall": 0.022727272727272728,
+                "f1-score": 0.029850746268656712,
+                "support": 44
+            },
+            "2014": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 47
+            },
+            "2015": {
+                "precision": 0.1388888888888889,
+                "recall": 0.06756756756756757,
+                "f1-score": 0.09090909090909091,
+                "support": 74
+            },
+            "2016": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 53
+            },
+            "2017": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 74
+            },
+            "2018": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 81
+            },
+            "accuracy": 0.031,
+            "macro avg": {
+                "precision": 0.01818682149282809,
+                "recall": 0.04353501228501228,
+                "f1-score": 0.012373539003858125,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.01803295803660991,
+                "recall": 0.031,
+                "f1-score": 0.012390590520285355,
+                "support": 1000
+            }
+        },
+        "ncountry": {
+            "australia": {
+                "precision": 0.34709193245778613,
+                "recall": 0.39029535864978904,
+                "f1-score": 0.36742800397219466,
+                "support": 474
+            },
+            "india": {
+                "precision": 0.10984848484848485,
+                "recall": 0.3411764705882353,
+                "f1-score": 0.16618911174785098,
+                "support": 85
+            },
+            "south_africa": {
+                "precision": 0.022727272727272728,
+                "recall": 0.16666666666666666,
+                "f1-score": 0.04,
+                "support": 18
+            },
+            "us": {
+                "precision": 0.28169014084507044,
+                "recall": 0.04728132387706856,
+                "f1-score": 0.08097165991902834,
+                "support": 423
+            },
+            "accuracy": 0.237,
+            "macro avg": {
+                "precision": 0.19033945771965355,
+                "recall": 0.23635495494543987,
+                "f1-score": 0.1636471939097685,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.29342271768366757,
+                "recall": 0.237,
+                "f1-score": 0.22325796052713662,
+                "support": 1000
+            }
+        },
+        "newspaper": {
+            "Mail & Guardian": {
+                "precision": 0.01875,
+                "recall": 0.21428571428571427,
+                "f1-score": 0.034482758620689655,
+                "support": 14
+            },
+            "Sydney Morning Herald (Australia)": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 111
+            },
+            "The Age (Melbourne, Australia)": {
+                "precision": 0.014705882352941176,
+                "recall": 0.00909090909090909,
+                "f1-score": 0.011235955056179777,
+                "support": 110
+            },
+            "The Australian": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 253
+            },
+            "The Hindu": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 8
+            },
+            "The New York Times": {
+                "precision": 0.25,
+                "recall": 0.00819672131147541,
+                "f1-score": 0.015873015873015872,
+                "support": 244
+            },
+            "The Times (South Africa)": {
+                "precision": 0.00909090909090909,
+                "recall": 0.25,
+                "f1-score": 0.017543859649122806,
+                "support": 4
+            },
+            "The Times of India (TOI)": {
+                "precision": 0.12030075187969924,
+                "recall": 0.2077922077922078,
+                "f1-score": 0.1523809523809524,
+                "support": 77
+            },
+            "The Washington Post": {
+                "precision": 0.18461538461538463,
+                "recall": 0.5363128491620112,
+                "f1-score": 0.27467811158798283,
+                "support": 179
+            },
+            "accuracy": 0.119,
+            "macro avg": {
+                "precision": 0.06638476977099267,
+                "recall": 0.13618648907136865,
+                "f1-score": 0.0562438503519937,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.10522582243607786,
+                "recall": 0.119,
+                "f1-score": 0.06656262029606405,
+                "support": 1000
+            }
+        },
+        "month": {
+            "April": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 17
+            },
+            "August": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 2
+            },
+            "December": {
+                "precision": 0.4583333333333333,
+                "recall": 0.025056947608200455,
+                "f1-score": 0.04751619870410367,
+                "support": 439
+            },
+            "July": {
+                "precision": 0.076158940397351,
+                "recall": 0.4423076923076923,
+                "f1-score": 0.12994350282485875,
+                "support": 52
+            },
+            "March": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 13
+            },
+            "November": {
+                "precision": 0.44339622641509435,
+                "recall": 0.6795180722891566,
+                "f1-score": 0.5366317792578498,
+                "support": 415
+            },
+            "October": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 62
+            },
+            "accuracy": 0.316,
+            "macro avg": {
+                "precision": 0.13969835716368267,
+                "recall": 0.1638403874578642,
+                "f1-score": 0.10201306868383031,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.38917803219625974,
+                "recall": 0.316,
+                "f1-score": 0.25031886177000184,
+                "support": 1000
+            }
+        },
+        "ncompas": {
+            "left": {
+                "precision": 0.6673346693386774,
+                "recall": 1.0,
+                "f1-score": 0.8004807692307693,
+                "support": 666
+            },
+            "right": {
+                "precision": 1.0,
+                "recall": 0.005988023952095809,
+                "f1-score": 0.011904761904761906,
+                "support": 334
+            },
+            "accuracy": 0.668,
+            "macro avg": {
+                "precision": 0.8336673346693386,
+                "recall": 0.5029940119760479,
+                "f1-score": 0.40619276556776557,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.7784448897795592,
+                "recall": 0.668,
+                "f1-score": 0.5370963827838828,
+                "support": 1000
+            }
+        },
+        "geographic": 0.0712188172938173,
+        "subject": 0.07547248718437302
+    },
+    "test": {
+        "year": {
+            "1995": {
+                "precision": 0.01818181818181818,
+                "recall": 0.375,
+                "f1-score": 0.03468208092485549,
+                "support": 24
+            },
+            "1996": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 26
+            },
+            "1997": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 32
+            },
+            "1998": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 27
+            },
+            "1999": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 25
+            },
+            "2000": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 19
+            },
+            "2001": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 50
+            },
+            "2002": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 22
+            },
+            "2003": {
+                "precision": 0.028277634961439587,
+                "recall": 0.4583333333333333,
+                "f1-score": 0.053268765133171914,
+                "support": 24
+            },
+            "2004": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 26
+            },
+            "2005": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 31
+            },
+            "2006": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 37
+            },
+            "2007": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 53
+            },
+            "2008": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 42
+            },
+            "2009": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 62
+            },
+            "2010": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 35
+            },
+            "2011": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 43
+            },
+            "2012": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 49
+            },
+            "2013": {
+                "precision": 0.08,
+                "recall": 0.03508771929824561,
+                "f1-score": 0.048780487804878044,
+                "support": 57
+            },
+            "2014": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 39
+            },
+            "2015": {
+                "precision": 0.10714285714285714,
+                "recall": 0.047619047619047616,
+                "f1-score": 0.06593406593406592,
+                "support": 63
+            },
+            "2016": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 66
+            },
+            "2017": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 65
+            },
+            "2018": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 83
+            },
+            "accuracy": 0.025,
+            "macro avg": {
+                "precision": 0.009733429595254786,
+                "recall": 0.03816833751044277,
+                "f1-score": 0.00844439165820714,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.012425026875438186,
+                "recall": 0.025,
+                "f1-score": 0.00904515426411686,
+                "support": 1000
+            }
+        },
+        "ncountry": {
+            "australia": {
+                "precision": 0.3592233009708738,
+                "recall": 0.39029535864978904,
+                "f1-score": 0.37411526794742167,
+                "support": 474
+            },
+            "india": {
+                "precision": 0.0931174089068826,
+                "recall": 0.3150684931506849,
+                "f1-score": 0.14375000000000002,
+                "support": 73
+            },
+            "south_africa": {
+                "precision": 0.014492753623188406,
+                "recall": 0.13333333333333333,
+                "f1-score": 0.0261437908496732,
+                "support": 15
+            },
+            "us": {
+                "precision": 0.3,
+                "recall": 0.0684931506849315,
+                "f1-score": 0.11152416356877323,
+                "support": 438
+            },
+            "accuracy": 0.24,
+            "macro avg": {
+                "precision": 0.1917083658752362,
+                "recall": 0.2267975839546847,
+                "f1-score": 0.16388330559146705,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.30868680681474436,
+                "recall": 0.24,
+                "f1-score": 0.23706412751294567,
+                "support": 1000
+            }
+        },
+        "newspaper": {
+            "Mail & Guardian": {
+                "precision": 0.027777777777777776,
+                "recall": 0.45454545454545453,
+                "f1-score": 0.05235602094240837,
+                "support": 11
+            },
+            "Sydney Morning Herald (Australia)": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 106
+            },
+            "The Age (Melbourne, Australia)": {
+                "precision": 0.07407407407407407,
+                "recall": 0.06315789473684211,
+                "f1-score": 0.06818181818181819,
+                "support": 95
+            },
+            "The Australian": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 273
+            },
+            "The Hindu": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 6
+            },
+            "The New York Times": {
+                "precision": 0.2222222222222222,
+                "recall": 0.00796812749003984,
+                "f1-score": 0.015384615384615384,
+                "support": 251
+            },
+            "The Times (South Africa)": {
+                "precision": 0.010101010101010102,
+                "recall": 0.25,
+                "f1-score": 0.01941747572815534,
+                "support": 4
+            },
+            "The Times of India (TOI)": {
+                "precision": 0.0873015873015873,
+                "recall": 0.16417910447761194,
+                "f1-score": 0.11398963730569948,
+                "support": 67
+            },
+            "The Washington Post": {
+                "precision": 0.23061630218687873,
+                "recall": 0.6203208556149733,
+                "f1-score": 0.33623188405797105,
+                "support": 187
+            },
+            "accuracy": 0.141,
+            "macro avg": {
+                "precision": 0.07245477485150557,
+                "recall": 0.1733523818738802,
+                "f1-score": 0.06728460573340753,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.11213522926892708,
+                "recall": 0.141,
+                "f1-score": 0.08150506534041276,
+                "support": 1000
+            }
+        },
+        "month": {
+            "April": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 14
+            },
+            "August": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 1
+            },
+            "December": {
+                "precision": 0.3783783783783784,
+                "recall": 0.032407407407407406,
+                "f1-score": 0.05970149253731343,
+                "support": 432
+            },
+            "July": {
+                "precision": 0.041379310344827586,
+                "recall": 0.25,
+                "f1-score": 0.07100591715976332,
+                "support": 48
+            },
+            "March": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 10
+            },
+            "November": {
+                "precision": 0.43759873617693523,
+                "recall": 0.6367816091954023,
+                "f1-score": 0.5187265917602996,
+                "support": 435
+            },
+            "October": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 60
+            },
+            "accuracy": 0.303,
+            "macro avg": {
+                "precision": 0.12247948927144874,
+                "recall": 0.13131271665754424,
+                "f1-score": 0.09277628592248233,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.35580111659297803,
+                "recall": 0.303,
+                "f1-score": 0.2548453962155183,
+                "support": 1000
+            }
+        },
+        "ncompas": {
+            "left": {
+                "precision": 0.6549648946840522,
+                "recall": 0.9954268292682927,
+                "f1-score": 0.7900786448880823,
+                "support": 656
+            },
+            "right": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1-score": 0.0,
+                "support": 344
+            },
+            "accuracy": 0.653,
+            "macro avg": {
+                "precision": 0.3274824473420261,
+                "recall": 0.49771341463414637,
+                "f1-score": 0.39503932244404116,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.42965697091273825,
+                "recall": 0.653,
+                "f1-score": 0.518291591046582,
+                "support": 1000
+            }
+        },
+        "geographic": 0.07195538350538351,
+        "subject": 0.08200037046137632
+    }
+}

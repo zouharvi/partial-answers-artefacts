@@ -1,1 +1,60 @@
-{"dev": {"ncompas": {"left": {"precision": 0.9472140762463344, "recall": 0.96996996996997, "f1-score": 0.9584569732937687, "support": 666}, "right": {"precision": 0.9371069182389937, "recall": 0.8922155688622755, "f1-score": 0.9141104294478527, "support": 334}, "accuracy": 0.944, "macro avg": {"precision": 0.942160497242664, "recall": 0.9310927694161227, "f1-score": 0.9362837013708107, "support": 1000}, "weighted avg": {"precision": 0.9438382854718825, "recall": 0.944, "f1-score": 0.9436452276492328, "support": 1000}}}, "test": {"ncompas": {"left": {"precision": 0.9254385964912281, "recall": 0.9649390243902439, "f1-score": 0.944776119402985, "support": 656}, "right": {"precision": 0.9272151898734177, "recall": 0.8517441860465116, "f1-score": 0.8878787878787878, "support": 344}, "accuracy": 0.926, "macro avg": {"precision": 0.9263268931823229, "recall": 0.9083416052183777, "f1-score": 0.9163274536408864, "support": 1000}, "weighted avg": {"precision": 0.9260497446147012, "recall": 0.926, "f1-score": 0.9252034373586612, "support": 1000}}}}
+{
+    "dev": {
+        "ncompas": {
+            "left": {
+                "precision": 0.9472140762463344,
+                "recall": 0.96996996996997,
+                "f1-score": 0.9584569732937687,
+                "support": 666
+            },
+            "right": {
+                "precision": 0.9371069182389937,
+                "recall": 0.8922155688622755,
+                "f1-score": 0.9141104294478527,
+                "support": 334
+            },
+            "accuracy": 0.944,
+            "macro avg": {
+                "precision": 0.942160497242664,
+                "recall": 0.9310927694161227,
+                "f1-score": 0.9362837013708107,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.9438382854718825,
+                "recall": 0.944,
+                "f1-score": 0.9436452276492328,
+                "support": 1000
+            }
+        }
+    },
+    "test": {
+        "ncompas": {
+            "left": {
+                "precision": 0.9254385964912281,
+                "recall": 0.9649390243902439,
+                "f1-score": 0.944776119402985,
+                "support": 656
+            },
+            "right": {
+                "precision": 0.9272151898734177,
+                "recall": 0.8517441860465116,
+                "f1-score": 0.8878787878787878,
+                "support": 344
+            },
+            "accuracy": 0.926,
+            "macro avg": {
+                "precision": 0.9263268931823229,
+                "recall": 0.9083416052183777,
+                "f1-score": 0.9163274536408864,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.9260497446147012,
+                "recall": 0.926,
+                "f1-score": 0.9252034373586612,
+                "support": 1000
+            }
+        }
+    }
+}

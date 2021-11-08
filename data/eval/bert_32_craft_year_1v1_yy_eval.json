@@ -1,1 +1,324 @@
-{"dev": {"year": {"1995": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 30}, "1996": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 30}, "1997": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 31}, "1998": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 34}, "1999": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 23}, "2000": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 18}, "2001": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 47}, "2002": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 22}, "2003": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 22}, "2004": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 18}, "2005": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 29}, "2006": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 33}, "2007": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 47}, "2008": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 55}, "2009": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 54}, "2010": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 44}, "2011": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 46}, "2012": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 44}, "2013": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 44}, "2014": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 47}, "2015": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 74}, "2016": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 53}, "2017": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 74}, "2018": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 81}, "accuracy": 1.0, "macro avg": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 1000}, "weighted avg": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 1000}}}, "test": {"year": {"1995": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 24}, "1996": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 26}, "1997": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 32}, "1998": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 27}, "1999": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 25}, "2000": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 19}, "2001": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 50}, "2002": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 22}, "2003": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 24}, "2004": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 26}, "2005": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 31}, "2006": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 37}, "2007": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 53}, "2008": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 42}, "2009": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 62}, "2010": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 35}, "2011": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 43}, "2012": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 49}, "2013": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 57}, "2014": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 39}, "2015": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 63}, "2016": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 66}, "2017": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 65}, "2018": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 83}, "accuracy": 1.0, "macro avg": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 1000}, "weighted avg": {"precision": 1.0, "recall": 1.0, "f1-score": 1.0, "support": 1000}}}}
+{
+    "dev": {
+        "year": {
+            "1995": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 30
+            },
+            "1996": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 30
+            },
+            "1997": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 31
+            },
+            "1998": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 34
+            },
+            "1999": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 23
+            },
+            "2000": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 18
+            },
+            "2001": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 47
+            },
+            "2002": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 22
+            },
+            "2003": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 22
+            },
+            "2004": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 18
+            },
+            "2005": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 29
+            },
+            "2006": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 33
+            },
+            "2007": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 47
+            },
+            "2008": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 55
+            },
+            "2009": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 54
+            },
+            "2010": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 44
+            },
+            "2011": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 46
+            },
+            "2012": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 44
+            },
+            "2013": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 44
+            },
+            "2014": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 47
+            },
+            "2015": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 74
+            },
+            "2016": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 53
+            },
+            "2017": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 74
+            },
+            "2018": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 81
+            },
+            "accuracy": 1.0,
+            "macro avg": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 1000
+            }
+        }
+    },
+    "test": {
+        "year": {
+            "1995": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 24
+            },
+            "1996": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 26
+            },
+            "1997": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 32
+            },
+            "1998": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 27
+            },
+            "1999": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 25
+            },
+            "2000": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 19
+            },
+            "2001": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 50
+            },
+            "2002": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 22
+            },
+            "2003": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 24
+            },
+            "2004": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 26
+            },
+            "2005": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 31
+            },
+            "2006": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 37
+            },
+            "2007": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 53
+            },
+            "2008": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 42
+            },
+            "2009": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 62
+            },
+            "2010": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 35
+            },
+            "2011": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 43
+            },
+            "2012": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 49
+            },
+            "2013": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 57
+            },
+            "2014": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 39
+            },
+            "2015": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 63
+            },
+            "2016": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 66
+            },
+            "2017": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 65
+            },
+            "2018": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 83
+            },
+            "accuracy": 1.0,
+            "macro avg": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 1000
+            }
+        }
+    }
+}

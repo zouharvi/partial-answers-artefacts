@@ -1,1 +1,84 @@
-{"dev": {"ncountry": {"australia": {"precision": 0.9728601252609603, "recall": 0.9831223628691983, "f1-score": 0.9779643231899265, "support": 474}, "india": {"precision": 0.9010989010989011, "recall": 0.9647058823529412, "f1-score": 0.9318181818181819, "support": 85}, "south_africa": {"precision": 1.0, "recall": 0.3888888888888889, "f1-score": 0.56, "support": 18}, "us": {"precision": 0.9929078014184397, "recall": 0.9929078014184397, "f1-score": 0.9929078014184397, "support": 423}, "accuracy": 0.975, "macro avg": {"precision": 0.9667167069445753, "recall": 0.832406233882367, "f1-score": 0.8656725766066371, "support": 1000}, "weighted avg": {"precision": 0.9757291059671017, "recall": 0.975, "f1-score": 0.9728396346465708, "support": 1000}}}, "test": {"ncountry": {"australia": {"precision": 0.9751552795031055, "recall": 0.9936708860759493, "f1-score": 0.9843260188087773, "support": 474}, "india": {"precision": 0.9859154929577465, "recall": 0.958904109589041, "f1-score": 0.9722222222222222, "support": 73}, "south_africa": {"precision": 0.8888888888888888, "recall": 0.5333333333333333, "f1-score": 0.6666666666666667, "support": 15}, "us": {"precision": 0.9931350114416476, "recall": 0.9908675799086758, "f1-score": 0.992, "support": 438}, "accuracy": 0.983, "macro avg": {"precision": 0.9607736681978472, "recall": 0.8691939772267498, "f1-score": 0.9038037269244166, "support": 1000}, "weighted avg": {"precision": 0.9825219018151626, "recall": 0.983, "f1-score": 0.9820387551375827, "support": 1000}}}}
+{
+    "dev": {
+        "ncountry": {
+            "australia": {
+                "precision": 0.9728601252609603,
+                "recall": 0.9831223628691983,
+                "f1-score": 0.9779643231899265,
+                "support": 474
+            },
+            "india": {
+                "precision": 0.9010989010989011,
+                "recall": 0.9647058823529412,
+                "f1-score": 0.9318181818181819,
+                "support": 85
+            },
+            "south_africa": {
+                "precision": 1.0,
+                "recall": 0.3888888888888889,
+                "f1-score": 0.56,
+                "support": 18
+            },
+            "us": {
+                "precision": 0.9929078014184397,
+                "recall": 0.9929078014184397,
+                "f1-score": 0.9929078014184397,
+                "support": 423
+            },
+            "accuracy": 0.975,
+            "macro avg": {
+                "precision": 0.9667167069445753,
+                "recall": 0.832406233882367,
+                "f1-score": 0.8656725766066371,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.9757291059671017,
+                "recall": 0.975,
+                "f1-score": 0.9728396346465708,
+                "support": 1000
+            }
+        }
+    },
+    "test": {
+        "ncountry": {
+            "australia": {
+                "precision": 0.9751552795031055,
+                "recall": 0.9936708860759493,
+                "f1-score": 0.9843260188087773,
+                "support": 474
+            },
+            "india": {
+                "precision": 0.9859154929577465,
+                "recall": 0.958904109589041,
+                "f1-score": 0.9722222222222222,
+                "support": 73
+            },
+            "south_africa": {
+                "precision": 0.8888888888888888,
+                "recall": 0.5333333333333333,
+                "f1-score": 0.6666666666666667,
+                "support": 15
+            },
+            "us": {
+                "precision": 0.9931350114416476,
+                "recall": 0.9908675799086758,
+                "f1-score": 0.992,
+                "support": 438
+            },
+            "accuracy": 0.983,
+            "macro avg": {
+                "precision": 0.9607736681978472,
+                "recall": 0.8691939772267498,
+                "f1-score": 0.9038037269244166,
+                "support": 1000
+            },
+            "weighted avg": {
+                "precision": 0.9825219018151626,
+                "recall": 0.983,
+                "f1-score": 0.9820387551375827,
+                "support": 1000
+            }
+        }
+    }
+}

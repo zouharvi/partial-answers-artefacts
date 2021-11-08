@@ -1,6 +1,6 @@
 # Partial Answers as Artefacts
 
-Work-in-Progress exploration of Fusion of Partial Answers as Artefacts for Multi-Task Classification.
+Initial (work-in-progress) exploration of Fusion of Partial Answers as Artefacts for Multi-Output Classification.
 Authors: Vilém Zouhar, Edu Vallejo Arguinzoniz.
 
 ## Running the code
@@ -45,6 +45,8 @@ You may enforce the script to use CPU/RAM (e.g. because of memory limitations) b
 This can also be used select which device you would like to utilize (if there are multiple), e.g. `CUDA_VISIBLE_DEVICES=2;` will use the third GPU device.
 
 All the scripts use a fixed split into train/dev/test (-1/1000/1000) that is randomly sampled in-time.
+Results for most of the experiments are reported with class-specific metrics (precision, recall, F1) as well as their aggregation (macro-/micro-avg, accuracy) in JSONs in [data/eval/](data/eval/).
+The paper reports only accuracies for reasons explained there.
 
 #### Main Model
 
@@ -69,6 +71,7 @@ The eval script produces a JSON file with the results (in `data/eval` by default
 in those scripts (by running them with the `--help` attribute).
 
 ##### Joint model
+
 Additionally we provide the possibility to download a checkpoint for the joint model (instead of training it with `make train_all_0v1`).
 To do that run `make get_all_0v1`
 

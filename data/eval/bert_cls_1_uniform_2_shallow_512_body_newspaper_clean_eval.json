@@ -1,1 +1,71 @@
-{"newspaper": {"Mail & Guardian": {"precision": 0.625, "recall": 0.9090909090909091, "f1-score": 0.7407407407407406, "support": 11}, "Sydney Morning Herald (Australia)": {"precision": 0.5703703703703704, "recall": 0.7264150943396226, "f1-score": 0.6390041493775934, "support": 106}, "The Age (Melbourne, Australia)": {"precision": 0.703125, "recall": 0.47368421052631576, "f1-score": 0.5660377358490566, "support": 95}, "The Australian": {"precision": 0.8591549295774648, "recall": 0.8937728937728938, "f1-score": 0.8761220825852781, "support": 273}, "The Hindu": {"precision": 0.8571428571428571, "recall": 1.0, "f1-score": 0.923076923076923, "support": 6}, "The New York Times": {"precision": 0.9672131147540983, "recall": 0.9402390438247012, "f1-score": 0.9535353535353536, "support": 251}, "The Times (South Africa)": {"precision": 0.0, "recall": 0.0, "f1-score": 0.0, "support": 4}, "The Times of India (TOI)": {"precision": 1.0, "recall": 0.9402985074626866, "f1-score": 0.9692307692307692, "support": 67}, "The Washington Post": {"precision": 0.946236559139785, "recall": 0.9411764705882353, "f1-score": 0.9436997319034853, "support": 187}, "accuracy": 0.857, "macro avg": {"precision": 0.7253603145538418, "recall": 0.7582974588450404, "f1-score": 0.7346052762554666, "support": 1000}, "weighted avg": {"precision": 0.8605400155391827, "recall": 0.857, "f1-score": 0.855123648113863, "support": 1000}}}
+{
+    "newspaper": {
+        "Mail & Guardian": {
+            "precision": 0.625,
+            "recall": 0.9090909090909091,
+            "f1-score": 0.7407407407407406,
+            "support": 11
+        },
+        "Sydney Morning Herald (Australia)": {
+            "precision": 0.5703703703703704,
+            "recall": 0.7264150943396226,
+            "f1-score": 0.6390041493775934,
+            "support": 106
+        },
+        "The Age (Melbourne, Australia)": {
+            "precision": 0.703125,
+            "recall": 0.47368421052631576,
+            "f1-score": 0.5660377358490566,
+            "support": 95
+        },
+        "The Australian": {
+            "precision": 0.8591549295774648,
+            "recall": 0.8937728937728938,
+            "f1-score": 0.8761220825852781,
+            "support": 273
+        },
+        "The Hindu": {
+            "precision": 0.8571428571428571,
+            "recall": 1.0,
+            "f1-score": 0.923076923076923,
+            "support": 6
+        },
+        "The New York Times": {
+            "precision": 0.9672131147540983,
+            "recall": 0.9402390438247012,
+            "f1-score": 0.9535353535353536,
+            "support": 251
+        },
+        "The Times (South Africa)": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 4
+        },
+        "The Times of India (TOI)": {
+            "precision": 1.0,
+            "recall": 0.9402985074626866,
+            "f1-score": 0.9692307692307692,
+            "support": 67
+        },
+        "The Washington Post": {
+            "precision": 0.946236559139785,
+            "recall": 0.9411764705882353,
+            "f1-score": 0.9436997319034853,
+            "support": 187
+        },
+        "accuracy": 0.857,
+        "macro avg": {
+            "precision": 0.7253603145538418,
+            "recall": 0.7582974588450404,
+            "f1-score": 0.7346052762554666,
+            "support": 1000
+        },
+        "weighted avg": {
+            "precision": 0.8605400155391827,
+            "recall": 0.857,
+            "f1-score": 0.855123648113863,
+            "support": 1000
+        }
+    }
+}
