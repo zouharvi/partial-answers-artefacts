@@ -2,6 +2,7 @@
 
 Initial (work-in-progress) exploration of Fusion of Partial Answers as Artefacts for Multi-Output Classification.
 Authors: Vilém Zouhar, Edu Vallejo Arguinzoniz.
+See [the final report](meta/report/report.pdf).
 
 ## Running the code
 

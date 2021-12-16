@@ -1,0 +1,194 @@
+\section{Data Distribution} \label{app_sec:balance}
+
+\Cref{tab:dist_month,tab:dist_year,tab:dist_newspaper,tab:dist_subject,tab:dist_geographic} show the distributions of the variables on our filtered data.
+The newspaper political alignment and newspaper country is not presented separately because these values can be inferred from \Cref{tab:dist_newspaper}.
+
+\bigskip
+\bigskip
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lclc}
+\toprule
+Class & Freq. & Class & Freq. \\
+\midrule
+December & \prc{43.9} & April & \prc{1.3} \\
+November & \prc{43.5} & March & \prc{1.0} \\
+October & \prc{5.6} & August & \prc{0.2} \\
+July & \prc{4.6}  \\
+\bottomrule
+\end{tabular}
+\caption{Relative frequencies of \emph{month} classes}.
+\label{tab:dist_month}
+\end{table}
+
+\bigskip
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lclclc}
+\toprule
+Class & Freq. & Class & Freq. & Class & Freq. \\
+\midrule
+1995 & \prc{2.3} & 2003 & \prc{2.4} & 2011 & \prc{5.3} \\
+1996 & \prc{2.4} & 2004 & \prc{2.1} & 2012 & \prc{4.7} \\
+1997 & \prc{3.2} & 2005 & \prc{2.9} & 2013 & \prc{4.9} \\
+1998 & \prc{2.8} & 2006 & \prc{4.1} & 2014 & \prc{4.2} \\
+1999 & \prc{2.5} & 2007 & \prc{4.8} & 2015 & \prc{6.9} \\
+2000 & \prc{2.1} & 2008 & \prc{4.6} & 2016 & \prc{6.1} \\
+2001 & \prc{5.3} & 2009 & \prc{6.0} & 2017 & \prc{6.2} \\
+2002 & \prc{1.9} & 2010 & \prc{4.3} & 2018 & \prc{8.0} \\
+\bottomrule
+\end{tabular}
+\caption{Relative frequencies of \emph{year} classes.}
+\label{tab:dist_year}
+\end{table}
+
+\bigskip
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lc}
+\toprule
+Class & Freq. \\
+\midrule
+The Australian & \prc{26.6} \\
+The New York Times & \prc{25.1} \\
+The Washington Post & \prc{18.1} \\
+Sydney Morning Herald & \prc{10.6} \\
+The Age & \prc{9.3} \\
+The Times of India & \prc{7.7} \\
+Mail \& Guardian & \prc{1.2} \\
+The Hindu & \prc{1.0} \\
+The Times (South Africa) & \prc{0.4} \\
+\bottomrule
+\end{tabular}
+\caption{Relative frequencies of \emph{newspaper} classes.}
+\label{tab:dist_newspaper}
+\end{table}
+
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lc}
+\toprule
+Item & Freq. \\
+\midrule
+CLIMATE CHANGE & 20.0\% \\
+EMISSIONS & 19.4\% \\
+AGREEMENTS & 19.2\% \\
+GOV. ADVISORS \& MINISTERS & 14.6\% \\
+TALKS \& MEETINGS & 13.7\% \\
+GREENHOUSE GASES & 13.7\% \\
+UNITED NATIONS & 13.6\% \\
+HEADS OF STATE \& GOV. & 13.3\% \\
+NEGATIVE PERSONAL NEWS & 12.8\% \\
+GLOBAL WARMING & 11.8\% \\
+INTERNATIONAL RELATIONS & 11.7\% \\
+PRIME MINISTERS & 11.5\% \\
+GOV. \& PUB. ADMINISTRATION & 11.3\% \\
+ENV. \& NATURAL RESOURCES & 10.9\% \\
+LEGISLATIVE BODIES & 10.4\% \\
+\bottomrule
+\end{tabular}
+\caption{Percentage of articles in which a given item from the \emph{subject} variable occurs. Filtered to items with relative frequency above 10\%.}
+\label{tab:dist_subject}
+\end{table}
+
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lc}
+\toprule
+Item & Freq. \\
+\midrule
+UNITED STATES & 29.5\% \\
+AUSTRALIA & 25.4\% \\
+SYDNEY, AUSTRALIA & 15.9\% \\
+CHINA & 12.9\% \\
+MELBOURNE, AUSTRALIA & 12.8\% \\
+EUROPE & 10.9\% \\
+VICTORIA, AUSTRALIA & 10.8\% \\
+\bottomrule
+\end{tabular}
+\caption{Percentage of articles in which a given item from the \emph{geographic} variable occurs. Filtered to items with relative frequency above 10\%.}
+\label{tab:dist_geographic}
+\end{table}
+
+\clearpage
+
+\section{Baseline Statistical Models} \label{subsubsec:baselines}
+
+For completeness we include individual task performance with baseline models.
+\begin{itemize}[leftmargin=0.4cm,noitemsep]
+\item
+BoW is a support vector machine-based classifier with linear kernel.
+It uses bag of words vectorizer without any pruning nor additional parameters.
+\item
+TF-IDF is a support vector machine-based classifier with linear kernel.
+It uses TF-IDF vectorizer with n-gram range 1 to 2 and 90k features.
+\item
+LSTM is bidirectional model with LSTM units (256 hidden dim) which is followed by a Dense layer (512 units, ReLU activation, 30\% dropout), second Denser layer (512 units, ReLU activation, 20\% dropout) and output layer (softmax for single-class variables, element-wise sigmoid for multi-output variables).
+The inputs to the recurrent network are GloVe embeddings (200 dim) of the words in the headline joined with first 20 tokens of the body. 
+The output of the recurrent network is joined together with TF-IDF representation of the body (32768 features, n-gram range 1 to 2) because on that large sequences, LSTM without attention is ineffective.
+The TF-IDF vector is first passed through 75\% dropout to limit overfitting.
+The model is optimized with Adam (learning rate 10$^{-3}$) and batch size of 128.
+\end{itemize}
+
+% Even though SVM classifiers slightly outperform logistic regression on unique class variables, they become computationally untractable for scoring \emph{subject} and \emph{geographic}.
+For SVM for variables with multiple output (\emph{subject} and \emph{geographic}), the labels are expanded into multiple training examples as:
+$$
+(x, [y_1, y_2, \ldots, y_k]) \rightarrow (x, y_1), (x, y_2), \ldots (x, y_k)
+$$
+The scores for R-Precision evaluation are then the class probabilities.
+The reason for expanding the labels to individual training examples is to increase output probability (scores) for the positive items.\footnote{We also explored building a classifier for every item and using the output probability as the score though that prevents the model from modeling any relationship between the output items. The used version does so by using 1-vs-rest modelling. The results for the distributed models were slightly worse than that of the presented one (not shown).}
+% A model is fitted for every item and the output probability interpreted as item score which is used in ordering during R-Precision evaluation.
+These models provide an intuition of performance of informed models.
+Their results are shown in \Cref{tab:baselines}.
+They are based on the same train-dev split (16k, 1k, 1k) as in \Cref{tab:bert_single_multi} and therefore are comparable.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lccc}
+\toprule
+& BoW & TF-IDF & LSTM \\
+\midrule
+Newspaper & \prc{80.3} & \prc{83.8}  & \prc{81.6} \\
+News. country & \prc{97.5} & \prc{98.0} & \prc{98.1} \\
+News. align. & \prc{89.6} & \prc{92.7} & \prc{91.8} \\
+Month & \prc{64.9} & \prc{68.9} & \prc{64.6} \\
+Year & \prc{53.2} & \prc{58.8} & \prc{47.7} \\
+\midrule
+Subject & \prc{34.3} & \prc{61.9} & \prc{59.5} \\
+Geographic & \prc{45.2} & \prc{67.1} & \prc{64.3} \\
+\bottomrule
+\end{tabular}
+\caption{
+Overview of baseline SVM and LSTM models for single variable prediction.
+Performance is reported in training accuracy except for variable \emph{subject} and \emph{geographic} which are reported with R-Precision.}
+\label{tab:baselines}
+\end{table}
+
+While SVM performs better with TF-IDF than with Bag of Words vectorizer, the performanceo of LSTM is underwhelming.
+Despite each individual decision regarding the architecture or hyperparameter selection lead to improvement, it was not he best of explored baseline models.
+While we believe that the LSTM-model could be further improved, it is not he goal of this paper to find the single best model that does best in the classification tasks and therefore we do not explore this further.
+
+\section{BERT Hyper-parameters} \label{subsubsec:B_hparam}
+Table \ref{tab:h_params} shows the hyper-parameters used in training the different instances of Bert.
+These settings may not be optimal for all experiments but there was no time to explore hyper-parameters for every possible experiment. We were also constrained by the computational requirements of the experiments so had to take that into account when choosing hyper-parameters.
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{ll}
+    \toprule
+    \textbf{Hyper-parameter} & \textbf{Value}\\     %&  \textbf{Value}\\
+    \midrule
+    Epochs     & 2\\
+    Max sequence length & 512\\
+    Batch-size & 8\\
+    Optimizer & Adam\\
+    Learning-rate & $5\cdot10^{-5}$\\
+    \bottomrule
+    \end{tabular}
+    \caption{Hyper-parameters used for training Bert-Single and Bert-Joint.}
+    \label{tab:h_params}
+\end{table}
