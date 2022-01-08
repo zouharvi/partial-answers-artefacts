@@ -29,7 +29,7 @@ The end result should be a graph similar to this one:
 
 #### Variable Distribution
 
-Run `make balance` to generate overview of class distributions (in LaTeX table formatting).
+Run `make balance` to generate an overview of class distributions (in LaTeX table formatting).
 
 #### Feature Dependency
 
@@ -95,7 +95,7 @@ The first three are invoked via the following scripts.
 The input can be either `headline`, `body` or `both`.
 The output is one of the variables (single).
 If the output variable is multi-class then the models are automatically adapted to support scoring based on probabilities.
-The vectorizer can be either `bow` for the absolute baseline or `tfidf` for a better adapted version.
+The vectorizer can be either `bow` for the absolute baseline or `tfidf` for a better-adapted version.
 The following models are supported `nb` (naive Bayes, no multioutput), `lr` (logistic regression), `svc` (support vector machine with RBF kernel), `linear_svc` (support vector machine with the linear kernel).
 No that `svc` may take up to an hour to run and also the same applies for models for predicting _subject_ or _geographic_ because internally many more models need to be trained.
 

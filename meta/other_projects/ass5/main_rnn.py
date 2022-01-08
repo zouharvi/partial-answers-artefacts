@@ -88,7 +88,7 @@ def main():
     # Train the model
     model.train(X_train, Y_train_bin, X_dev, Y_dev_bin)
 
-    # compute test accuracy if a test file has been passed 
+    # compute test accuracy if a test file has been passed
     if args.test_file:
         # read in test set and vectorize
         X_test, Y_test = read_corpus(args.test_file)

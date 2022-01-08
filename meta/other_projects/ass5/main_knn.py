@@ -28,7 +28,7 @@ def create_arg_parser():
                         help="Which encoder to use: glove-{a,m}, {bert,sbert,dpr}-{c,t}")
     parser.add_argument("--embeddings", default='glove_reviews.json',
                         help="Path to glove file embedding")
-    
+
     args = parser.parse_args()
     return args
 
@@ -52,31 +52,32 @@ def main():
     # note: this could be perhaps hidden behind a lazy lambda to reduce the number of lines
     # but this seems more straightforward
     if args.encoder == "tfidf":
-        X_all = encoder_tfidf(X_train+X_dev, max_features=None)
+        X_all = encoder_tfidf(X_train + X_dev, max_features=None)
     elif args.encoder == "tfidf-m":
-        X_all = encoder_tfidf(X_train+X_dev, max_features=768)
+        X_all = encoder_tfidf(X_train + X_dev, max_features=768)
     elif args.encoder == "tfidf-s":
-        X_all = encoder_tfidf(X_train+X_dev, max_features=768)
+        X_all = encoder_tfidf(X_train + X_dev, max_features=768)
     elif args.encoder == "glove-a":
-        X_all = encoder_glove(X_train+X_dev, embeddings, action="avg")
+        X_all = encoder_glove(X_train + X_dev, embeddings, action="avg")
     elif args.encoder == "glove-m":
-        X_all = encoder_glove(X_train+X_dev, embeddings, action="max")
+        X_all = encoder_glove(X_train + X_dev, embeddings, action="max")
     elif args.encoder == "bert-c":
-        X_all = encoder_bert(X_train+X_dev, type_out="cls")
+        X_all = encoder_bert(X_train + X_dev, type_out="cls")
     elif args.encoder == "bert-t":
-        X_all = encoder_bert(X_train+X_dev, type_out="tokens")
+        X_all = encoder_bert(X_train + X_dev, type_out="tokens")
     elif args.encoder == "sbert-c":
-        X_all = encoder_sbert(X_train+X_dev, type_out="cls")
+        X_all = encoder_sbert(X_train + X_dev, type_out="cls")
     elif args.encoder == "sbert-t":
-        X_all = encoder_sbert(X_train+X_dev, type_out="tokens")
+        X_all = encoder_sbert(X_train + X_dev, type_out="tokens")
     elif args.encoder == "dpr-c-q":
-        X_all = encoder_dpr(X_train+X_dev, type_out="cls", version="query")
+        X_all = encoder_dpr(X_train + X_dev, type_out="cls", version="query")
     elif args.encoder == "dpr-t-q":
-        X_all = encoder_dpr(X_train+X_dev, type_out="tokens", version="query")
+        X_all = encoder_dpr(
+            X_train + X_dev, type_out="tokens", version="query")
     elif args.encoder == "dpr-c-d":
-        X_all = encoder_dpr(X_train+X_dev, type_out="cls", version="doc")
+        X_all = encoder_dpr(X_train + X_dev, type_out="cls", version="doc")
     elif args.encoder == "dpr-t-d":
-        X_all = encoder_dpr(X_train+X_dev, type_out="tokens", version="doc")
+        X_all = encoder_dpr(X_train + X_dev, type_out="tokens", version="doc")
     else:
         raise Exception("Unknown encoder model")
 
@@ -103,6 +104,7 @@ def main():
                     f"{k:0>2}",
                     f"{score:.2%}",
                 )
+
 
 if __name__ == '__main__':
     main()

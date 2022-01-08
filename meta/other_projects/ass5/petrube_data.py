@@ -11,6 +11,7 @@ from utils import *
 np.random.seed(1234)
 random.seed(1234)
 
+
 def create_arg_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--train-file", default='train.txt',
@@ -22,14 +23,16 @@ def create_arg_parser():
     args = parser.parse_args()
     return args
 
+
 def line_shuffle(line):
     tokens = line.split()
     random.shuffle(tokens)
     return ' '.join(tokens)
 
+
 def line_drop(line, perc):
     tokens = line.split()
-    count = int(perc*len(tokens))
+    count = int(perc * len(tokens))
 
     # this is not a very efficient way but is quite safe
     for _ in range(count):
@@ -37,9 +40,10 @@ def line_drop(line, perc):
 
     return ' '.join(tokens)
 
+
 def line_add(line, perc, tokens_all):
     tokens = line.split()
-    count = int(perc*len(tokens))
+    count = int(perc * len(tokens))
 
     # this is not a very efficient way but is quite safe
     for _ in range(count):
@@ -50,7 +54,7 @@ def line_add(line, perc, tokens_all):
 
 def line_change(line, perc, tokens_all):
     tokens = line.split()
-    count = int(perc*len(tokens))
+    count = int(perc * len(tokens))
 
     # this is not a very efficient way but is quite safe
     for _ in range(count):
@@ -58,9 +62,11 @@ def line_change(line, perc, tokens_all):
 
     return ' '.join(tokens)
 
+
 def save_data(filename, X, Y):
     with open(filename, "w") as f:
         f.writelines([f"{y} - - {x}\n" for x, y in zip(X, Y)])
+
 
 def main():
     '''Main function to train and test neural network given cmd line arguments'''
@@ -81,35 +87,36 @@ def main():
         )
         save_data(
             args.output_dir + f"/{filename}_d{SMALL_PCT}.txt",
-            [line_drop(line, SMALL_PCT/100) for line in X],
+            [line_drop(line, SMALL_PCT / 100) for line in X],
             Y
         )
         save_data(
             args.output_dir + f"/{filename}_d{LARGE_PCT}.txt",
-            [line_drop(line, LARGE_PCT/100) for line in X],
+            [line_drop(line, LARGE_PCT / 100) for line in X],
             Y
         )
 
-        tokens_all = list(set([item for subl in X_train+X_dev for item in subl]))
+        tokens_all = list(
+            set([item for subl in X_train + X_dev for item in subl]))
 
         save_data(
             args.output_dir + f"/{filename}_a{SMALL_PCT}.txt",
-            [line_add(line, SMALL_PCT/100, tokens_all) for line in X],
+            [line_add(line, SMALL_PCT / 100, tokens_all) for line in X],
             Y
         )
         save_data(
             args.output_dir + f"/{filename}_a{LARGE_PCT}.txt",
-            [line_add(line, LARGE_PCT/100, tokens_all) for line in X],
+            [line_add(line, LARGE_PCT / 100, tokens_all) for line in X],
             Y
         )
         save_data(
             args.output_dir + f"/{filename}_c{SMALL_PCT}.txt",
-            [line_change(line, SMALL_PCT/100, tokens_all) for line in X],
+            [line_change(line, SMALL_PCT / 100, tokens_all) for line in X],
             Y
         )
         save_data(
             args.output_dir + f"/{filename}_c{LARGE_PCT}.txt",
-            [line_change(line, LARGE_PCT/100, tokens_all) for line in X],
+            [line_change(line, LARGE_PCT / 100, tokens_all) for line in X],
             Y
         )
 

@@ -11,13 +11,15 @@ from tensorflow_addons.optimizers import AdamW
 from keras.losses import CategoricalCrossentropy
 from utils import report_accuracy_score, get_emb_matrix
 
+
 class ModelRNN():
-    def __init__(self, 
+    def __init__(
+            self,
             embeddings,
             X_all=None,
             args=None):
-        '''TODO xxxxxxxxx'''
-        
+        '''TODO comment'''
+
         self.embeddings = embeddings
 
         # VECTORIZE
@@ -40,9 +42,11 @@ class ModelRNN():
         self.model = Sequential()
         self.model.add(Embedding(
             num_tokens, embedding_dim,
-            embeddings_initializer=None if args.embd_random else Constant(embd_matrix),
+            embeddings_initializer=None if args.embd_random else Constant(
+                embd_matrix),
             trainable=not args.embd_not_trainable,
-            embeddings_regularizer=regularizers.l1_l2(l1=1e-5, l2=1e-4) if args.embd_reg else None,
+            embeddings_regularizer=regularizers.l1_l2(
+                l1=1e-5, l2=1e-4) if args.embd_reg else None,
         ))
 
         if args.embd_dense:
@@ -63,7 +67,7 @@ class ModelRNN():
             "go_backwards": args.rnn_backwards,
         }
 
-        for _ in range(args.rnn_layers-1):
+        for _ in range(args.rnn_layers - 1):
             if args.rnn_not_bi:
                 self.model.add(
                     UNIT(**rnn_params, return_sequences=True,)
@@ -77,7 +81,8 @@ class ModelRNN():
         if args.rnn_not_bi:
             self.model.add(UNIT(**rnn_params))
         else:
-            self.model.add(Bidirectional(UNIT(**rnn_params), merge_mode=args.rnn_bimerge))
+            self.model.add(Bidirectional(
+                UNIT(**rnn_params), merge_mode=args.rnn_bimerge))
 
         self.model.add(Dense(
             units=128, activation="relu"
@@ -107,7 +112,7 @@ class ModelRNN():
             optimizer=optimizer,
             metrics=['accuracy']
         )
-        
+
         self.batch_size = args.batch_size
         self.epochs = args.epochs
 
@@ -124,7 +129,7 @@ class ModelRNN():
         # Early stopping: stop training when there are three consecutive epochs without improving
         # It's also possible to monitor the training loss with monitor="loss"
         callback = tf.keras.callbacks.EarlyStopping(
-            monitor='val_accuracy', patience=10,# restore_best_weights=True
+            monitor='val_accuracy', patience=10,  # restore_best_weights=True
         )
 
         # Finally fit the model to our data

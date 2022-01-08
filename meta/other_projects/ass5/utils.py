@@ -2,10 +2,12 @@ import json
 import numpy as np
 from sklearn.metrics import accuracy_score
 
+
 def report_accuracy_score(Y_dev, Y_pred):
     Y_dev = np.argmax(Y_dev, axis=1)
     Y_pred = np.argmax(Y_pred, axis=1)
     print(f"ACC: {accuracy_score(Y_dev, Y_pred):.3%}")
+
 
 def read_corpus(corpus_file):
     '''Read in review data set and returns docs and labels'''
@@ -25,6 +27,7 @@ def read_embeddings(embeddings_file):
     embeddings = json.load(open(embeddings_file, 'r'))
     return {word: np.array(embeddings[word]) for word in embeddings}
 
+
 def get_emb_matrix(voc, emb):
     '''Get embedding matrix given vocab and the embeddings'''
     num_tokens = len(voc) + 2
@@ -40,6 +43,7 @@ def get_emb_matrix(voc, emb):
             embedding_matrix[i] = embedding_vector
     # Final matrix with pretrained embeddings that we can feed to embedding layer
     return embedding_matrix
+
 
 def center_norm(X_data):
     X_data -= X_data.mean(axis=0)
